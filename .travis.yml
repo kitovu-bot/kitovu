@@ -1,5 +1,8 @@
 language: python
+python: '3.6'
 sudo: false
+dist: trusty
+group: edge
 cache: pip
 env:
   global:
@@ -10,17 +13,17 @@ env:
     - TOXENV=docs
 matrix:
   include:
-    - python: '3.6'
-      env:
-        - TOXENV=py36,report,codecov
-before_install:
-  - python --version
-  - uname -a
-  - lsb_release -a
+    - env:
+        - TOXENV=py36-cov
+    - env:
+        - TOXENV=pylint
+    - env:
+        - TOXENV=flake8
+    - env:
+        - TOXENV=mypy
 install:
   - pip install tox
   - virtualenv --version
-  - easy_install --version
   - pip --version
   - tox --version
 script:
