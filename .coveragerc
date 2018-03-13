@@ -1,0 +1,16 @@
+[paths]
+source =
+   src/kitovu
+   */site-packages/kitovu
+
+[run]
+branch = true
+source =
+    kitovu
+    tests
+parallel = true
+
+[report]
+show_missing = true
+precision = 2
+omit = *migrations*
