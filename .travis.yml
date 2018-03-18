@@ -15,7 +15,7 @@ env:
     - TOXENV=mypy
     - TOXENV=docs
 install:
-  - pip install tox
+  - pip install tox codecov
   - virtualenv --version
   - pip --version
   - tox --version
