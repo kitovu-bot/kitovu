@@ -13,8 +13,7 @@ Overview
       - | |travis| |appveyor| |requires|
         | |codecov|
     * - package
-      - | |version| |wheel| |supported-versions| |supported-implementations|
-        | |commits-since|
+      - | |version|
 
 .. |docs| image:: https://readthedocs.org/projects/kitovu/badge/?style=flat
     :target: https://readthedocs.org/projects/kitovu
