@@ -9,18 +9,11 @@ env:
     - LD_PRELOAD=/lib/x86_64-linux-gnu/libSegFault.so
     - SEGFAULT_SIGNALS=all
   matrix:
-    - TOXENV=check
+    - TOXENV=py36-cov
+    - TOXENV=pylint
+    - TOXENV=flake8
+    - TOXENV=mypy
     - TOXENV=docs
-matrix:
-  include:
-    - env:
-        - TOXENV=py36-cov
-    - env:
-        - TOXENV=pylint
-    - env:
-        - TOXENV=flake8
-    - env:
-        - TOXENV=mypy
 install:
   - pip install tox
   - virtualenv --version
