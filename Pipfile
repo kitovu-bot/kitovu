@@ -12,7 +12,7 @@ click = "*"
 pysmb = "*"
 keyring = "*"
 pluggy = "*"
-pyyaml = "*"
+PyYAML = "*"
 
 
 [dev-packages]
@@ -21,7 +21,6 @@ pytest = "*"
 pytest-bdd = "*"
 pytest-cov = "*"
 coverage = "*"
-codecov = "*"
 hypothesis = "*"
 pylint = "*"
 "flake8" = "*"
