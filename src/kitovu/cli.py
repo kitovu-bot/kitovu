@@ -21,12 +21,12 @@ from kitovu.sync import syncing
 
 
 @click.group()
-def cli():
+def cli() -> None:
     pass
 
 
 @cli.command()
 @click.argument('url')
-def sync(url):
+def sync(url: str) -> None:
     """Synchronize the given URL."""
     syncing.start(url)

@@ -51,7 +51,7 @@ class SyncPluginSpec:
         raise NotImplementedError
 
 
-def init():
+def init() -> None:
     """Load plugins and initialize the global PluginManager instance."""
     global manager
     manager = pluggy.PluginManager("kitovu")

@@ -18,11 +18,11 @@ class _LoginInfo:
 
     """SMB login info we can extract from an URL."""
 
-    username: str = attr.ib()
-    hostname: str = attr.ib()
-    share: str = attr.ib()
-    domain: typing.Optional[str] = attr.ib()
-    port: typing.Optional[int] = attr.ib()
+    username: str = attr.ib(None)
+    hostname: str = attr.ib(None)
+    share: str = attr.ib(None)
+    domain: typing.Optional[str] = attr.ib(None)
+    port: typing.Optional[int] = attr.ib(None)
 
 
 class _SignOptions(enum.IntEnum):
@@ -47,7 +47,7 @@ def _parse_url(url: str) -> _LoginInfo:
     username: str = parsed.username
     hostname: str
     share: str
-    domain: str
+    domain: typing.Optional[str]
     port: int
 
     if parsed.scheme == 'smb' and parsed.hostname == 'hsr.ch':
@@ -74,9 +74,9 @@ class SmbPlugin(syncplugin.SyncPluginSpec):
 
     """A plugin to sync data via SMB/CIFS (Windows fileshares)."""
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._connection: SMBConnection = None
-        self._login_info: _LoginInfo = None
+        self._login_info = _LoginInfo()
 
     @utils.hookimpl
     def connect(self, url: str, options: typing.Dict[str, typing.Any]) -> None:
@@ -97,7 +97,7 @@ class SmbPlugin(syncplugin.SyncPluginSpec):
 
         # FIXME: Handle OSError (not in HSR net)
         server_ip: str = socket.gethostbyname(info.hostname)
-        port: int = info.port
+        port: typing.Optional[int] = info.port
 
         if port is None:
             # Default SMB/CIFS ports
@@ -109,7 +109,7 @@ class SmbPlugin(syncplugin.SyncPluginSpec):
             raise OSError("Connection failed")
 
     @utils.hookimpl
-    def disconnect(self):
+    def disconnect(self) -> None:
         self._connection.close()
 
     def _create_digest(self, size: int, mtime: float) -> str:
@@ -149,5 +149,5 @@ class SmbPlugin(syncplugin.SyncPluginSpec):
         self._connection.retrieveFile(self._login_info.share, str(path), fileobj)
 
 
-def init():
+def init() -> None:
     syncplugin.manager.register(SmbPlugin())

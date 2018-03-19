@@ -5,7 +5,7 @@ import pathlib
 from kitovu.sync import syncplugin, smb
 
 
-def start(url: str):
+def start(url: str) -> None:
     """Sync files from the given URL."""
     syncplugin.init()
     smb.init()
