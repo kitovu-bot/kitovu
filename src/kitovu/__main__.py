@@ -8,8 +8,7 @@ Why does this file exist, and why __main__? For more info, read:
 - https://docs.python.org/2/using/cmdline.html#cmdoption-m
 - https://docs.python.org/3/using/cmdline.html#cmdoption-m
 """
-from kitovu.cli import main
+from kitovu import cli
 
 if __name__ == "__main__":
-    # pylint: disable=no-value-for-parameter
-    main()
+    cli.cli()

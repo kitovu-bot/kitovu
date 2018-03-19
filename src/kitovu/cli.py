@@ -14,11 +14,19 @@ Why does this file exist, and why not put this in __main__?
 
   Also see (1) from http://click.pocoo.org/5/setuptools/#setuptools-integration
 """
+
 import click
 
+from kitovu.sync import syncing
 
-@click.command()
-@click.argument('names', nargs=-1)
-def main(names):
-    """Command line interface entry point."""
-    click.echo(repr(names))
+
+@click.group()
+def cli():
+    pass
+
+
+@cli.command()
+@click.argument('url')
+def sync(url):
+    """Synchronize the given URL."""
+    syncing.start(url)

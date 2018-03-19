@@ -71,7 +71,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'kitovu = kitovu.cli:main',
+            'kitovu = kitovu.cli:cli',
         ]
     },
 )
