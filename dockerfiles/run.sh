@@ -26,5 +26,5 @@ if [[ "$@" == "validate" ]]; then
   run_docker flake8 src || echo_red "mflake8 failed"
   run_docker mypy src   || echo_red "mmypy failed"
 else
-  run_docker "$@"
+  run_docker sh -c "python setup.py install && $@"
 fi
