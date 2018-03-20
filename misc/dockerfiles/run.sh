@@ -12,7 +12,7 @@ ROOT_DIR="$(dirname $(dirname $DIR))"
 
 # copy the files for the Dockerfile into the docker dir for the build
 for f in Pipfile Pipfile.lock; do
-  cp $ROOT_DIR/$f $DIR/$f
+  cp "$ROOT_DIR/$f" "$DIR/$f"
 done
 
 echo_exec docker build --build-arg "UID=$(id -u)" --build-arg "GID=$(id -g)" "$DIR" --tag kitovu
