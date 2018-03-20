@@ -8,7 +8,7 @@ echo_red()   { echo -e "\e[101m$@\e[0m"; }
 echo_exec() { echo_green "$@"; "$@"; }
 
 DIR="$(cd "$(dirname $0)"; pwd)"
-ROOT_DIR="$(dirname $DIR)"
+ROOT_DIR="$(dirname $(dirname $DIR))"
 
 # copy the files for the Dockerfile into the docker dir for the build
 for f in Pipfile Pipfile.lock; do
@@ -26,5 +26,10 @@ if [[ "$@" == "validate" ]]; then
   run_docker flake8 src || echo_red "mflake8 failed"
   run_docker mypy src   || echo_red "mmypy failed"
 else
-  run_docker sh -c "python setup.py install && $@"
+  if [[ "$@" == "" ]]; then
+    CMD="python"
+  else
+    CMD="$@"
+  fi
+  run_docker sh -c "python setup.py install && $CMD"
 fi
