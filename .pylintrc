@@ -9,10 +9,6 @@ disable=
 [reports]
 format=colorized
 
-[typecheck]
-# For pluggy
-ignored-classes=_HookRelay
-
 [basic]
 const-rgx=[a-z_]*|[A-Z_]*
 docstring-min-length=3

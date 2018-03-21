@@ -61,7 +61,6 @@ setup(
         'attrs',
         'pysmb',
         'keyring',
-        'pluggy',
         'pyyaml',
     ],
     extras_require={

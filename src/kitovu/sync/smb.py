@@ -70,7 +70,7 @@ def _parse_url(url: str) -> _LoginInfo:
                       domain=domain, port=port)
 
 
-class SmbPlugin(syncplugin.SyncPluginSpec):
+class SmbPlugin(syncplugin.AbstractSyncPlugin):
 
     """A plugin to sync data via SMB/CIFS (Windows fileshares)."""
 
@@ -78,7 +78,6 @@ class SmbPlugin(syncplugin.SyncPluginSpec):
         self._connection: SMBConnection = None
         self._login_info = _LoginInfo()
 
-    @utils.hookimpl
     def connect(self, url: str, options: typing.Dict[str, typing.Any]) -> None:
         # FIXME custom exception for errors
         info: _LoginInfo = _parse_url(url)
@@ -108,7 +107,6 @@ class SmbPlugin(syncplugin.SyncPluginSpec):
         if not success:
             raise OSError("Connection failed")
 
-    @utils.hookimpl
     def disconnect(self) -> None:
         self._connection.close()
 
@@ -125,29 +123,21 @@ class SmbPlugin(syncplugin.SyncPluginSpec):
         mtime = int(mtime)
         return f'{size}-{mtime}'
 
-    @utils.hookimpl
     def create_local_digest(self, path: pathlib.Path) -> str:
         info = path.lstat()
         return self._create_digest(size=info.st_size, mtime=info.st_mtime)
 
-    @utils.hookimpl
     def create_remote_digest(self, path: pathlib.Path) -> str:
         attributes = self._connection.getAttributes(self._login_info.share,
                                                     str(path))
         return self._create_digest(size=attributes.file_size,
                                    mtime=attributes.last_write_time)
 
-    @utils.hookimpl
     def list_path(self, path: pathlib.Path) -> typing.Iterable[pathlib.PurePath]:
         for entry in self._connection.listPath(self._login_info.share,
                                                str(path)):
             if not entry.isDirectory:
                 yield pathlib.PurePath(path / entry.filename)
 
-    @utils.hookimpl
     def retrieve_file(self, path: pathlib.Path, fileobj: typing.IO[str]) -> None:
         self._connection.retrieveFile(self._login_info.share, str(path), fileobj)
-
-
-def init() -> None:
-    syncplugin.manager.register(SmbPlugin())
