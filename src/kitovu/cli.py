@@ -32,5 +32,5 @@ def sync(url: str) -> None:
     """Synchronize the given URL."""
     try:
         syncing.start(url)
-    except utils.UsageError as e:
-        raise click.ClickException(str(e))
+    except utils.UsageError as ex:
+        raise click.ClickException(str(ex))

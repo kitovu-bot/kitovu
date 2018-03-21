@@ -1,8 +1,9 @@
 """Logic related to actually syncing files."""
 
-import stevedore.driver
 import pathlib
 import urllib.parse
+
+import stevedore.driver
 
 from kitovu import utils
 from kitovu.sync import syncplugin
@@ -27,7 +28,8 @@ def _find_plugin(url: str) -> syncplugin.AbstractSyncPlugin:
     except stevedore.exception.NoMatches:
         raise utils.NoPluginError(f"No plugin found for {scheme}:// URL.")
 
-    return manager.driver
+    plugin: syncplugin.AbstractSyncPlugin = manager.driver
+    return plugin
 
 
 def start(url: str) -> None:

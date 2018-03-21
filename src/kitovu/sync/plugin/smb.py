@@ -9,7 +9,7 @@ import pathlib
 import attr
 from smb.SMBConnection import SMBConnection
 
-from kitovu import config, utils
+from kitovu import config
 from kitovu.sync import syncplugin
 
 

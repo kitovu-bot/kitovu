@@ -1,6 +1,6 @@
 import pytest
 
-from kitovu.sync import smb
+from kitovu.sync.plugin import smb
 
 
 @pytest.mark.parametrize('url, expected', [
