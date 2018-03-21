@@ -17,6 +17,7 @@ Why does this file exist, and why not put this in __main__?
 
 import click
 
+from kitovu import utils
 from kitovu.sync import syncing
 
 
@@ -29,4 +30,7 @@ def cli() -> None:
 @click.argument('url')
 def sync(url: str) -> None:
     """Synchronize the given URL."""
-    syncing.start(url)
+    try:
+        syncing.start(url)
+    except utils.UsageError as e:
+        raise click.ClickException(str(e))

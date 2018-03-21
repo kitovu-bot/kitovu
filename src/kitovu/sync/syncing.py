@@ -1,14 +1,38 @@
 """Logic related to actually syncing files."""
 
+import stevedore.driver
 import pathlib
+import urllib.parse
 
-from kitovu.sync import syncplugin, smb
+from kitovu import utils
+from kitovu.sync import syncplugin
+from kitovu.sync.plugin import smb
+
+
+def _find_plugin(url: str) -> syncplugin.AbstractSyncPlugin:
+    """Find an appropriate sync plugin for the given URL.
+
+    The URL's scheme (e.g. smb://) is equal to the plugin name.
+    """
+    builtin_plugins = {
+        'smb': smb.SmbPlugin(),
+    }
+    scheme: str = urllib.parse.urlparse(url).scheme
+    if scheme in builtin_plugins:
+        return builtin_plugins[scheme]
+
+    try:
+        manager = stevedore.driver.DriverManager(namespace='kitovu.sync.plugin',
+                                                 name=scheme, invoke_on_load=True)
+    except stevedore.exception.NoMatches:
+        raise utils.NoPluginError(f"No plugin found for {scheme}:// URL.")
+
+    return manager.driver
 
 
 def start(url: str) -> None:
     """Sync files from the given URL."""
-    # FIXME actually dispatch to the right plugin
-    plugin = smb.SmbPlugin()
+    plugin = _find_plugin(url)
     plugin.connect(url, options={})
 
     path = pathlib.PurePath('/Informatik/Fachbereich/Engineering-Projekt/EPJ/FS2018/')

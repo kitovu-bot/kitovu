@@ -11,7 +11,8 @@ attrs = "*"
 click = "*"
 pysmb = "*"
 keyring = "*"
-PyYAML = "*"
+pyyaml = "*"
+stevedore = "*"
 
 
 [dev-packages]

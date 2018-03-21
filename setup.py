@@ -62,6 +62,7 @@ setup(
         'pysmb',
         'keyring',
         'pyyaml',
+        'stevedore',
     ],
     extras_require={
         # eg:
