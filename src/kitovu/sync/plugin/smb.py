@@ -139,5 +139,5 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
             if not entry.isDirectory:
                 yield pathlib.PurePath(path / entry.filename)
 
-    def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[str]) -> None:
+    def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[bytes]) -> None:
         self._connection.retrieveFile(self._login_info.share, str(path), fileobj)
