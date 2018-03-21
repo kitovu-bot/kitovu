@@ -127,17 +127,17 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
         info = path.lstat()
         return self._create_digest(size=info.st_size, mtime=info.st_mtime)
 
-    def create_remote_digest(self, path: pathlib.Path) -> str:
+    def create_remote_digest(self, path: pathlib.PurePath) -> str:
         attributes = self._connection.getAttributes(self._login_info.share,
                                                     str(path))
         return self._create_digest(size=attributes.file_size,
                                    mtime=attributes.last_write_time)
 
-    def list_path(self, path: pathlib.Path) -> typing.Iterable[pathlib.PurePath]:
+    def list_path(self, path: pathlib.PurePath) -> typing.Iterable[pathlib.PurePath]:
         for entry in self._connection.listPath(self._login_info.share,
                                                str(path)):
             if not entry.isDirectory:
                 yield pathlib.PurePath(path / entry.filename)
 
-    def retrieve_file(self, path: pathlib.Path, fileobj: typing.IO[str]) -> None:
+    def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[str]) -> None:
         self._connection.retrieveFile(self._login_info.share, str(path), fileobj)

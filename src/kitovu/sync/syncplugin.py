@@ -31,16 +31,16 @@ class AbstractSyncPlugin(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def create_remote_digest(self, path: pathlib.Path) -> str:
+    def create_remote_digest(self, path: pathlib.PurePath) -> str:
         """Create a digest for the given remote file."""
         raise NotImplementedError
 
     @abc.abstractmethod
-    def list_path(self, path: pathlib.Path) -> typing.Iterable[pathlib.Path]:
+    def list_path(self, path: pathlib.PurePath) -> typing.Iterable[pathlib.PurePath]:
         """Get a list of files in the given remote path."""
         raise NotImplementedError
 
     @abc.abstractmethod
-    def retrieve_file(self, path: pathlib.Path, fileobj: typing.IO[str]) -> None:
+    def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[str]) -> None:
         """Retrieve the given remote file."""
         raise NotImplementedError
