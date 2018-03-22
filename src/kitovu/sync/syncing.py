@@ -3,6 +3,7 @@
 import pathlib
 import urllib.parse
 
+import stevedore
 import stevedore.driver
 
 from kitovu import utils
