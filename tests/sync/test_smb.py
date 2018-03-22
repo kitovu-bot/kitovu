@@ -1,4 +1,3 @@
-from unittest import mock
 import pytest
 
 import keyring
@@ -26,6 +25,7 @@ def test_parse_url(url: str, expected: smb._LoginInfo):
 
 
 class SMBConnectionMock:
+
     def __init__(self, **kwargs):
         self.init_args = kwargs
         self.connected_ip = None
@@ -49,14 +49,21 @@ class SMBConnectionMock:
             raise Exception('Not connected!')
 
 
-@mock.patch('kitovu.sync.plugin.smb.SMBConnection', new=SMBConnectionMock)
-@mock.patch('socket.gethostbyname', mock.MagicMock(return_value='123.123.123.123'))
-@mock.patch('socket.gethostname', mock.MagicMock(return_value='my-local-host'))
-class TestConnect():
-    def test_connect_with_default_options(self):
+class TestConnect:
+
+    @pytest.fixture(autouse=True)
+    def patch(self, monkeypatch):
+        monkeypatch.setattr(smb, 'SMBConnection', SMBConnectionMock)
+        monkeypatch.setattr('socket.gethostbyname', lambda _host: '123.123.123.123')
+        monkeypatch.setattr('socket.gethostname', lambda: 'my-local-host')
+
+    @pytest.fixture
+    def plugin(self):
+        return smb.SmbPlugin()
+
+    def test_connect_with_default_options(self, plugin):
         url = 'smb://myauthdomain;myusername@myserver.test/some/path'
         keyring.set_password('kitovu', url, 'some_password')
-        plugin = smb.SmbPlugin()
         plugin.connect(url, {})
         assert plugin._connection.init_args == {
             'username': 'myusername',
@@ -71,12 +78,13 @@ class TestConnect():
         assert plugin._connection.connected_ip == '123.123.123.123'
         assert plugin._connection.connected_port == 445
 
-    def test_connect_with_custom_options(self):
+    def test_connect_with_custom_options(self, plugin):
         url = 'smb://myauthdomain;myusername@myserver.test/some/path'
         keyring.set_password('kitovu', url, 'some_password')
-        plugin = smb.SmbPlugin()
         plugin.connect(url, {
-            'use_ntlm_v2': True, 'sign_options': 'when_supported', 'is_direct_tcp': False
+            'use_ntlm_v2': True,
+            'sign_options': 'when_supported',
+            'is_direct_tcp': False,
         })
         assert plugin._connection.init_args == {
             'username': 'myusername',
@@ -91,10 +99,9 @@ class TestConnect():
         assert plugin._connection.connected_ip == '123.123.123.123'
         assert plugin._connection.connected_port == 139
 
-    def test_connect_with_hsr_url(self):
+    def test_connect_with_hsr_url(self, plugin):
         url = 'smb://myhsrusername@hsr.ch/some/path'
         keyring.set_password('kitovu', url, 'some_hsr_password')
-        plugin = smb.SmbPlugin()
         plugin.connect(url, {})
         assert plugin._connection.init_args == {
             'username': 'myhsrusername',
