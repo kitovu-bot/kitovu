@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "12dfd296be302b6bd0a95ab72915ca94cd06e52e6dc74352dd1f0d878fee8d7f"
+            "sha256": "8120df5c2657dc18108be923a330747b6aa688d276606abc5d09aeca54bcb075"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -384,6 +384,14 @@
             ],
             "version": "==0.6.1"
         },
+        "mock": {
+            "hashes": [
+                "sha256:5ce3c71c5545b472da17b72268978914d0252980348636840bd34a00b5cc96c1",
+                "sha256:b158b6df76edd239b8208d481dc46b6afd45a846b7812ff0ce58971cf5bc8bba"
+            ],
+            "markers": "python_version < '3.0'",
+            "version": "==2.0.0"
+        },
         "mypy": {
             "hashes": [
                 "sha256:83d798f66323f2de6191d66d9ae5ab234e4ee5b400010e19c58d75d308049f25",
@@ -412,6 +420,13 @@
             ],
             "version": "==0.4.2"
         },
+        "pbr": {
+            "hashes": [
+                "sha256:05f61c71aaefc02d8e37c0a3eeb9815ff526ea28b3b76324769e6158d7f95be1",
+                "sha256:60c25b7dfd054ef9bb0ae327af949dd4676aa09ac3a9471cdc871d8a9213f9ac"
+            ],
+            "version": "==3.1.1"
+        },
         "pluggy": {
             "hashes": [
                 "sha256:7f8ae7f5bdf75671a718d2daf0a64b7885f74510bcd98b1a0bb420eb9a9d0cff"
@@ -420,10 +435,10 @@
         },
         "py": {
             "hashes": [
-                "sha256:8cca5c229d225f8c1e3085be4fcf306090b00850fefad892f9d96c7b6e2f310f",
-                "sha256:ca18943e28235417756316bfada6cd96b23ce60dd532642690dcfdaba988a76d"
+                "sha256:29c9fab495d7528e80ba1e343b958684f4ace687327e6f789a94bf3d1915f881",
+                "sha256:983f77f3331356039fdd792e9220b7b8ee1aa6bd2b25f567a963ff1de5a64f6a"
             ],
-            "version": "==1.5.2"
+            "version": "==1.5.3"
         },
         "pycodestyle": {
             "hashes": [
@@ -469,6 +484,14 @@
             ],
             "index": "pypi",
             "version": "==2.5.1"
+        },
+        "pytest-mock": {
+            "hashes": [
+                "sha256:03a2fea79d0a83a8de2e77e92afe5f0a5ca99a58cc68f843f9a74de34800a943",
+                "sha256:b879dff61e31fcd4727c227c182f15f222a155293cc64ed5a02d55e0020cf949"
+            ],
+            "index": "pypi",
+            "version": "==1.7.1"
         },
         "singledispatch": {
             "hashes": [
