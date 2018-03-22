@@ -13,6 +13,9 @@ ARG GID
 RUN addgroup -g $GID local-group && \
     adduser -D -u $UID -G local-group local-user
 
+COPY entrypoint.sh /opt/bin/entrypoint.sh
+RUN chmod +x /opt/bin/entrypoint.sh
+
 USER local-user
 
 COPY Pipfile /opt/project/
@@ -20,6 +23,6 @@ COPY Pipfile.lock /opt/project/
 
 RUN pipenv sync --dev
 
-ENTRYPOINT ["/usr/local/bin/pipenv", "run"]
+ENTRYPOINT ["/opt/bin/entrypoint.sh"]
 
 CMD ["python"]

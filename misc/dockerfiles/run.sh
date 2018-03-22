@@ -27,9 +27,8 @@ if [[ "$@" == "validate" ]]; then
   run_docker mypy --ignore-missing-imports --allow-untyped-decorators --strict src || echo_red "mypy failed"
 else
   if [[ "$@" == "" ]]; then
-    CMD="python"
+    run_docker python
   else
-    CMD="$@"
+    run_docker "$@"
   fi
-  run_docker sh -c "python setup.py install && $CMD"
 fi
