@@ -25,6 +25,7 @@ hypothesis = "*"
 pylint = "*"
 "flake8" = "*"
 mypy = "*"
+pytest-mock = "*"
 
 
 [requires]
