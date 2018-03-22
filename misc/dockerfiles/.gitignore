@@ -1,0 +1,3 @@
+# temporary copies for the docker build
+/Pipfile
+/Pipfile.lock
