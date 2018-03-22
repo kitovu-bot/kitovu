@@ -59,7 +59,7 @@ def _parse_url(url: str) -> _LoginInfo:
         port = 445
     else:
         if ';' in username:
-            username, domain = username.split(';')
+            domain, username = username.split(';')
         else:
             domain = None
         hostname = parsed.hostname

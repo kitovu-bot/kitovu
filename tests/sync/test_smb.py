@@ -13,7 +13,7 @@ from kitovu.sync.plugin import smb
         username='user', hostname='example.com', share='share',
         domain=None, port=None)),
     # Other server with domain
-    ('smb://user;domain@example.com/share', smb._LoginInfo(
+    ('smb://domain;user@example.com/share', smb._LoginInfo(
         username='user', hostname='example.com', share='share',
         domain='domain', port=None)),
 ])
