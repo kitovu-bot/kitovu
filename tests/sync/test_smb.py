@@ -1,9 +1,18 @@
 import pytest
+from datetime import datetime
 
 import keyring
+import pathlib
 from smb.SMBConnection import SMBConnection
 
 from kitovu.sync.plugin import smb
+
+
+@pytest.fixture(autouse=True)
+def patch(monkeypatch):
+    monkeypatch.setattr(smb, 'SMBConnection', SMBConnectionMock)
+    monkeypatch.setattr('socket.gethostbyname', lambda _host: '123.123.123.123')
+    monkeypatch.setattr('socket.gethostname', lambda: 'my-local-host')
 
 
 @pytest.mark.parametrize('url, expected', [
@@ -26,6 +35,18 @@ def test_parse_url(url: str, expected: smb._LoginInfo):
 
 class SMBConnectionMock:
 
+    class AttributesMock:
+
+        def __init__(self, file_size, last_write_time):
+            self.file_size = file_size
+            self.last_write_time = last_write_time
+
+    class SharedFileMock:
+
+        def __init__(self, filename, isDirectory):
+            self.filename = filename
+            self.isDirectory = isDirectory
+
     def __init__(self, **kwargs):
         self.init_args = kwargs
         self.connected_ip = None
@@ -34,15 +55,28 @@ class SMBConnectionMock:
     def connect(self, ip_address, port):
         self.connected_ip = ip_address
         self.connected_port = port
+        self._ensure_connected()
         return True
 
-    def is_connected(self):
-        return self.connected_ip is not None and self.connected_port is not None
-
-    def disconnect(self):
+    def close(self):
         self._ensure_connected()
         self.connected_ip = None
         self.connected_port = None
+
+    def getAttributes(self, share, path):
+        return self.AttributesMock(1024, 988824605.56)
+
+    def listPath(self, share, path):
+        return [
+            self.SharedFileMock('example_dir', True),
+            self.SharedFileMock('example.txt', False),
+            self.SharedFileMock('other_example.txt', False),
+            self.SharedFileMock('sub', True),
+            self.SharedFileMock('last_file', False),
+        ]
+
+    def is_connected(self):
+        return self.connected_ip is not None and self.connected_port is not None
 
     def _ensure_connected(self):
         if not self.is_connected():
@@ -50,12 +84,6 @@ class SMBConnectionMock:
 
 
 class TestConnect:
-
-    @pytest.fixture(autouse=True)
-    def patch(self, monkeypatch):
-        monkeypatch.setattr(smb, 'SMBConnection', SMBConnectionMock)
-        monkeypatch.setattr('socket.gethostbyname', lambda _host: '123.123.123.123')
-        monkeypatch.setattr('socket.gethostname', lambda: 'my-local-host')
 
     @pytest.fixture
     def plugin(self):
@@ -115,3 +143,31 @@ class TestConnect:
         }
         assert plugin._connection.connected_ip == '123.123.123.123'
         assert plugin._connection.connected_port == 445
+
+
+class TestWithConnectedPlugin:
+
+    @pytest.fixture
+    def plugin(self):
+        plugin = smb.SmbPlugin()
+        url = 'smb://myauthdomain;myusername@myserver.test/some/path'
+        keyring.set_password('kitovu', url, 'some_password')
+        plugin.connect(url, {})
+        return plugin
+
+    def test_disconnect(self, plugin):
+        assert plugin._connection.is_connected()
+        plugin.disconnect()
+        assert not plugin._connection.is_connected()
+
+    def test_create_remote_digest(self, plugin):
+        assert plugin.create_remote_digest(pathlib.PurePath('/test')) == '1024-988824605'
+
+    def test_list_path(self, plugin):
+        pure_paths = plugin.list_path(pathlib.PurePath('/some/test/dir'))
+        paths = [str(p) for p in pure_paths]
+        assert paths == [
+            '/some/test/dir/example.txt',
+            '/some/test/dir/other_example.txt',
+            '/some/test/dir/last_file',
+        ]
