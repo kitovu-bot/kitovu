@@ -1,5 +1,4 @@
 import keyring.backend
-import pytest
 
 
 class InMemoryKeyring(keyring.backend.KeyringBackend):
