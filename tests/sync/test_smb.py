@@ -163,10 +163,9 @@ class TestWithConnectedPlugin:
         assert plugin.create_remote_digest(pathlib.PurePath('/test')) == '1024-988824605'
 
     def test_list_path(self, plugin):
-        pure_paths = plugin.list_path(pathlib.PurePath('/some/test/dir'))
-        paths = [str(p) for p in pure_paths]
+        paths = list(plugin.list_path(pathlib.PurePath('/some/test/dir')))
         assert paths == [
-            '/some/test/dir/example.txt',
-            '/some/test/dir/other_example.txt',
-            '/some/test/dir/last_file',
+            pathlib.PurePath('/some/test/dir/example.txt'),
+            pathlib.PurePath('/some/test/dir/other_example.txt'),
+            pathlib.PurePath('/some/test/dir/last_file'),
         ]
