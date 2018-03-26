@@ -1,7 +1,8 @@
-import pytest
-
-import keyring
 import pathlib
+
+import pytest
+import attr
+import keyring
 from smb.SMBConnection import SMBConnection
 
 from kitovu.sync.plugin import smb
@@ -34,17 +35,17 @@ def test_parse_url(url: str, expected: smb._LoginInfo):
 
 class SMBConnectionMock:
 
+    @attr.s
     class AttributesMock:
 
-        def __init__(self, file_size, last_write_time):
-            self.file_size = file_size
-            self.last_write_time = last_write_time
+        file_size = attr.ib()
+        last_write_time = attr.ib()
 
+    @attr.s
     class SharedFileMock:
 
-        def __init__(self, filename, isDirectory):
-            self.filename = filename
-            self.isDirectory = isDirectory
+        filename = attr.ib()
+        isDirectory = attr.ib()
 
     def __init__(self, **kwargs):
         self.init_args = kwargs
@@ -54,11 +55,11 @@ class SMBConnectionMock:
     def connect(self, ip_address, port):
         self.connected_ip = ip_address
         self.connected_port = port
-        self._ensure_connected()
+        assert self.is_connected()
         return True
 
     def close(self):
-        self._ensure_connected()
+        assert self.is_connected()
         self.connected_ip = None
         self.connected_port = None
 
@@ -76,10 +77,6 @@ class SMBConnectionMock:
 
     def is_connected(self):
         return self.connected_ip is not None and self.connected_port is not None
-
-    def _ensure_connected(self):
-        if not self.is_connected():
-            raise Exception('Not connected!')
 
 
 class TestConnect:
