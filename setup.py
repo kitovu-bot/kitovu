@@ -61,8 +61,8 @@ setup(
         'attrs',
         'pysmb',
         'keyring',
-        'pluggy',
         'pyyaml',
+        'stevedore',
     ],
     extras_require={
         # eg:
@@ -71,7 +71,7 @@ setup(
     },
     entry_points={
         'console_scripts': [
-            'kitovu = kitovu.cli:main',
+            'kitovu = kitovu.cli:cli',
         ]
     },
 )

@@ -23,13 +23,12 @@ run_docker() {
 
 if [[ "$@" == "validate" ]]; then
   run_docker pylint src || echo_red "mpylint failed"
-  run_docker flake8 src || echo_red "mflake8 failed"
+  run_docker flake8 src tests || echo_red "flake8 failed"
   run_docker mypy --ignore-missing-imports --allow-untyped-decorators --strict src || echo_red "mypy failed"
 else
   if [[ "$@" == "" ]]; then
-    CMD="python"
+    run_docker python
   else
-    CMD="$@"
+    run_docker "$@"
   fi
-  run_docker sh -c "python setup.py install && $CMD"
 fi

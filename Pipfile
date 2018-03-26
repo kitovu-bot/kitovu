@@ -11,8 +11,8 @@ attrs = "*"
 click = "*"
 pysmb = "*"
 keyring = "*"
-pluggy = "*"
-PyYAML = "*"
+pyyaml = "*"
+stevedore = "*"
 
 
 [dev-packages]
@@ -25,6 +25,7 @@ hypothesis = "*"
 pylint = "*"
 "flake8" = "*"
 mypy = "*"
+pytest-mock = "*"
 
 
 [requires]
