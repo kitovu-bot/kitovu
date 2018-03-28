@@ -6,9 +6,15 @@ Create a Plugin
 Plugin Class
 ------------
 
-To create a custom plugin class::
+To create a plugin that is able to connect to another service you have to first create a plugin class.
+This custom plugin class needs to inherit from :code:`kitovu.sync.syncplugin.AbstractSyncPlugin`.
+
+This example illustrates all required methods::
+
+ from kitovu.sync import syncplugin
 
  class ExamplePlugin(syncplugin.AbstractSyncPlugin):
+     """A plugin that handles connections with an example service"""
 
      def connect(self, url: str, options: typing.Dict[str, typing.Any]) -> None:
          """Setup the connection to your service.
