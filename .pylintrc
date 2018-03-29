@@ -12,3 +12,6 @@ format=colorized
 [basic]
 const-rgx=[a-z_]*|[A-Z_]*
 docstring-min-length=3
+
+[design]
+max-attributes = 10

@@ -1,7 +1,6 @@
 """Plugin to synchronize SMB Windows fileshares."""
 
 import enum
-import urllib.parse
 import socket
 import typing
 import pathlib
@@ -13,18 +12,6 @@ from kitovu import config
 from kitovu.sync import syncplugin
 
 
-@attr.s
-class _LoginInfo:
-
-    """SMB login info we can extract from an URL."""
-
-    username: str = attr.ib(None)
-    hostname: str = attr.ib(None)
-    share: str = attr.ib(None)
-    domain: typing.Optional[str] = attr.ib(None)
-    port: typing.Optional[int] = attr.ib(None)
-
-
 class _SignOptions(enum.IntEnum):
 
     """Enum for possible signing options from PySMB."""
@@ -34,40 +21,20 @@ class _SignOptions(enum.IntEnum):
     when_required = SMBConnection.SIGN_WHEN_REQUIRED
 
 
-def _parse_url(url: str) -> _LoginInfo:
-    """Get a _LoginInfo class for the given URL.
+@attr.s
+class _ConnectionInfo:
 
-    For the exact syntax of such an URL, see:
-    http://ubiqx.org/cifs/Appendix-D.html
-    https://www.iana.org/assignments/uri-schemes/prov/smb
+    """Connection information we got from the config."""
 
-    With an invalid URL, this will raise ValueError.
-    """
-    parsed: urllib.parse.ParseResult = urllib.parse.urlparse(url)
-    username: str = parsed.username
-    hostname: str
-    share: str
-    domain: typing.Optional[str]
-    port: int
-
-    if parsed.scheme == 'smb' and parsed.hostname == 'hsr.ch':
-        # smb://user@hsr.ch shorthand URL
-        # FIXME Make sure no share/domain/... is in the URL
-        hostname = 'svm-c213.hsr.ch'
-        share = 'skripte'
-        domain = 'HSR'
-        port = 445
-    else:
-        if ';' in username:
-            domain, username = username.split(';')
-        else:
-            domain = None
-        hostname = parsed.hostname
-        share = parsed.path.lstrip('/')
-        port = parsed.port
-
-    return _LoginInfo(username=username, hostname=hostname, share=share,
-                      domain=domain, port=port)
+    username: str = attr.ib(None)
+    password: str = attr.ib(None)
+    hostname: str = attr.ib(None)
+    share: str = attr.ib(None)
+    domain: typing.Optional[str] = attr.ib(None)
+    port: typing.Optional[int] = attr.ib(None)
+    use_ntlm_v2: bool = attr.ib(None)
+    sign_options: _SignOptions = attr.ib(None)
+    is_direct_tcp: bool = attr.ib(None)
 
 
 class SmbPlugin(syncplugin.AbstractSyncPlugin):
@@ -76,34 +43,57 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
 
     def __init__(self) -> None:
         self._connection: SMBConnection = None
-        self._login_info = _LoginInfo()
+        self._info = _ConnectionInfo()
 
-    def connect(self, url: str, options: typing.Dict[str, typing.Any]) -> None:
-        # FIXME custom exception for errors
-        info: _LoginInfo = _parse_url(url)
-        self._login_info = info
-        password = config.get_password(url)
+    def _password_identifier(self) -> str:
+        """Get an unique identifier for the connection in self._info.
 
-        use_ntlm_v2: bool = options.get('use_ntlm_v2', False)
-        sign_options: str = options.get('sign_options', 'when_required')
-        is_direct_tcp: bool = options.get('is_direct_tcp', True)
+        The identifier is used to request/store passwords. Thus, it contains all
+        information associated with a connection and a user account.
 
-        self._connection = SMBConnection(
-            username=info.username, password=password, domain=info.domain,
-            my_name=socket.gethostname(), remote_name=info.hostname,
-            use_ntlm_v2=use_ntlm_v2, sign_options=_SignOptions[sign_options],
-            is_direct_tcp=is_direct_tcp)
+        A newline is used as a separator because it shouldn't cause any trouble
+        in the password backend, but still should never be part of a
+        username/domain/hostname.
+
+        It does *not* contain the port, as it could be possible to access the
+        same SMB server via different protocol versions that way, and that's
+        probably more likely than having different SMB servers running on the
+        same host.
+        """
+        domain: str = self._info.domain if self._info.domain else ''
+        return '\n'.join([self._info.username, domain, self._info.hostname])
+
+    def configure(self, info: typing.Dict[str, typing.Any]) -> None:
+        self._info.use_ntlm_v2 = info.get('use_ntlm_v2', False)
+        sign_options = info.get('sign_options', 'when_required')
+        self._info.sign_options = _SignOptions[sign_options]
+        self._info.is_direct_tcp = info.get('is_direct_tcp', True)
+
+        self._info.username = info['username']
+        self._info.domain = info.get('domain', 'HSR')
+
+        self._info.share = info.get('share', 'skripte')
+        self._info.hostname = info.get('hostname', 'svm-c213.hsr.ch')
+
+        self._info.password = config.get_password('smb', self._password_identifier())
+
+        default_port = 445 if self._info.is_direct_tcp else 139
+        self._info.port = info.get('port', default_port)
+
+    def connect(self) -> None:
+        self._connection = SMBConnection(username=self._info.username,
+                                         password=self._info.password,
+                                         domain=self._info.domain,
+                                         my_name=socket.gethostname(),
+                                         remote_name=self._info.hostname,
+                                         use_ntlm_v2=self._info.use_ntlm_v2,
+                                         sign_options=self._info.sign_options,
+                                         is_direct_tcp=self._info.is_direct_tcp)
 
         # FIXME: Handle OSError (not in HSR net)
-        server_ip: str = socket.gethostbyname(info.hostname)
-        port: typing.Optional[int] = info.port
-
-        if port is None:
-            # Default SMB/CIFS ports
-            port = 445 if is_direct_tcp else 139
-
+        server_ip: str = socket.gethostbyname(self._info.hostname)
         # FIXME: Handle smb.smb_structs.ProtocolError (wrong password)
-        success = self._connection.connect(server_ip, port)
+        success = self._connection.connect(server_ip, self._info.port)
         if not success:
             raise OSError("Connection failed")
 
@@ -128,16 +118,14 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
         return self._create_digest(size=info.st_size, mtime=info.st_mtime)
 
     def create_remote_digest(self, path: pathlib.PurePath) -> str:
-        attributes = self._connection.getAttributes(self._login_info.share,
-                                                    str(path))
+        attributes = self._connection.getAttributes(self._info.share, str(path))
         return self._create_digest(size=attributes.file_size,
                                    mtime=attributes.last_write_time)
 
     def list_path(self, path: pathlib.PurePath) -> typing.Iterable[pathlib.PurePath]:
-        for entry in self._connection.listPath(self._login_info.share,
-                                               str(path)):
+        for entry in self._connection.listPath(self._info.share, str(path)):
             if not entry.isDirectory:
                 yield pathlib.PurePath(path / entry.filename)
 
     def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[bytes]) -> None:
-        self._connection.retrieveFile(self._login_info.share, str(path), fileobj)
+        self._connection.retrieveFile(self._info.share, str(path), fileobj)

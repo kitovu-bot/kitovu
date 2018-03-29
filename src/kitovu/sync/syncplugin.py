@@ -13,8 +13,16 @@ class AbstractSyncPlugin(metaclass=abc.ABCMeta):
     """
 
     @abc.abstractmethod
-    def connect(self, url: str, options: dict) -> None:
-        """Connect to the given URL.
+    def configure(self, info: typing.Dict[str, typing.Any]) -> None:
+        """Read a configuration section intended for this plugin.
+
+        If a KeyError occurs, it's interpreted as missing setting in the config.
+        """
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def connect(self) -> None:
+        """Connect to the host given via 'configure'.
 
         This should raise an appropriate exception if the connection failed.
         """
