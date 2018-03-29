@@ -29,9 +29,10 @@ def cli() -> None:
 @cli.command()
 @click.argument('plugin')
 @click.argument('username')
-def sync(plugin: str, username: str) -> None:
-    """Synchronize with the given plugin and username."""
+@click.argument('path')
+def sync(plugin: str, username: str, path: str) -> None:
+    """Synchronize with the given plugin, username and path."""
     try:
-        syncing.start(plugin, username)
+        syncing.start(plugin, username, path)
     except utils.UsageError as ex:
         raise click.ClickException(str(ex))

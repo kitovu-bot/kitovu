@@ -7,13 +7,14 @@ import stevedore.driver
 
 from kitovu import utils
 from kitovu.sync import syncplugin
-from kitovu.sync.plugin import smb
+from kitovu.sync.plugin import smb, moodle
 
 
 def _find_plugin(pluginname: str) -> syncplugin.AbstractSyncPlugin:
     """Find an appropriate sync plugin with the given name."""
     builtin_plugins = {
         'smb': smb.SmbPlugin(),
+        'moodle': moodle.MoodlePlugin(),
     }
     if pluginname in builtin_plugins:
         return builtin_plugins[pluginname]
@@ -28,16 +29,18 @@ def _find_plugin(pluginname: str) -> syncplugin.AbstractSyncPlugin:
     return plugin
 
 
-def start(pluginname: str, username: str) -> None:
-    """Sync files with the given plugin and username."""
+def start(pluginname: str, username: str, path: str) -> None:
+    """Sync files with the given plugin, username and path."""
     plugin = _find_plugin(pluginname)
     plugin.configure({'username': username})
     plugin.connect()
 
-    path = pathlib.PurePath('/Informatik/Fachbereich/Engineering-Projekt/EPJ/FS2018/')
+    pure_path = pathlib.PurePath(path)
 
-    files = list(plugin.list_path(path))
-    print(f'Remote files: {files}')
+    files = list(plugin.list_path(pure_path))
+    print('Remote files:')
+    for filename in files:
+        print(f'  {filename}')
 
     example_file = files[0]
     print(f'Downloading: {example_file}')
