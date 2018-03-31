@@ -15,24 +15,6 @@ def patch(monkeypatch):
     monkeypatch.setattr('socket.gethostname', lambda: 'my-local-host')
 
 
-@pytest.mark.parametrize('url, expected', [
-    # @hsr.ch shorthand
-    ('smb://testuser@hsr.ch', smb._LoginInfo(
-        username='testuser', hostname='svm-c213.hsr.ch', share='skripte',
-        domain='HSR', port=445)),
-    # Other SMB server
-    ('smb://user@example.com/share', smb._LoginInfo(
-        username='user', hostname='example.com', share='share',
-        domain=None, port=None)),
-    # Other server with domain
-    ('smb://domain;user@example.com/share', smb._LoginInfo(
-        username='user', hostname='example.com', share='share',
-        domain='domain', port=None)),
-])
-def test_parse_url(url: str, expected: smb._LoginInfo):
-    assert smb._parse_url(url) == expected
-
-
 class SMBConnectionMock:
 
     @attr.s
@@ -85,16 +67,27 @@ class TestConnect:
     def plugin(self):
         return smb.SmbPlugin()
 
-    def test_connect_with_default_options(self, plugin):
-        url = 'smb://myauthdomain;myusername@myserver.test/some/path'
-        keyring.set_password('kitovu', url, 'some_password')
-        plugin.connect(url, {})
+    @pytest.fixture
+    def info(self):
+        """Get connection info (like we'd get it from a config) for tests."""
+        keyring.set_password('kitovu-smb', 'myusername\nmyauthdomain\nexample.com', 'some_password')
+        return {
+            'domain': 'myauthdomain',
+            'username': 'myusername',
+            'hostname': 'example.com',
+            'share': 'myshare',
+        }
+
+    def test_connect_with_default_options(self, plugin, info):
+        plugin.configure(info)
+        plugin.connect()
+
         assert plugin._connection.init_args == {
             'username': 'myusername',
             'password': 'some_password',
             'domain': 'myauthdomain',
             'my_name': 'my-local-host',
-            'remote_name': 'myserver.test',
+            'remote_name': 'example.com',
             'use_ntlm_v2': False,
             'sign_options': SMBConnection.SIGN_WHEN_REQUIRED,
             'is_direct_tcp': True,
@@ -102,20 +95,20 @@ class TestConnect:
         assert plugin._connection.connected_ip == '123.123.123.123'
         assert plugin._connection.connected_port == 445
 
-    def test_connect_with_custom_options(self, plugin):
-        url = 'smb://myauthdomain;myusername@myserver.test/some/path'
-        keyring.set_password('kitovu', url, 'some_password')
-        plugin.connect(url, {
-            'use_ntlm_v2': True,
-            'sign_options': 'when_supported',
-            'is_direct_tcp': False,
-        })
+    def test_connect_with_custom_options(self, plugin, info):
+        info['use_ntlm_v2'] = True
+        info['sign_options'] = 'when_supported'
+        info['is_direct_tcp'] = False
+
+        plugin.configure(info)
+        plugin.connect()
+
         assert plugin._connection.init_args == {
             'username': 'myusername',
             'password': 'some_password',
             'domain': 'myauthdomain',
             'my_name': 'my-local-host',
-            'remote_name': 'myserver.test',
+            'remote_name': 'example.com',
             'use_ntlm_v2': True,
             'sign_options': SMBConnection.SIGN_WHEN_SUPPORTED,
             'is_direct_tcp': False,
@@ -123,10 +116,12 @@ class TestConnect:
         assert plugin._connection.connected_ip == '123.123.123.123'
         assert plugin._connection.connected_port == 139
 
-    def test_connect_with_hsr_url(self, plugin):
-        url = 'smb://myhsrusername@hsr.ch/some/path'
-        keyring.set_password('kitovu', url, 'some_hsr_password')
-        plugin.connect(url, {})
+    def test_connect_with_hsr_config(self, plugin):
+        keyring.set_password('kitovu-smb', 'myhsrusername\nHSR\nsvm-c213.hsr.ch', 'some_hsr_password')
+
+        plugin.configure({'username': 'myhsrusername'})
+        plugin.connect()
+
         assert plugin._connection.init_args == {
             'username': 'myhsrusername',
             'password': 'some_hsr_password',
@@ -146,9 +141,9 @@ class TestWithConnectedPlugin:
     @pytest.fixture
     def plugin(self):
         plugin = smb.SmbPlugin()
-        url = 'smb://myauthdomain;myusername@myserver.test/some/path'
-        keyring.set_password('kitovu', url, 'some_password')
-        plugin.connect(url, {})
+        keyring.set_password('kitovu-smb', 'myusername\nHSR\nsvm-c213.hsr.ch', 'some_password')
+        plugin.configure({'username': 'myusername'})
+        plugin.connect()
         return plugin
 
     def test_disconnect(self, plugin):
