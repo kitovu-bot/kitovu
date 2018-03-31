@@ -12,8 +12,9 @@ def test_connection_active() -> None:
     assert dummy.connection_state == True
 
 
-def test_conection_inactive() -> None:
+def test_connection_inactive() -> None:
     dummy.disconnect()
     assert dummy.connection_state == False
+
 
 

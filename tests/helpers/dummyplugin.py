@@ -1,11 +1,10 @@
 """Dummy plugin so that we can separately test kitovu and the plugin architecture."""
 
 from kitovu.sync import syncplugin
-from kitovu import utils
 import pathlib
 import typing
-import pytest
-
+import time
+import hashlib
 
 class DummyPlugin(syncplugin.AbstractSyncPlugin):
 
@@ -20,28 +19,21 @@ class DummyPlugin(syncplugin.AbstractSyncPlugin):
         self._info.port = info.get("port", 8000)
 
     def connect(self) -> None:
-        try:
             self.connection_state = True
             print("connection established")
-        except:
-            raise utils.NoConnection("connection establishment failed")
-
 
     def disconnect(self) -> None:
-        try:
             self.connection_state = False
             print("connection closed")
-        except:
-            raise utils.NoConnection("closing connection failed")
 
     def create_local_digest(self, path: pathlib.Path) -> str:
-        pass
+        return hashlib.sha256(path.lstat().st_size + time.strftime("%d/%m/%Y"))
 
     def create_remote_digest(self, path: pathlib.PurePath) -> str:
-        pass
+        return hashlib.sha256(path.lstat().st_size + time.strftime("%d/%m/%Y"))
 
     def list_path(self, path: pathlib.PurePath) -> typing.Iterable[pathlib.PurePath]:
-        pass
+        return path.parent()
 
     def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[bytes]) -> None:
         pass
