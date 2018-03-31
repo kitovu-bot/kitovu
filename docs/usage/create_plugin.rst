@@ -16,17 +16,26 @@ This example illustrates all required methods::
  class ExamplePlugin(syncplugin.AbstractSyncPlugin):
      """A plugin that handles connections with an example service"""
 
-     def connect(self, url: str, options: typing.Dict[str, typing.Any]) -> None:
+     def configure(self, info: typing.Dict[str, typing.Any]) -> None:
+        """Read a configuration section intended for this plugin.
+
+        If a KeyError occurs, it's interpreted as missing setting in the config.
+
+        Keyword arguments:
+        info -- the dictionary representing the configuration section for this plugin
+        """
+        pass
+
+
+     def connect(self) -> None:
          """Setup the connection to your service.
 
-         Keyword arguments:
-         url -- the url to connect to
-         options -- a dictionary containing all configuration from the configuration file
+         This should raise an appropriate exception if the connection failed.
          """
          pass
 
      def disconnect(self) -> None:
-         """Disconnects from your service"""
+         """Close any open connections."""
          pass
 
      def create_local_digest(self, path: pathlib.Path) -> str:
