@@ -4,7 +4,10 @@ import keyring.backend
 class InMemoryKeyring(keyring.backend.KeyringBackend):
 
     priority = 1
-    _passwords = {}
+
+    def __init__(self):
+        super().__init__()
+        self._passwords = {}
 
     def set_password(self, servicename, username, password):
         self._passwords[(servicename, username)] = password

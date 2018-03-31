@@ -6,8 +6,11 @@ from kitovu.sync import syncplugin
 
 class DebugPlugin(syncplugin.AbstractSyncPlugin):
 
-    def connect(self, url: str, options: dict) -> None:
-        print(f"Connecting to {url} with {options}")
+    def configure(self, info: typing.Dict[str, typing.Any]) -> None:
+        print(f"Connection info: {info!r}")
+
+    def connect(self) -> None:
+        print("Connecting")
 
     def disconnect(self) -> None:
         print("Disconnecting")
