@@ -7,10 +7,11 @@ global-ignore:
 plugins:
   - name: skripte-server
     type: smb
-    # server: svm-c213.hsr.ch
+    # hostname: svm-c213.hsr.ch
     # port: 445
     # share: skripte
-    user: example_user
+    # domain: HSR
+    username: example_user
   # ...
 
 syncs:

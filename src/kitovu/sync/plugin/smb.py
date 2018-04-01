@@ -95,7 +95,7 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
         # FIXME: Handle smb.smb_structs.ProtocolError (wrong password)
         success = self._connection.connect(server_ip, self._info.port)
         if not success:
-            raise OSError("Connection failed")
+            raise OSError(f'Connection failed to {server_ip}:{self._info.port}')
 
     def disconnect(self) -> None:
         self._connection.close()
