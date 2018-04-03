@@ -8,7 +8,7 @@ import pathlib
 import attr
 from smb.SMBConnection import SMBConnection
 
-from kitovu import config
+from kitovu import utils
 from kitovu.sync import syncplugin
 
 
@@ -75,7 +75,7 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
         self._info.share = info.get('share', 'skripte')
         self._info.hostname = info.get('hostname', 'svm-c213.hsr.ch')
 
-        self._info.password = config.get_password('smb', self._password_identifier())
+        self._info.password = utils.get_password('smb', self._password_identifier())
 
         default_port = 445 if self._info.is_direct_tcp else 139
         self._info.port = info.get('port', default_port)
