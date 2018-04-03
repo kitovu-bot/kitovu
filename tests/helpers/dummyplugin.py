@@ -4,40 +4,55 @@ import attr
 from kitovu.sync import syncplugin
 import pathlib
 import typing
-import time
-import hashlib
+
+@attr.s
+class Digests:
+
+    """test-class that provies the local and remote digests as strings"""
+
+    local_digest: str = attr.ib()
+    remote_digest: str = attr.ib()
 
 @attr.s
 class DummyPlugin(syncplugin.AbstractSyncPlugin):
 
     """provides fake connection info with hard-coded credentials for testing."""
 
-    paths: typing.Dict[pathlib.PurePath, typing.Dict[str, str]] = attr.ib({})
+    paths: typing.Dict[pathlib.PurePath, Digests] = attr.ib({
+        pathlib.PurePath("example1.txt"): Digests("1", "1"),
+        pathlib.PurePath("example2.txt"): Digests("2", "2"),
+        pathlib.PurePath("example3.txt"): Digests("3", "3"),
+        pathlib.PurePath("example4.txt"): Digests("4", "4"),
+    })
     connection_state: bool = attr.ib(False)
 
     def configure(self, info: typing.Dict[str, typing.Any]) -> None:
-        self._info.username = info.get("username", "legger")
-        self._info.password = info.get("password", "swordfish")
-        self._info.hostname = info.get("hostname", "localhost")
-        self._info.port = info.get("port", 8000)
+        pass
 
     def connect(self) -> None:
-            self.connection_state = True
-            print("connection established")
+        self.connection_state = True
+        print("connection established")
 
     def disconnect(self) -> None:
-            self.connection_state = False
-            print("connection closed")
+        assert self.connection_state
+        self.connection_state = False
+        print("connection closed")
 
     def create_local_digest(self, path: pathlib.PurePath) -> str:
-        return hashlib.sha256(path.lstat().st_size + time.strftime("%d/%m/%Y"))
+        assert self.connection_state
+        return self.paths[path].local_digest
 
     def create_remote_digest(self, path: pathlib.PurePath) -> str:
-        return hashlib.sha256(path.lstat().st_size + time.strftime("%d/%m/%Y"))
+        assert self.connection_state
+        return self.paths[path].remote_digest
 
     def list_path(self, path: pathlib.PurePath) -> typing.Iterable[pathlib.PurePath]:
-        pass
+        assert self.connection_state
+        for n in self.paths:
+            yield n
 
     def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[bytes]) -> None:
-        pass
+        assert self.connection_state
+        remote_digest = self.paths[path].remote_digest
+        fileobj.write(f"{path}\n{remote_digest}")
 
