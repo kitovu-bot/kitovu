@@ -1,16 +1,19 @@
 """Dummy plugin so that we can separately test kitovu and the plugin architecture."""
 
+import attr
 from kitovu.sync import syncplugin
 import pathlib
 import typing
 import time
 import hashlib
 
+@attr.s
 class DummyPlugin(syncplugin.AbstractSyncPlugin):
 
     """provides fake connection info with hard-coded credentials for testing."""
 
-    connection_state: typing.Optional[bool] = False
+    paths: typing.Dict[pathlib.PurePath, typing.Dict[str, str]] = attr.ib({})
+    connection_state: bool = attr.ib(False)
 
     def configure(self, info: typing.Dict[str, typing.Any]) -> None:
         self._info.username = info.get("username", "legger")
@@ -26,14 +29,14 @@ class DummyPlugin(syncplugin.AbstractSyncPlugin):
             self.connection_state = False
             print("connection closed")
 
-    def create_local_digest(self, path: pathlib.Path) -> str:
+    def create_local_digest(self, path: pathlib.PurePath) -> str:
         return hashlib.sha256(path.lstat().st_size + time.strftime("%d/%m/%Y"))
 
     def create_remote_digest(self, path: pathlib.PurePath) -> str:
         return hashlib.sha256(path.lstat().st_size + time.strftime("%d/%m/%Y"))
 
     def list_path(self, path: pathlib.PurePath) -> typing.Iterable[pathlib.PurePath]:
-        return path.parent()
+        pass
 
     def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[bytes]) -> None:
         pass
