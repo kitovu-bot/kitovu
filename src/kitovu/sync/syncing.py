@@ -19,7 +19,7 @@ def _find_plugin(pluginname: str) -> syncplugin.AbstractSyncPlugin:
         return builtin_plugins[pluginname]
 
     try:
-        manager = stevedore.driver.DriverManager(namespace='kitovu.sync.plugin',
+        manager = stevedore.driver.DriverManager(namespace='kitovu.sync.plug§in',
                                                  name=pluginname, invoke_on_load=True)
     except stevedore.exception.NoMatches:
         raise utils.NoPluginError(f"The plugin {pluginname} was not found")
@@ -34,24 +34,22 @@ def start(pluginname: str, username: str) -> None:
     plugin.configure({'username': username})
     plugin.connect()
 
-    path = pathlib.PurePath('/Informatik/Fachbereich/Engineering-Projekt/EPJ/FS2018/')
+    path = pathlib.Path('/Informatik/Fachbereich/Engineering-Projekt/EPJ/FS2018/')
+    # in order to traverse the file system, Path class is needed instead of PurePath
 
     files = list(plugin.list_path(path))
     print(f'Remote files: {files}')
+    for item in path.rglob("*.*"):
+        print(f'Downloading: {item}')
 
-    for x in files:
-        file = files[x]
-        print(f'Downloading: {file}')
-
-        # FIXME: insert our nice Progress bar
-
-        digest = plugin.create_remote_digest(file)
+        digest = plugin.create_remote_digest(item)
         print(f'Remote digest: {digest}')
 
-        output = pathlib.Path(file.name)
+        output = pathlib.Path(item.name)
 
         with output.open('wb') as fileobj:
-            plugin.retrieve_file(file, fileobj)
+            plugin.retrieve_file(item, fileobj)
 
         digest = plugin.create_local_digest(output)
         print(f'Local digest: {digest}')
+
