@@ -7,7 +7,7 @@ import stevedore.driver
 
 from kitovu import utils
 from kitovu.sync import syncplugin
-from kitovu.sync.settings import YAMLSettingsFactory, PluginSettings
+from kitovu.sync.settings import Settings, PluginSettings
 from kitovu.sync.plugin import smb
 
 
@@ -31,7 +31,7 @@ def _find_plugin(pluginname: str) -> syncplugin.AbstractSyncPlugin:
 
 def start_all(config_file: pathlib.PurePath) -> None:
     """Sync all files with the given configuration file."""
-    settings = YAMLSettingsFactory.from_file(config_file)
+    settings = Settings.from_yaml_file(config_file)
     for _plugin_key, plugin_settings in settings.plugins.items():
         start(plugin_settings)
 

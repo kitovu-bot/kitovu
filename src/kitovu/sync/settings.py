@@ -29,23 +29,15 @@ class Settings:
     global_ignore: typing.List[str] = attr.ib()
     plugins: typing.Dict[str, PluginSettings] = attr.ib()
 
-
-class YAMLSettingsFactory:
-    """A factory to create settings objects from files or strings.
-
-    It cannot be done in the Settings class itself because mypy does
-    not know the Settings type inside of the class.
-    """
-
     @classmethod
-    def from_file(cls, path: pathlib.PurePath) -> Settings:
+    def from_yaml_file(cls, path: pathlib.PurePath) -> 'Settings':
         """Load the settings from the specified yaml file"""
 
         stream = open(path, 'r')
-        return cls.from_stream(stream)
+        return cls.from_yaml_stream(stream)
 
     @classmethod
-    def from_stream(cls, stream: typing.TextIO) -> Settings:
+    def from_yaml_stream(cls, stream: typing.TextIO) -> 'Settings':
         """Load the settings from the specified stream"""
 
         data = yaml.load(stream)
