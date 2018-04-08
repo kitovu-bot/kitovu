@@ -39,15 +39,19 @@ def start(pluginname: str, username: str) -> None:
     files = list(plugin.list_path(path))
     print(f'Remote files: {files}')
 
-    example_file = files[0]
-    print(f'Downloading: {example_file}')
-    digest = plugin.create_remote_digest(example_file)
-    print(f'Remote digest: {digest}')
+    for x in files:
+        file = files[x]
+        print(f'Downloading: {file}')
 
-    output = pathlib.Path(example_file.name)
+        # FIXME: insert our nice Progress bar
 
-    with output.open('wb') as fileobj:
-        plugin.retrieve_file(example_file, fileobj)
+        digest = plugin.create_remote_digest(file)
+        print(f'Remote digest: {digest}')
 
-    digest = plugin.create_local_digest(output)
-    print(f'Local digest: {digest}')
+        output = pathlib.Path(file.name)
+
+        with output.open('wb') as fileobj:
+            plugin.retrieve_file(file, fileobj)
+
+        digest = plugin.create_local_digest(output)
+        print(f'Local digest: {digest}')
