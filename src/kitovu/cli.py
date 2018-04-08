@@ -31,7 +31,7 @@ def cli() -> None:
 @cli.command()
 @click.argument('config_file')
 def sync(config_file: str) -> None:
-    """Synchronize with the given configuraiton file."""
+    """Synchronize with the given configuration file."""
     try:
         syncing.start_all(pathlib.PurePath(config_file))
     except utils.UsageError as ex:

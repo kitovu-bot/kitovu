@@ -14,7 +14,7 @@ SimpleDict = typing.Dict[str, typing.Any]
 
 @attr.s
 class PluginSettings:
-    """A class representing the settings of a signle plugin"""
+    """A class representing the settings of a single plugin"""
 
     plugin_type: str = attr.ib()
     connection: SimpleDict = attr.ib()
@@ -23,7 +23,7 @@ class PluginSettings:
 
 @attr.s
 class Settings:
-    """A class representing the settings of a all plugins"""
+    """A class representing the settings of all plugins"""
 
     root_dir: pathlib.PurePath = attr.ib()
     global_ignore: typing.List[str] = attr.ib()
