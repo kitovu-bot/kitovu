@@ -37,9 +37,10 @@ def start(pluginname: str, username: str) -> None:
     path = pathlib.Path('/Informatik/Fachbereich/Engineering-Projekt/EPJ/FS2018/')
     # in order to traverse the file system, Path class is needed instead of PurePath
 
-    files = list(plugin.list_path(path))
+    files = plugin.list_path(path)
     print(f'Remote files: {files}')
-    for item in path.rglob("*.*"):
+    for entries in files:
+        for item in plugin.list_path.rglob("*.*"):
         print(f'Downloading: {item}')
 
         digest = plugin.create_remote_digest(item)
