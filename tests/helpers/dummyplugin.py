@@ -35,6 +35,7 @@ class DummyPlugin(syncplugin.AbstractSyncPlugin):
         pass
 
     def connect(self) -> None:
+        assert not self.connection_state
         self.connection_state = True
 
     def disconnect(self) -> None:
