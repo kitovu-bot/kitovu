@@ -1,6 +1,7 @@
 """Logic related to actually syncing files."""
 
 import pathlib
+import typing
 
 import stevedore
 import stevedore.driver
@@ -34,9 +35,11 @@ def start(pluginname: str, username: str) -> None:
     plugin.configure({'username': username})
     plugin.connect()
 
+    # hardcoded paths that will be replaced from entries in the config-file
     path = pathlib.PurePath('/Informatik/Fachbereich/Engineering-Projekt/EPJ/FS2018/')
+    outputpath = pathlib.Path(".") / "kitovu-output-files"
 
-    files = list(plugin.list_path(path))
+    files: typing.Iterable[pathlib.PurePath] = list(plugin.list_path(path))
 
     print(f'Remote files: {files}')
     for item in files:
@@ -47,7 +50,9 @@ def start(pluginname: str, username: str) -> None:
         digest = plugin.create_remote_digest(item)
         print(f'Remote digest: {digest}')
 
-        output = pathlib.Path(item.name)
+        output = pathlib.Path(outputpath / item.relative_to(path))
+
+        output.parent.mkdir(parents=True, exist_ok=True)
 
         with output.open('wb') as fileobj:
             plugin.retrieve_file(item, fileobj)
