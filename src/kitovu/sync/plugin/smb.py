@@ -124,8 +124,12 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
 
     def list_path(self, path: pathlib.PurePath) -> typing.Iterable[pathlib.PurePath]:
         for entry in self._connection.listPath(self._info.share, str(path)):
-            if not entry.isDirectory:
-                yield pathlib.PurePath(path / entry.filename)
+            if entry.isDirectory:
+                if entry.filename not in [".", ".."]:
+                    yield from self.list_path(pathlib.PurePath(path / entry.filename))
+                    # FIXME reconstruct folder structure locally
+            else:
+                yield pathlib.PurePath(path / entry.filename)  # only gives back the files in the current folder
 
     def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[bytes]) -> None:
         self._connection.retrieveFile(self._info.share, str(path), fileobj)
