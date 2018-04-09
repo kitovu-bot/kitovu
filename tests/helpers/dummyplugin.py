@@ -52,8 +52,7 @@ class DummyPlugin(syncplugin.AbstractSyncPlugin):
 
     def list_path(self, path: pathlib.PurePath) -> typing.Iterable[pathlib.PurePath]:
         assert self.connection_state
-        for n in self.paths:
-            yield n
+        yield from sorted(self.paths)
 
     def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[bytes]) -> None:
         # for the sake of testing, it writes gibberish into the file
