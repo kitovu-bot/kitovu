@@ -3,6 +3,7 @@ import pathlib
 import typing
 
 import pytest
+import py.path
 
 from helpers import dummyplugin
 
@@ -59,28 +60,25 @@ def test_if_list_path_lists_correct_pathnames(plugin):
     assert all_paths == pathnames
 
 
-def test_if_correct_file_retrieved(plugin):
-    filename = "testsample.txt"
-    if os.path.exists(filename):
-        os.remove(filename)
+def test_if_correct_file_retrieved(plugin, tmpdir: py.path.local):
+    sample = tmpdir / 'testsample.txt'
+
     plugin.connect()
-    f = open(filename, "w")
-    with f:
+    with sample.open("wb") as f:
         plugin.retrieve_file(pathlib.PurePath("example1.txt"), f)
-    f = open(filename, "r")
-    with f:
-        assert f.read() == "example1.txt\n1"
+
+    text = sample.read_text('utf-8')
+    assert text == "example1.txt\n1"
 
 
-def test_if_changed_digest_still_retrieves_correct_file(plugin):
-    filename = "testsample.txt"
-    if os.path.exists(filename):
-        os.remove(filename)
+def test_if_changed_digest_still_retrieves_correct_file(plugin, tmpdir: py.path.local):
+    sample = tmpdir / 'testsample.txt'
+
     plugin.connect()
     plugin.paths[pathlib.PurePath("example1.txt")].remote_digest = "42"  # change remote digest
-    f = open(filename, "w")
-    with f:
+
+    with sample.open("wb") as f:
         plugin.retrieve_file(pathlib.PurePath("example1.txt"), f)
-    f = open(filename, "r")
-    with f:
-        assert f.read() == "example1.txt\n42"
+
+    text = sample.read_text('utf-8')
+    assert text == "example1.txt\n42"
