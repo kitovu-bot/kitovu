@@ -34,13 +34,14 @@ def start(pluginname: str, username: str) -> None:
     plugin.configure({'username': username})
     plugin.connect()
 
-    path = pathlib.Path('/Informatik/Fachbereich/Engineering-Projekt/EPJ/FS2018/')
-    # in order to traverse the file system, Path class is needed instead of PurePath
-    # where do I actually get the path names? how do I access the paths from the config file?
+    path = pathlib.PurePath('/Informatik/Fachbereich/Engineering-Projekt/EPJ/FS2018/')
 
-    files = plugin.list_path(path)
+    files = list(plugin.list_path(path))
+
     print(f'Remote files: {files}')
-    for item in plugin.list_path.rglob("*.*"):
+    for item in files:
+
+        # each plugin should now yield all files recursively with list_path
         print(f'Downloading: {item}')
 
         digest = plugin.create_remote_digest(item)
