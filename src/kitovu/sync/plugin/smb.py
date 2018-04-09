@@ -127,7 +127,6 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
             if entry.isDirectory:
                 if entry.filename not in [".", ".."]:
                     yield from self.list_path(pathlib.PurePath(path / entry.filename))
-                    # FIXME reconstruct folder structure locally
             else:
                 yield pathlib.PurePath(path / entry.filename)  # only gives back the files in the current folder
 
