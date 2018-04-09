@@ -21,6 +21,7 @@ class NoPluginError(UsageError):
 
     pass
 
+
 class NoConnection(Error):
 
     """Thrown when connection establishment failed."""

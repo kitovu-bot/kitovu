@@ -1,9 +1,11 @@
 """Dummy plugin so that we can test the plugin architecture and the rest of kitovu separately."""
 
-import attr
-from kitovu.sync import syncplugin
 import pathlib
 import typing
+
+import attr
+
+from kitovu.sync import syncplugin
 
 
 @attr.s
@@ -55,5 +57,4 @@ class DummyPlugin(syncplugin.AbstractSyncPlugin):
         # for the sake of testing, it writes gibberish into the file
         assert self.connection_state
         remote_digest = self.paths[path].remote_digest
-        fileobj.write(f"{path}\n{remote_digest}")
-
+        fileobj.write(f"{path}\n{remote_digest}".encode("utf-8"))

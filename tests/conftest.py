@@ -1,7 +1,7 @@
 import pytest
 import keyring
 
-from tests.helpers.in_memory_keyring import InMemoryKeyring
+from helpers.in_memory_keyring import InMemoryKeyring
 
 
 @pytest.fixture(autouse=True)
