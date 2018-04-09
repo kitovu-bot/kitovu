@@ -17,18 +17,19 @@ class Digests:
     remote_digest: str = attr.ib()
 
 
-@attr.s
 class DummyPlugin(syncplugin.AbstractSyncPlugin):
 
     """provides a fake connection with hard-coded filenames for testing."""
 
-    paths: typing.Dict[pathlib.PurePath, Digests] = attr.ib(attr.Factory(lambda: {
-        pathlib.PurePath("example1.txt"): Digests("1", "1"),
-        pathlib.PurePath("example2.txt"): Digests("2", "2"),
-        pathlib.PurePath("example3.txt"): Digests("3", "3"),
-        pathlib.PurePath("example4.txt"): Digests("4", "4"),
-    }))
-    connection_state: bool = attr.ib(False)
+    def __init__(self):
+        super().__init__()
+        self.paths: typing.Dict[pathlib.PurePath, Digests] = {
+            pathlib.PurePath("example1.txt"): Digests("1", "1"),
+            pathlib.PurePath("example2.txt"): Digests("2", "2"),
+            pathlib.PurePath("example3.txt"): Digests("3", "3"),
+            pathlib.PurePath("example4.txt"): Digests("4", "4"),
+        }
+        self.connection_state: bool = False
 
     def configure(self, info: typing.Dict[str, typing.Any]) -> None:
         pass
