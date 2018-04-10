@@ -49,7 +49,6 @@ def start(plugin_settings: PluginSettings) -> None:
     plugin.connect()
 
     for sync in plugin_settings.syncs:
-        print(sync)
         remote_path = sync['remote-dir']
         local_path = sync['local-dir']
 
