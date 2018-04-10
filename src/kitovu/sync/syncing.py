@@ -35,10 +35,10 @@ def _find_plugin(plugin_settings: PluginSettings) -> syncplugin.AbstractSyncPlug
     return plugin
 
 
-def start_all(config_file: pathlib.PurePath) -> None:
+def start_all(config_file: pathlib.Path) -> None:
     """Sync all files with the given configuration file."""
     settings = Settings.from_yaml_file(config_file)
-    for _plugin_key, plugin_settings in settings.plugins.items():
+    for _plugin_key, plugin_settings in sorted(settings.plugins.items()):
         start(plugin_settings)
 
 
@@ -70,13 +70,13 @@ def start(plugin_settings: PluginSettings) -> None:
         print(f'Local digest: {digest}')
 
 
-def config_error(config_file: pathlib.PurePath) -> typing.Union[str, None]:
+def config_error(config_file: pathlib.Path) -> typing.Union[str, None]:
     """Validates the given configuration file.
 
     Returns either an error message or None if it's valid."""
     try:
         settings = Settings.from_yaml_file(config_file)
-        for _plugin_key, plugin_settings in settings.plugins.items():
+        for _plugin_key, plugin_settings in sorted(settings.plugins.items()):
             _find_plugin(plugin_settings)
         return None
     except (jsonschema.exceptions.ValidationError, utils.UsageError) as error:

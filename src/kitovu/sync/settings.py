@@ -2,6 +2,7 @@
 
 import pathlib
 import typing
+import os.path
 
 import yaml
 import attr
@@ -19,14 +20,14 @@ class PluginSettings:
 
     plugin_type: str = attr.ib()
     connection: SimpleDict = attr.ib()
-    syncs: typing.List[SimpleDict] = attr.ib(default=[])
+    syncs: typing.List[SimpleDict] = attr.ib(default=attr.Factory(list))
 
 
 @attr.s
 class Settings:
     """A class representing the settings of all plugins"""
 
-    root_dir: pathlib.PurePath = attr.ib()
+    root_dir: pathlib.Path = attr.ib()
     global_ignore: typing.List[str] = attr.ib()
     plugins: typing.Dict[str, PluginSettings] = attr.ib()
 
@@ -53,28 +54,28 @@ class Settings:
     }
 
     @classmethod
-    def from_yaml_file(cls, path: pathlib.PurePath) -> 'Settings':
+    def from_yaml_file(cls, path: pathlib.Path) -> 'Settings':
         """Load the settings from the specified yaml file"""
-
         try:
-            stream = open(path, 'r')
+            with path.open('r') as stream:
+                return cls.from_yaml_stream(stream)
         except FileNotFoundError as error:
             raise utils.UsageError(f'Could not find the file {error.filename}')
 
         return cls.from_yaml_stream(stream)
 
     @classmethod
-    def from_yaml_stream(cls, stream: typing.TextIO) -> 'Settings':
+    def from_yaml_stream(cls, stream: typing.IO) -> 'Settings':
         """Load the settings from the specified stream"""
-
+        # FIXME handle OSError and UnicodeDecodeError
         data = yaml.load(stream)
 
         jsonschema.validate(data, cls.settings_schema)
 
-        root_dir = pathlib.PurePath(data.pop('root-dir'))
+        root_dir = pathlib.Path(os.path.expanduser(data.pop('root-dir')))
         global_ignore = data.pop('global-ignore', [])
 
-        plugins = cls._get_plugins(
+        plugins = cls._get_plugin_settings(
             raw_plugins=data.pop('plugins'),
             raw_syncs=data.pop('syncs'),
             root_dir=root_dir,
@@ -87,9 +88,9 @@ class Settings:
         )
 
     @classmethod
-    def _get_plugins(cls, raw_plugins: typing.List[SimpleDict],
-                     raw_syncs: typing.List[SimpleDict],
-                     root_dir: pathlib.PurePath) -> typing.Dict[str, PluginSettings]:
+    def _get_plugin_settings(cls, raw_plugins: typing.List[SimpleDict],
+                             raw_syncs: typing.List[SimpleDict],
+                             root_dir: pathlib.Path) -> typing.Dict[str, PluginSettings]:
         """Create the PluginSettings for the specified plugins and syncs."""
         plugins = {}
 
@@ -144,7 +145,7 @@ class Settings:
             name = sync.pop('name')
             for plugin_usage in sync.pop('plugins'):
                 plugin_usage['name'] = name
-                plugin_usage['local-dir'] = pathlib.PurePath(
+                plugin_usage['local-dir'] = pathlib.Path(
                     plugin_usage.get('local-dir', root_dir / name))
                 plugin_usage['remote-dir'] = pathlib.PurePath(plugin_usage['remote-dir'])
                 plugins[plugin_usage.pop('plugin')].syncs.append(plugin_usage)

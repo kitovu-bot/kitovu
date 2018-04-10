@@ -4,9 +4,9 @@ from kitovu.sync.settings import Settings, PluginSettings
 
 
 def test_load_a_sample_yaml_file():
-    settings = Settings.from_yaml_file(pathlib.PurePath('./tests/assets/smb_example_config.yml'))
+    settings = Settings.from_yaml_file(pathlib.Path('./tests/assets/smb_example_config.yml'))
 
-    expected_root_dir = pathlib.PurePath('~/Documents/HSR/semester_06')
+    expected_root_dir = pathlib.Path(f'{pathlib.Path.home()}/Documents/HSR/semester_06')
     expected_global_ignore = ['Thumbs.db', '.DS_Store']
     expected_plugins = {
         'skripte-server': PluginSettings(
@@ -19,7 +19,7 @@ def test_load_a_sample_yaml_file():
                     'name': 'Engineering-Projekt',
                     'ignore': ['SubDir', 'example.txt'],
                     'remote-dir': pathlib.PurePath('Informatik/Fachbereich/Engineering-Projekt/EPJ'),
-                    'local-dir': pathlib.PurePath('~/Documents/HSR/semester_06/Engineering-Projekt'),
+                    'local-dir': pathlib.Path(f'{expected_root_dir}/Engineering-Projekt'),
                 }
             ],
         ),
