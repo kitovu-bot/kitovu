@@ -29,7 +29,7 @@ def _find_plugin(pluginname: str) -> syncplugin.AbstractSyncPlugin:
     return plugin
 
 
-def start_all(config_file: pathlib.PurePath) -> None:
+def start_all(config_file: pathlib.Path) -> None:
     """Sync all files with the given configuration file."""
     settings = Settings.from_yaml_file(config_file)
     for _plugin_key, plugin_settings in settings.plugins.items():

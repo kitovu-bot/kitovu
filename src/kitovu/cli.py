@@ -29,10 +29,10 @@ def cli() -> None:
 
 
 @cli.command()
-@click.argument('config_file')
-def sync(config_file: str) -> None:
+@click.argument('config_file', type=pathlib.Path)
+def sync(config_file: pathlib.Path) -> None:
     """Synchronize with the given configuration file."""
     try:
-        syncing.start_all(pathlib.PurePath(config_file))
+        syncing.start_all(config_file)
     except utils.UsageError as ex:
         raise click.ClickException(str(ex))

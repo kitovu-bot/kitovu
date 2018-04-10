@@ -30,7 +30,7 @@ class Settings:
     plugins: typing.Dict[str, PluginSettings] = attr.ib()
 
     @classmethod
-    def from_yaml_file(cls, path: pathlib.PurePath) -> 'Settings':
+    def from_yaml_file(cls, path: pathlib.Path) -> 'Settings':
         """Load the settings from the specified yaml file"""
 
         stream = open(path, 'r')
