@@ -36,7 +36,7 @@ class Settings:
             return cls.from_yaml_stream(stream)
 
     @classmethod
-    def from_yaml_stream(cls, stream: typing.TextIO) -> 'Settings':
+    def from_yaml_stream(cls, stream: typing.IO) -> 'Settings':
         """Load the settings from the specified stream"""
         # FIXME handle OSError and UnicodeDecodeError
         data = yaml.load(stream)

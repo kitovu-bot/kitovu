@@ -4,7 +4,7 @@ from kitovu.sync.settings import Settings, PluginSettings
 
 
 def test_load_a_sample_yaml_file():
-    settings = Settings.from_yaml_file(pathlib.PurePath('./tests/assets/smb_example_config.yml'))
+    settings = Settings.from_yaml_file(pathlib.Path('./tests/assets/smb_example_config.yml'))
 
     expected_root_dir = pathlib.PurePath('~/Documents/HSR/semester_06')
     expected_global_ignore = ['Thumbs.db', '.DS_Store']
