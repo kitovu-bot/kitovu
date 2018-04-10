@@ -7,7 +7,7 @@ import py.path
 from helpers import dummyplugin
 
 
-@pytest.fixture(autouse=True)
+@pytest.fixture
 def plugin() -> dummyplugin.DummyPlugin:
     return dummyplugin.DummyPlugin()
 
