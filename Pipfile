@@ -13,6 +13,7 @@ pysmb = "*"
 keyring = "*"
 pyyaml = "*"
 stevedore = "*"
+jsonschema = "*"
 
 
 [dev-packages]

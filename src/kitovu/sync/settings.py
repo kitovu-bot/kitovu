@@ -5,6 +5,7 @@ import typing
 
 import yaml
 import attr
+import jsonschema
 
 from kitovu import utils
 
@@ -29,6 +30,28 @@ class Settings:
     global_ignore: typing.List[str] = attr.ib()
     plugins: typing.Dict[str, PluginSettings] = attr.ib()
 
+    settings_schema: typing.Dict[str, typing.Any] = {
+        'type': 'object',
+        'properties': {
+            'root-dir': {'type': 'string'},
+            'syncs': {
+                'type': 'array',
+                'items': {'type': 'object'},
+            },
+            'plugins': {
+                'type': 'array',
+                'items': {'type': 'object'},
+            },
+            'global-ignore': {'type': 'array'},
+        },
+        'required': [
+            'root-dir',
+            'syncs',
+            'plugins',
+        ],
+        'additionalProperties': False,
+    }
+
     @classmethod
     def from_yaml_file(cls, path: pathlib.PurePath) -> 'Settings':
         """Load the settings from the specified yaml file"""
@@ -42,10 +65,8 @@ class Settings:
 
         data = yaml.load(stream)
 
-        required_keys = ['root-dir', 'syncs', 'plugins']
-        missing_keys = [i for i in required_keys if i not in data.keys()]
-        if missing_keys:
-            raise utils.MissingSettingKeysError(missing_keys)
+        jsonschema.validate(data, cls.settings_schema)
+
         root_dir = pathlib.PurePath(data.pop('root-dir'))
         global_ignore = data.pop('global-ignore', [])
 
@@ -54,8 +75,6 @@ class Settings:
             raw_syncs=data.pop('syncs'),
             root_dir=root_dir,
         )
-
-        cls._ensure_empty(data)
 
         return Settings(
             root_dir=root_dir,
@@ -72,11 +91,46 @@ class Settings:
 
         for raw_plugin in raw_plugins:
             name = raw_plugin.pop('name')
-            print(name)
             plugins[name] = PluginSettings(
                 plugin_type=raw_plugin.pop('type'),
                 connection=raw_plugin,
             )
+
+        sync_schema: typing.Dict[str, typing.Any] = {
+            'type': 'array',
+            'items': {
+                'type': 'object',
+                'properties': {
+                    'name': {'type': 'string'},
+                    'plugins': {
+                        'type': 'array',
+                        'items': {
+                            'type': 'object',
+                            'properties': {
+                                'plugin': {
+                                    'type': 'string',
+                                    'enum': [key for key in plugins],
+                                },
+                                'local-dir': {'type': 'string'},
+                                'remote-dir': {'type': 'string'},
+                            },
+                            'required': [
+                                'plugin',
+                                'remote-dir',
+                            ],
+                            'additionalProperties': True,
+                        },
+                    },
+                },
+                'required': [
+                    'name',
+                    'plugins',
+                ],
+                'additionalProperties': False,
+            },
+        }
+
+        jsonschema.validate(raw_syncs, sync_schema)
 
         for sync in raw_syncs:
             name = sync.pop('name')
@@ -86,12 +140,5 @@ class Settings:
                     plugin_usage.get('local-dir', root_dir / name))
                 plugin_usage['remote-dir'] = pathlib.PurePath(plugin_usage['remote-dir'])
                 plugins[plugin_usage.pop('plugin')].syncs.append(plugin_usage)
-            cls._ensure_empty(sync)
 
         return plugins
-
-    @classmethod
-    def _ensure_empty(cls, data: SimpleDict) -> None:
-        """Raise an error if the specified dictionary is not empty."""
-        if data:
-            raise utils.UnknownSettingKeysError(list(data.keys()))

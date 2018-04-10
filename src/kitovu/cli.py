@@ -16,6 +16,7 @@ Why does this file exist, and why not put this in __main__?
 """
 
 import pathlib
+import sys
 
 import click
 
@@ -36,3 +37,11 @@ def sync(config_file: str) -> None:
         syncing.start_all(pathlib.PurePath(config_file))
     except utils.UsageError as ex:
         raise click.ClickException(str(ex))
+
+
+@cli.command()
+@click.argument('config_file')
+def validate(config_file: str) -> None:
+    """Validates the specified configuration file."""
+    if not syncing.validate(pathlib.PurePath(config_file)):
+        sys.exit(1)

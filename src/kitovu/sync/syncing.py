@@ -4,6 +4,7 @@ import pathlib
 
 import stevedore
 import stevedore.driver
+import jsonschema
 
 from kitovu import utils
 from kitovu.sync import syncplugin
@@ -62,3 +63,14 @@ def start(plugin_settings: PluginSettings) -> None:
 
         digest = plugin.create_local_digest(output)
         print(f'Local digest: {digest}')
+
+
+def validate(config_file: pathlib.PurePath) -> bool:
+    try:
+        Settings.from_yaml_file(config_file)
+        return True
+    except FileNotFoundError as error:
+        print(f'Could not find the file {error.filename}')
+    except jsonschema.exceptions.ValidationError as error:
+        print(error)
+    return False
