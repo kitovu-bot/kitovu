@@ -25,32 +25,32 @@ class DummyPlugin(syncplugin.AbstractSyncPlugin):
             pathlib.PurePath("example3.txt"): Digests("3", "3"),
             pathlib.PurePath("example4.txt"): Digests("4", "4"),
         }
-        self.connection_state: bool = False
+        self.is_connected: bool = False
 
     def configure(self, info: typing.Dict[str, typing.Any]) -> None:
         pass
 
     def connect(self) -> None:
-        assert not self.connection_state
-        self.connection_state = True
+        assert not self.is_connected
+        self.is_connected = True
 
     def disconnect(self) -> None:
-        assert self.connection_state
-        self.connection_state = False
+        assert self.is_connected
+        self.is_connected = False
 
     def create_local_digest(self, path: pathlib.PurePath) -> str:
-        assert self.connection_state
+        assert self.is_connected
         return self.paths[path].local_digest
 
     def create_remote_digest(self, path: pathlib.PurePath) -> str:
-        assert self.connection_state
+        assert self.is_connected
         return self.paths[path].remote_digest
 
     def list_path(self, path: pathlib.PurePath) -> typing.Iterable[pathlib.PurePath]:
-        assert self.connection_state
+        assert self.is_connected
         yield from sorted(self.paths)
 
     def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[bytes]) -> None:
-        assert self.connection_state
+        assert self.is_connected
         remote_digest = self.paths[path].remote_digest
         fileobj.write(f"{path}\n{remote_digest}".encode("utf-8"))

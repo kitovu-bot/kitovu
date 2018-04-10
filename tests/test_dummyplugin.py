@@ -14,13 +14,13 @@ def plugin() -> dummyplugin.DummyPlugin:
 
 def test_connection_active(plugin) -> None:
     plugin.connect()
-    assert plugin.connection_state
+    assert plugin.is_connected
 
 
 def test_connection_inactive(plugin) -> None:
     plugin.connect()
     plugin.disconnect()
-    assert not plugin.connection_state
+    assert not plugin.is_connected
 
 
 def test_local_digest(plugin):
