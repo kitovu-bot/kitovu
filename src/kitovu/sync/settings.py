@@ -38,6 +38,7 @@ class Settings:
     @classmethod
     def from_yaml_stream(cls, stream: typing.TextIO) -> 'Settings':
         """Load the settings from the specified stream"""
+        # FIXME handle OSError and UnicodeDecodeError
         data = yaml.load(stream)
 
         required_keys = ['root-dir', 'syncs', 'plugins']
