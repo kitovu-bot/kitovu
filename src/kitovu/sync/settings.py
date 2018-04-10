@@ -71,7 +71,6 @@ class Settings:
 
         for raw_plugin in raw_plugins:
             name = raw_plugin.pop('name')
-            print(name)
             plugins[name] = PluginSettings(
                 plugin_type=raw_plugin.pop('type'),
                 connection=raw_plugin,
