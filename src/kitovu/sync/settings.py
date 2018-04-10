@@ -18,7 +18,7 @@ class PluginSettings:
 
     plugin_type: str = attr.ib()
     connection: SimpleDict = attr.ib()
-    syncs: typing.List[SimpleDict] = attr.ib(default=[])
+    syncs: typing.List[SimpleDict] = attr.ib(default=attr.Factory(list))
 
 
 @attr.s
