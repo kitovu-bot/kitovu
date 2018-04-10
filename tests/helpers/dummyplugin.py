@@ -11,15 +11,11 @@ from kitovu.sync import syncplugin
 @attr.s
 class Digests:
 
-    """test-class that provides the local and remote digests as strings"""
-
     local_digest: str = attr.ib()
     remote_digest: str = attr.ib()
 
 
 class DummyPlugin(syncplugin.AbstractSyncPlugin):
-
-    """provides a fake connection with hard-coded filenames for testing."""
 
     def __init__(self):
         super().__init__()
@@ -55,7 +51,6 @@ class DummyPlugin(syncplugin.AbstractSyncPlugin):
         yield from sorted(self.paths)
 
     def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[bytes]) -> None:
-        # for the sake of testing, it writes gibberish into the file
         assert self.connection_state
         remote_digest = self.paths[path].remote_digest
         fileobj.write(f"{path}\n{remote_digest}".encode("utf-8"))
