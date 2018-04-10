@@ -17,7 +17,7 @@ def test_load_a_sample_yaml_file():
             syncs=[
                 {
                     'name': 'Engineering-Projekt',
-                    'ignored': ['SubDir', 'example.txt'],
+                    'ignore': ['SubDir', 'example.txt'],
                     'remote-dir': pathlib.PurePath('Informatik/Fachbereich/Engineering-Projekt/EPJ'),
                     'local-dir': pathlib.PurePath('~/Documents/HSR/semester_06/Engineering-Projekt'),
                 }

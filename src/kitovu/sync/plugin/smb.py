@@ -41,6 +41,21 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
 
     """A plugin to sync data via SMB/CIFS (Windows fileshares)."""
 
+    connection_schema: typing.Dict[str, typing.Any] = {
+        'type': 'object',
+        'properties': {
+            'hostame': {'type': 'string'},
+            'port': {'type': 'string'},
+            'share': {'type': 'string'},
+            'domain': {'type': 'string'},
+            'username': {'type': 'string'},
+        },
+        'required': [
+            'username',
+        ],
+        'additionalProperties': False,
+    }
+
     def __init__(self) -> None:
         self._connection: SMBConnection = None
         self._info = _ConnectionInfo()

@@ -43,5 +43,7 @@ def sync(config_file: str) -> None:
 @click.argument('config_file')
 def validate(config_file: str) -> None:
     """Validates the specified configuration file."""
-    if not syncing.validate(pathlib.PurePath(config_file)):
+    error = syncing.config_error(pathlib.PurePath(config_file))
+    if error:
+        print(error)
         sys.exit(1)

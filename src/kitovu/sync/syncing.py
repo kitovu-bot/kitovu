@@ -1,6 +1,7 @@
 """Logic related to actually syncing files."""
 
 import pathlib
+import typing
 
 import stevedore
 import stevedore.driver
@@ -12,21 +13,25 @@ from kitovu.sync.settings import Settings, PluginSettings
 from kitovu.sync.plugin import smb
 
 
-def _find_plugin(pluginname: str) -> syncplugin.AbstractSyncPlugin:
+def _find_plugin(plugin_settings: PluginSettings) -> syncplugin.AbstractSyncPlugin:
     """Find an appropriate sync plugin with the given settings."""
     builtin_plugins = {
         'smb': smb.SmbPlugin(),
     }
-    if pluginname in builtin_plugins:
-        return builtin_plugins[pluginname]
+    plugin_type = plugin_settings.plugin_type
+    if plugin_type in builtin_plugins:
+        plugin = builtin_plugins[plugin_type]
+    else:
+        try:
+            manager = stevedore.driver.DriverManager(namespace='kitovu.sync.plugin',
+                                                     name=plugin_type, invoke_on_load=True)
+        except stevedore.exception.NoMatches:
+            raise utils.NoPluginError(f"The plugin {plugin_type} was not found")
 
-    try:
-        manager = stevedore.driver.DriverManager(namespace='kitovu.sync.plugin',
-                                                 name=pluginname, invoke_on_load=True)
-    except stevedore.exception.NoMatches:
-        raise utils.NoPluginError(f"The plugin {pluginname} was not found")
+        plugin = manager.driver
 
-    plugin: syncplugin.AbstractSyncPlugin = manager.driver
+    jsonschema.validate(plugin_settings.connection, plugin.connection_schema)
+
     return plugin
 
 
@@ -39,7 +44,7 @@ def start_all(config_file: pathlib.PurePath) -> None:
 
 def start(plugin_settings: PluginSettings) -> None:
     """Sync files with the given plugin and username."""
-    plugin = _find_plugin(plugin_settings.plugin_type)
+    plugin = _find_plugin(plugin_settings)
     plugin.configure(plugin_settings.connection)
     plugin.connect()
 
@@ -65,12 +70,16 @@ def start(plugin_settings: PluginSettings) -> None:
         print(f'Local digest: {digest}')
 
 
-def validate(config_file: pathlib.PurePath) -> bool:
+def config_error(config_file: pathlib.PurePath) -> typing.Union[str, None]:
+    """Validates the given configuration file.
+
+    Returns either an error message or None if it's valid."""
     try:
-        Settings.from_yaml_file(config_file)
-        return True
+        settings = Settings.from_yaml_file(config_file)
+        for _plugin_key, plugin_settings in settings.plugins.items():
+            _find_plugin(plugin_settings)
+        return None
     except FileNotFoundError as error:
-        print(f'Could not find the file {error.filename}')
-    except jsonschema.exceptions.ValidationError as error:
-        print(error)
-    return False
+        return f'Could not find the file {error.filename}'
+    except (jsonschema.exceptions.ValidationError, utils.NoPluginError) as error:
+        return str(error)

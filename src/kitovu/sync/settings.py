@@ -7,8 +7,6 @@ import yaml
 import attr
 import jsonschema
 
-from kitovu import utils
-
 
 SimpleDict = typing.Dict[str, typing.Any]
 
@@ -113,12 +111,16 @@ class Settings:
                                 },
                                 'local-dir': {'type': 'string'},
                                 'remote-dir': {'type': 'string'},
+                                'ignore': {
+                                    'type': 'array',
+                                    'items': {'type': 'string'},
+                                },
                             },
                             'required': [
                                 'plugin',
                                 'remote-dir',
                             ],
-                            'additionalProperties': True,
+                            'additionalProperties': False,
                         },
                     },
                 },
