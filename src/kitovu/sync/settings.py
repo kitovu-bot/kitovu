@@ -2,6 +2,7 @@
 
 import pathlib
 import typing
+import os.path
 
 import yaml
 import attr
@@ -25,7 +26,7 @@ class PluginSettings:
 class Settings:
     """A class representing the settings of all plugins"""
 
-    root_dir: pathlib.PurePath = attr.ib()
+    root_dir: pathlib.Path = attr.ib()
     global_ignore: typing.List[str] = attr.ib()
     plugins: typing.Dict[str, PluginSettings] = attr.ib()
 
@@ -45,7 +46,7 @@ class Settings:
         missing_keys = [i for i in required_keys if i not in data.keys()]
         if missing_keys:
             raise utils.MissingSettingKeysError(missing_keys)
-        root_dir = pathlib.PurePath(data.pop('root-dir'))
+        root_dir = pathlib.Path(os.path.expanduser(data.pop('root-dir')))
         global_ignore = data.pop('global-ignore', [])
 
         plugins = cls._get_plugin_settings(
@@ -65,7 +66,7 @@ class Settings:
     @classmethod
     def _get_plugin_settings(cls, raw_plugins: typing.List[SimpleDict],
                              raw_syncs: typing.List[SimpleDict],
-                             root_dir: pathlib.PurePath) -> typing.Dict[str, PluginSettings]:
+                             root_dir: pathlib.Path) -> typing.Dict[str, PluginSettings]:
         """Create the PluginSettings for the specified plugins and syncs."""
         plugins = {}
 
@@ -80,7 +81,7 @@ class Settings:
             name = sync.pop('name')
             for plugin_usage in sync.pop('plugins'):
                 plugin_usage['name'] = name
-                plugin_usage['local-dir'] = pathlib.PurePath(
+                plugin_usage['local-dir'] = pathlib.Path(
                     plugin_usage.get('local-dir', root_dir / name))
                 plugin_usage['remote-dir'] = pathlib.PurePath(plugin_usage['remote-dir'])
                 plugins[plugin_usage.pop('plugin')].syncs.append(plugin_usage)

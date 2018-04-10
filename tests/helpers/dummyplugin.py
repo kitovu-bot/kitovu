@@ -38,7 +38,7 @@ class DummyPlugin(syncplugin.AbstractSyncPlugin):
         assert self.is_connected
         self.is_connected = False
 
-    def create_local_digest(self, path: pathlib.PurePath) -> str:
+    def create_local_digest(self, path: pathlib.Path) -> str:
         assert self.is_connected
         return self.paths[path].local_digest
 
