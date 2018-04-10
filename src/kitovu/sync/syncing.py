@@ -32,7 +32,7 @@ def _find_plugin(pluginname: str) -> syncplugin.AbstractSyncPlugin:
 def start_all(config_file: pathlib.Path) -> None:
     """Sync all files with the given configuration file."""
     settings = Settings.from_yaml_file(config_file)
-    for _plugin_key, plugin_settings in settings.plugins.items():
+    for _plugin_key, plugin_settings in sorted(settings.plugins.items()):
         start(plugin_settings)
 
 
