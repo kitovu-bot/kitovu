@@ -32,14 +32,12 @@ class Settings:
     @classmethod
     def from_yaml_file(cls, path: pathlib.Path) -> 'Settings':
         """Load the settings from the specified yaml file"""
-
-        stream = open(path, 'r')
-        return cls.from_yaml_stream(stream)
+        with path.open('r') as stream:
+            return cls.from_yaml_stream(stream)
 
     @classmethod
     def from_yaml_stream(cls, stream: typing.TextIO) -> 'Settings':
         """Load the settings from the specified stream"""
-
         data = yaml.load(stream)
 
         required_keys = ['root-dir', 'syncs', 'plugins']
