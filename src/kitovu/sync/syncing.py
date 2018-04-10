@@ -30,7 +30,7 @@ def _find_plugin(plugin_settings: PluginSettings) -> syncplugin.AbstractSyncPlug
 
         plugin = manager.driver
 
-    jsonschema.validate(plugin_settings.connection, plugin.connection_schema)
+    jsonschema.validate(plugin_settings.connection, plugin.connection_schema())
 
     return plugin
 
@@ -79,7 +79,5 @@ def config_error(config_file: pathlib.PurePath) -> typing.Union[str, None]:
         for _plugin_key, plugin_settings in settings.plugins.items():
             _find_plugin(plugin_settings)
         return None
-    except FileNotFoundError as error:
-        return f'Could not find the file {error.filename}'
-    except (jsonschema.exceptions.ValidationError, utils.NoPluginError) as error:
+    except (jsonschema.exceptions.ValidationError, utils.UsageError) as error:
         return str(error)

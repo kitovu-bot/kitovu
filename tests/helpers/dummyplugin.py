@@ -54,3 +54,6 @@ class DummyPlugin(syncplugin.AbstractSyncPlugin):
         assert self.is_connected
         remote_digest = self.paths[path].remote_digest
         fileobj.write(f"{path}\n{remote_digest}".encode("utf-8"))
+
+    def connection_schema(self) -> typing.Dict[str, typing.Any]:
+        return {}

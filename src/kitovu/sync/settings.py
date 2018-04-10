@@ -7,6 +7,8 @@ import yaml
 import attr
 import jsonschema
 
+from kitovu import utils
+
 
 SimpleDict = typing.Dict[str, typing.Any]
 
@@ -54,7 +56,11 @@ class Settings:
     def from_yaml_file(cls, path: pathlib.PurePath) -> 'Settings':
         """Load the settings from the specified yaml file"""
 
-        stream = open(path, 'r')
+        try:
+            stream = open(path, 'r')
+        except FileNotFoundError as error:
+            raise utils.UsageError(f'Could not find the file {error.filename}')
+
         return cls.from_yaml_stream(stream)
 
     @classmethod

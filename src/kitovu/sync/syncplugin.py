@@ -14,10 +14,7 @@ class AbstractSyncPlugin(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def configure(self, info: typing.Dict[str, typing.Any]) -> None:
-        """Read a configuration section intended for this plugin.
-
-        If a KeyError occurs, it's interpreted as missing setting in the config.
-        """
+        """Read a configuration section intended for this plugin."""
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -51,4 +48,9 @@ class AbstractSyncPlugin(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[bytes]) -> None:
         """Retrieve the given remote file."""
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def connection_schema(self) -> typing.Dict[str, typing.Any]:
+        """Returns a jsonschema to check for required properties passed to the configure method."""
         raise NotImplementedError
