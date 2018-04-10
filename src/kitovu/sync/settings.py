@@ -48,7 +48,7 @@ class Settings:
         root_dir = pathlib.PurePath(data.pop('root-dir'))
         global_ignore = data.pop('global-ignore', [])
 
-        plugins = cls._get_plugins(
+        plugins = cls._get_plugin_settings(
             raw_plugins=data.pop('plugins'),
             raw_syncs=data.pop('syncs'),
             root_dir=root_dir,
@@ -63,9 +63,9 @@ class Settings:
         )
 
     @classmethod
-    def _get_plugins(cls, raw_plugins: typing.List[SimpleDict],
-                     raw_syncs: typing.List[SimpleDict],
-                     root_dir: pathlib.PurePath) -> typing.Dict[str, PluginSettings]:
+    def _get_plugin_settings(cls, raw_plugins: typing.List[SimpleDict],
+                             raw_syncs: typing.List[SimpleDict],
+                             root_dir: pathlib.PurePath) -> typing.Dict[str, PluginSettings]:
         """Create the PluginSettings for the specified plugins and syncs."""
         plugins = {}
 
