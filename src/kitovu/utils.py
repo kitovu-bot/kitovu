@@ -20,10 +20,3 @@ class NoPluginError(UsageError):
     """Thrown when there was no matching plugin found."""
 
     pass
-
-
-class NoConnection(Error):
-
-    """Thrown when connection establishment failed."""
-
-    pass
