@@ -1,7 +1,6 @@
 import pytest
 import pathlib
 import py.path
-import glob
 
 import stevedore
 
@@ -57,7 +56,7 @@ class TestSyncAll:
         file_name = pathlib.Path(tmpdir / 'config.yml')
         with file_name.open('w') as f:
             f.write(f"""
-            root-dir: {tmpdir}
+            root-dir: {tmpdir}/syncs
             plugins:
               - name: mytest-plugin
                 type: dummy
@@ -79,14 +78,16 @@ class TestSyncAll:
             """)
         syncing.start_all(file_name)
 
-        assert sorted(glob.glob(f"{tmpdir}/**/*")) == [
-            f'{tmpdir}/sync-1/group1-file1.txt',
-            f'{tmpdir}/sync-1/group1-file2.txt',
-            f'{tmpdir}/sync-1/group1-file3.txt',
-            f'{tmpdir}/sync-1/group2-file1.txt',
-            f'{tmpdir}/sync-1/group2-file2.txt',
-            f'{tmpdir}/sync-2/group3-file1.txt',
-            f'{tmpdir}/sync-2/group3-file2.txt',
-            f'{tmpdir}/sync-2/group4-file1.txt',
-            f'{tmpdir}/sync-2/group4-file2.txt',
+        assert sorted(pathlib.Path(tmpdir).glob("syncs/**/*")) == [
+            pathlib.Path(f'{tmpdir}/syncs/sync-1'),
+            pathlib.Path(f'{tmpdir}/syncs/sync-1/group1-file1.txt'),
+            pathlib.Path(f'{tmpdir}/syncs/sync-1/group1-file2.txt'),
+            pathlib.Path(f'{tmpdir}/syncs/sync-1/group1-file3.txt'),
+            pathlib.Path(f'{tmpdir}/syncs/sync-1/group2-file1.txt'),
+            pathlib.Path(f'{tmpdir}/syncs/sync-1/group2-file2.txt'),
+            pathlib.Path(f'{tmpdir}/syncs/sync-2'),
+            pathlib.Path(f'{tmpdir}/syncs/sync-2/group3-file1.txt'),
+            pathlib.Path(f'{tmpdir}/syncs/sync-2/group3-file2.txt'),
+            pathlib.Path(f'{tmpdir}/syncs/sync-2/group4-file1.txt'),
+            pathlib.Path(f'{tmpdir}/syncs/sync-2/group4-file2.txt'),
         ]
