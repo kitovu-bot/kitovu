@@ -25,37 +25,39 @@ def test_connection_inactive(plugin) -> None:
 
 def test_local_digest(plugin):
     plugin.connect()
-    local_digest = plugin.create_local_digest(pathlib.PurePath("example1.txt"))
+    local_digest = plugin.create_local_digest(pathlib.PurePath("/local_dir/test/example1.txt"))
     assert local_digest == "1"
 
 
 def test_local_digest_changed(plugin):
     plugin.connect()
-    plugin.paths[pathlib.PurePath("example1.txt")].local_digest = "42"
-    local_digest = plugin.create_local_digest(pathlib.PurePath("example1.txt"))
+    plugin.local_digests[pathlib.PurePath("/local_dir/test/example1.txt")] = "42"
+    local_digest = plugin.create_local_digest(pathlib.PurePath("/local_dir/test/example1.txt"))
     assert local_digest == "42"
 
 
 def test_remote_digest(plugin):
     plugin.connect()
-    remote_digest = plugin.create_remote_digest(pathlib.PurePath("example1.txt"))
+    remote_digest = plugin.create_remote_digest(pathlib.PurePath("/remote_dir/test/example1.txt"))
     assert remote_digest == "1"
 
 
 def test_remote_digest_changed(plugin):
     plugin.connect()
-    plugin.paths[pathlib.PurePath("example1.txt")].remote_digest = "42"
-    remote_digest = plugin.create_remote_digest(pathlib.PurePath("example1.txt"))
+    plugin.remote_digests[pathlib.PurePath("/remote_dir/test/example1.txt")] = "42"
+    remote_digest = plugin.create_remote_digest(pathlib.PurePath("/remote_dir/test/example1.txt"))
     assert remote_digest == "42"
 
 
 def test_if_list_path_lists_correct_pathnames(plugin):
-    pathnames: typing.Iterable[pathlib.PurePath] = [pathlib.PurePath("example1.txt"),
-                                                    pathlib.PurePath("example2.txt"),
-                                                    pathlib.PurePath("example3.txt"),
-                                                    pathlib.PurePath("example4.txt")]
+    pathnames: typing.Iterable[pathlib.PurePath] = [
+        pathlib.PurePath("/remote_dir/test/example1.txt"),
+        pathlib.PurePath("/remote_dir/test/example2.txt"),
+        pathlib.PurePath("/remote_dir/test/example3.txt"),
+        pathlib.PurePath("/remote_dir/test/example4.txt"),
+    ]
     plugin.connect()
-    all_paths = list(plugin.list_path(plugin.paths))
+    all_paths = list(plugin.list_path('/remote_dir/test'))
     assert all_paths == pathnames
 
 
@@ -64,20 +66,20 @@ def test_if_correct_file_retrieved(plugin, tmpdir: py.path.local):
 
     plugin.connect()
     with sample.open("wb") as f:
-        plugin.retrieve_file(pathlib.PurePath("example1.txt"), f)
+        plugin.retrieve_file(pathlib.PurePath("/remote_dir/test/example1.txt"), f)
 
     text = sample.read_text('utf-8')
-    assert text == "example1.txt\n1"
+    assert text == "/remote_dir/test/example1.txt\n1"
 
 
 def test_if_changed_digest_still_retrieves_correct_file(plugin, tmpdir: py.path.local):
     sample = tmpdir / 'testsample.txt'
 
     plugin.connect()
-    plugin.paths[pathlib.PurePath("example1.txt")].remote_digest = "42"  # change remote digest
+    plugin.remote_digests[pathlib.PurePath("/remote_dir/test/example1.txt")] = "42"  # change remote digest
 
     with sample.open("wb") as f:
-        plugin.retrieve_file(pathlib.PurePath("example1.txt"), f)
+        plugin.retrieve_file(pathlib.PurePath("/remote_dir/test/example1.txt"), f)
 
     text = sample.read_text('utf-8')
-    assert text == "example1.txt\n42"
+    assert text == "/remote_dir/test/example1.txt\n42"
