@@ -46,18 +46,19 @@ def start(plugin_settings: PluginSettings) -> None:
         remote_path = sync['remote-dir']
         local_path = sync['local-dir']
 
-        files = list(plugin.list_path(remote_path))
-        print(f'Remote files: {files}')
+        for item in plugin.list_path(remote_path):
+            # each plugin should now yield all files recursively with list_path
+            print(f'Downloading: {item}')
 
-        example_file = files[0]
-        print(f'Downloading: {example_file}')
-        digest = plugin.create_remote_digest(example_file)
-        print(f'Remote digest: {digest}')
+            digest = plugin.create_remote_digest(item)
+            print(f'Remote digest: {digest}')
 
-        output = pathlib.Path(example_file.name)
+            output = pathlib.Path(local_path / item.relative_to(remote_path))
 
-        with output.open('wb') as fileobj:
-            plugin.retrieve_file(local_path / example_file, fileobj)
+            pathlib.Path(output.parent).mkdir(parents=True, exist_ok=True)
 
-        digest = plugin.create_local_digest(output)
-        print(f'Local digest: {digest}')
+            with output.open('wb') as fileobj:
+                plugin.retrieve_file(item, fileobj)
+
+            digest = plugin.create_local_digest(output)
+            print(f'Local digest: {digest}')
