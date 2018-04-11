@@ -39,10 +39,7 @@ def start(pluginname: str, username: str) -> None:
     path = pathlib.PurePath('/Informatik/Fachbereich/Engineering-Projekt/EPJ/FS2018/')
     outputpath = pathlib.Path(".") / "kitovu-output-files"
 
-    files: typing.Iterable[pathlib.PurePath] = list(plugin.list_path(path))
-
-    print(f'Remote files: {files}')
-    for item in files:
+    for item in plugin.list_path(path):
 
         # each plugin should now yield all files recursively with list_path
         print(f'Downloading: {item}')
