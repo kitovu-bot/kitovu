@@ -1,7 +1,6 @@
 """Logic related to actually syncing files."""
 
 import pathlib
-import typing
 
 import stevedore
 import stevedore.driver
@@ -49,11 +48,10 @@ def start(pluginname: str, username: str) -> None:
 
         output = pathlib.Path(outputpath / item.relative_to(path))
 
-        output.parent.mkdir(parents=True, exist_ok=True)
+        pathlib.Path(output.parent).mkdir(parents=True, exist_ok=True)
 
         with output.open('wb') as fileobj:
             plugin.retrieve_file(item, fileobj)
 
         digest = plugin.create_local_digest(output)
         print(f'Local digest: {digest}')
-

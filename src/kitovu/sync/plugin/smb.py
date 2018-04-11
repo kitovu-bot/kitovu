@@ -128,7 +128,8 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
                 if entry.filename not in [".", ".."]:
                     yield from self.list_path(pathlib.PurePath(path / entry.filename))
             else:
-                yield pathlib.PurePath(path / entry.filename)  # only gives back the files in the current folder
+                # only gives back the files in the current folder
+                yield pathlib.PurePath(path / entry.filename)
 
     def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[bytes]) -> None:
         self._connection.retrieveFile(self._info.share, str(path), fileobj)
