@@ -62,3 +62,5 @@ def start(plugin_settings: PluginSettings) -> None:
 
             digest = plugin.create_local_digest(output)
             print(f'Local digest: {digest}')
+
+    plugin.disconnect()

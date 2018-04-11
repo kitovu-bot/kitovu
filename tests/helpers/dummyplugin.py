@@ -48,7 +48,7 @@ class DummyPlugin(syncplugin.AbstractSyncPlugin):
 
     def create_local_digest(self, path: pathlib.Path) -> str:
         assert self.is_connected
-        return self.local_digests[path]
+        return self.local_digests.get(path, '')
 
     def create_remote_digest(self, path: pathlib.PurePath) -> str:
         assert self.is_connected
