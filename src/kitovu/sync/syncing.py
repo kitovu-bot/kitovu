@@ -34,20 +34,24 @@ def start(pluginname: str, username: str) -> None:
     plugin.configure({'username': username})
     plugin.connect()
 
+    # hardcoded paths that will be replaced from entries in the config-file
     path = pathlib.PurePath('/Informatik/Fachbereich/Engineering-Projekt/EPJ/FS2018/')
+    outputpath = pathlib.Path(".") / "kitovu-output-files"
 
-    files = list(plugin.list_path(path))
-    print(f'Remote files: {files}')
+    for item in plugin.list_path(path):
 
-    example_file = files[0]
-    print(f'Downloading: {example_file}')
-    digest = plugin.create_remote_digest(example_file)
-    print(f'Remote digest: {digest}')
+        # each plugin should now yield all files recursively with list_path
+        print(f'Downloading: {item}')
 
-    output = pathlib.Path(example_file.name)
+        digest = plugin.create_remote_digest(item)
+        print(f'Remote digest: {digest}')
 
-    with output.open('wb') as fileobj:
-        plugin.retrieve_file(example_file, fileobj)
+        output = pathlib.Path(outputpath / item.relative_to(path))
 
-    digest = plugin.create_local_digest(output)
-    print(f'Local digest: {digest}')
+        pathlib.Path(output.parent).mkdir(parents=True, exist_ok=True)
+
+        with output.open('wb') as fileobj:
+            plugin.retrieve_file(item, fileobj)
+
+        digest = plugin.create_local_digest(output)
+        print(f'Local digest: {digest}')
