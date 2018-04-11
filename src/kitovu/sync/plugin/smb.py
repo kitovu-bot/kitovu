@@ -123,6 +123,7 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
                                    mtime=attributes.last_write_time)
 
     def list_path(self, path: pathlib.PurePath) -> typing.Iterable[pathlib.PurePath]:
+        # FIXME: detect recursion
         for entry in self._connection.listPath(self._info.share, str(path)):
             if entry.isDirectory:
                 if entry.filename not in [".", ".."]:
