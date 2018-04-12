@@ -17,7 +17,7 @@ def test_load_a_sample_yaml_file():
             subjects=[
                 {
                     'name': 'Engineering-Projekt',
-                    'ignored': ['SubDir', 'example.txt'],
+                    'ignore': ['SubDir', 'example.txt'],
                     'remote-dir': pathlib.PurePath('Informatik/Fachbereich/Engineering-Projekt/EPJ'),
                     'local-dir': pathlib.Path(f'{expected_root_dir}/Engineering-Projekt'),
                 }

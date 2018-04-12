@@ -18,7 +18,7 @@ subjects:
   - name: Engineering-Projekt
     sources:
       - connection: skripte-server
-        ignored:
+        ignore:
           - SubDir
           - example.txt
         remote-dir: Informatik/Fachbereich/Engineering-Projekt/EPJ
