@@ -65,8 +65,8 @@ class Settings:
 
     @classmethod
     def _get_connection_settings(cls, raw_connections: typing.List[SimpleDict],
-                             raw_subjects: typing.List[SimpleDict],
-                             root_dir: pathlib.Path) -> typing.Dict[str, ConnectionSettings]:
+                                 raw_subjects: typing.List[SimpleDict],
+                                 root_dir: pathlib.Path) -> typing.Dict[str, ConnectionSettings]:
         """Create the ConnectionSettings for the specified connections and subjects."""
         connections = {}
 
