@@ -57,7 +57,7 @@ def test_if_list_path_lists_correct_pathnames(plugin):
         pathlib.PurePath("remote_dir/test/example4.txt"),
     ]
     plugin.connect()
-    all_paths = list(plugin.list_path('remote_dir/test'))
+    all_paths = list(plugin.list_path(pathlib.PurePath('remote_dir/test')))
     assert all_paths == pathnames
 
 
