@@ -1,4 +1,4 @@
-"""A collection of all settings wrappers and factories for the sync."""
+"""A collection of all settings wrappers and factories for the subject."""
 
 import pathlib
 import typing
@@ -15,31 +15,31 @@ SimpleDict = typing.Dict[str, typing.Any]
 
 
 @attr.s
-class PluginSettings:
-    """A class representing the settings of a single plugin"""
+class ConnectionSettings:
+    """A class representing the settings of a single connection"""
 
-    plugin_type: str = attr.ib()
+    plugin_name: str = attr.ib()
     connection: SimpleDict = attr.ib()
-    syncs: typing.List[SimpleDict] = attr.ib(default=attr.Factory(list))
+    subjects: typing.List[SimpleDict] = attr.ib(default=attr.Factory(list))
 
 
 @attr.s
 class Settings:
-    """A class representing the settings of all plugins"""
+    """A class representing the settings of all connections"""
 
     root_dir: pathlib.Path = attr.ib()
     global_ignore: typing.List[str] = attr.ib()
-    plugins: typing.Dict[str, PluginSettings] = attr.ib()
+    connections: typing.Dict[str, ConnectionSettings] = attr.ib()
 
     settings_schema: typing.Dict[str, typing.Any] = {
         'type': 'object',
         'properties': {
             'root-dir': {'type': 'string'},
-            'syncs': {
+            'subjects': {
                 'type': 'array',
                 'items': {'type': 'object'},
             },
-            'plugins': {
+            'connections': {
                 'type': 'array',
                 'items': {'type': 'object'},
             },
@@ -47,8 +47,8 @@ class Settings:
         },
         'required': [
             'root-dir',
-            'syncs',
-            'plugins',
+            'subjects',
+            'connections',
         ],
         'additionalProperties': False,
     }
@@ -75,46 +75,46 @@ class Settings:
         root_dir = pathlib.Path(os.path.expanduser(data.pop('root-dir')))
         global_ignore = data.pop('global-ignore', [])
 
-        plugins = cls._get_plugin_settings(
-            raw_plugins=data.pop('plugins'),
-            raw_syncs=data.pop('syncs'),
+        connections = cls._get_connection_settings(
+            raw_connections=data.pop('connections'),
+            raw_subjects=data.pop('subjects'),
             root_dir=root_dir,
         )
 
         return Settings(
             root_dir=root_dir,
             global_ignore=global_ignore,
-            plugins=plugins,
+            connections=connections,
         )
 
     @classmethod
-    def _get_plugin_settings(cls, raw_plugins: typing.List[SimpleDict],
-                             raw_syncs: typing.List[SimpleDict],
-                             root_dir: pathlib.Path) -> typing.Dict[str, PluginSettings]:
-        """Create the PluginSettings for the specified plugins and syncs."""
-        plugins = {}
+    def _get_connection_settings(cls, raw_connections: typing.List[SimpleDict],
+                             raw_subjects: typing.List[SimpleDict],
+                             root_dir: pathlib.Path) -> typing.Dict[str, ConnectionSettings]:
+        """Create the ConnectionSettings for the specified connections and subjects."""
+        connections = {}
 
-        for raw_plugin in raw_plugins:
-            name = raw_plugin.pop('name')
-            plugins[name] = PluginSettings(
-                plugin_type=raw_plugin.pop('type'),
-                connection=raw_plugin,
+        for raw_connection in raw_connections:
+            name = raw_connection.pop('name')
+            connections[name] = ConnectionSettings(
+                plugin_name=raw_connection.pop('plugin'),
+                connection=raw_connection,
             )
 
-        sync_schema: typing.Dict[str, typing.Any] = {
+        subject_schema: typing.Dict[str, typing.Any] = {
             'type': 'array',
             'items': {
                 'type': 'object',
                 'properties': {
                     'name': {'type': 'string'},
-                    'plugins': {
+                    'sources': {
                         'type': 'array',
                         'items': {
                             'type': 'object',
                             'properties': {
-                                'plugin': {
+                                'connection': {
                                     'type': 'string',
-                                    'enum': [key for key in plugins],
+                                    'enum': [key for key in connections],
                                 },
                                 'local-dir': {'type': 'string'},
                                 'remote-dir': {'type': 'string'},
@@ -124,7 +124,7 @@ class Settings:
                                 },
                             },
                             'required': [
-                                'plugin',
+                                'connection',
                                 'remote-dir',
                             ],
                             'additionalProperties': False,
@@ -133,21 +133,21 @@ class Settings:
                 },
                 'required': [
                     'name',
-                    'plugins',
+                    'sources',
                 ],
                 'additionalProperties': False,
             },
         }
 
-        jsonschema.validate(raw_syncs, sync_schema)
+        jsonschema.validate(raw_subjects, subject_schema)
 
-        for sync in raw_syncs:
-            name = sync.pop('name')
-            for plugin_usage in sync.pop('plugins'):
-                plugin_usage['name'] = name
-                plugin_usage['local-dir'] = pathlib.Path(
-                    plugin_usage.get('local-dir', root_dir / name))
-                plugin_usage['remote-dir'] = pathlib.PurePath(plugin_usage['remote-dir'])
-                plugins[plugin_usage.pop('plugin')].syncs.append(plugin_usage)
+        for subject in raw_subjects:
+            name = subject.pop('name')
+            for connection_usage in subject.pop('sources'):
+                connection_usage['name'] = name
+                connection_usage['local-dir'] = pathlib.Path(
+                    connection_usage.get('local-dir', root_dir / name))
+                connection_usage['remote-dir'] = pathlib.PurePath(connection_usage['remote-dir'])
+                connections[connection_usage.pop('connection')].subjects.append(connection_usage)
 
-        return plugins
+        return connections

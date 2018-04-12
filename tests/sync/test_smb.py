@@ -49,6 +49,8 @@ class SMBConnectionMock:
         return self.AttributesMock(1024, 988824605.56)
 
     def listPath(self, share, path):
+        if str(path).endswith('example_dir') or str(path).endswith('sub'):
+            return [self.SharedFileMock('sub_file', False)]
         return [
             self.SharedFileMock('example_dir', True),
             self.SharedFileMock('example.txt', False),
@@ -157,7 +159,9 @@ class TestWithConnectedPlugin:
     def test_list_path(self, plugin):
         paths = list(plugin.list_path(pathlib.PurePath('/some/test/dir')))
         assert paths == [
+            pathlib.PurePath('/some/test/dir/example_dir/sub_file'),
             pathlib.PurePath('/some/test/dir/example.txt'),
             pathlib.PurePath('/some/test/dir/other_example.txt'),
+            pathlib.PurePath('/some/test/dir/sub/sub_file'),
             pathlib.PurePath('/some/test/dir/last_file'),
         ]

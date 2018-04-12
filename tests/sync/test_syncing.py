@@ -8,8 +8,9 @@ import stevedore
 from kitovu import utils
 from kitovu.sync import syncing
 from kitovu.sync.plugin import smb
-from kitovu.sync.settings import PluginSettings
+from kitovu.sync.settings import ConnectionSettings
 from kitovu.sync.syncplugin import AbstractSyncPlugin
+from helpers import dummyplugin
 
 
 class FakePlugin(AbstractSyncPlugin):
@@ -69,12 +70,70 @@ class TestFindPlugin:
         plugin = syncing._find_plugin(self._get_settings('test', connection={'some-required-prop': 'test'}))
         assert plugin is fake_plugin_obj
 
-    def _get_settings(self, plugin_type, connection={}, syncs=[]):
-        return PluginSettings(
-            plugin_type=plugin_type,
+    def _get_settings(self, plugin_name, connection={}, subjects=[]):
+        return ConnectionSettings(
+            plugin_name=plugin_name,
             connection=connection,
-            syncs=syncs,
+            subjects=subjects,
         )
+
+class TestSyncAll:
+    @pytest.fixture(autouse=True)
+    def include_dummy_plugin(self, mocker):
+        manager = mocker.patch('stevedore.driver.DriverManager', autospec=True)
+        instance = manager(namespace='kitovu.sync.plugin', name='dummy',
+                           invoke_on_load=True)
+        instance.driver = dummyplugin.DummyPlugin(remote_digests={
+            pathlib.PurePath('Some/Test/Dir1/group1-file1.txt'): '11',
+            pathlib.PurePath('Some/Test/Dir1/group1-file2.txt'): '12',
+            pathlib.PurePath('Some/Test/Dir1/group1-file3.txt'): '13',
+            pathlib.PurePath('Another/Test/Dir1/group2-file1.txt'): '21',
+            pathlib.PurePath('Another/Test/Dir1/group2-file2.txt'): '22',
+            pathlib.PurePath('Some/Test/Dir2/group3-file1.txt'): '31',
+            pathlib.PurePath('Some/Test/Dir2/group3-file2.txt'): '32',
+            pathlib.PurePath('Another/Test/Dir2/group4-file1.txt'): '41',
+            pathlib.PurePath('Another/Test/Dir2/group4-file2.txt'): '42',
+        })
+
+    def test_complex_sync_all(self, tmpdir: py.path.local):
+        file_name = pathlib.Path(tmpdir / 'config.yml')
+        with file_name.open('w') as f:
+            f.write(f"""
+            root-dir: {tmpdir}/syncs
+            connections:
+              - name: mytest-plugin
+                plugin: dummy
+              - name: another-plugin
+                plugin: dummy
+            subjects:
+              - name: sync-1
+                sources:
+                  - connection: mytest-plugin
+                    remote-dir: Some/Test/Dir1
+                  - connection: another-plugin
+                    remote-dir: Another/Test/Dir1
+              - name: sync-2
+                sources:
+                  - connection: mytest-plugin
+                    remote-dir: Some/Test/Dir2
+                  - connection: another-plugin
+                    remote-dir: Another/Test/Dir2
+            """)
+        syncing.start_all(file_name)
+
+        assert sorted(pathlib.Path(tmpdir).glob("syncs/**/*")) == [
+            pathlib.Path(f'{tmpdir}/syncs/sync-1'),
+            pathlib.Path(f'{tmpdir}/syncs/sync-1/group1-file1.txt'),
+            pathlib.Path(f'{tmpdir}/syncs/sync-1/group1-file2.txt'),
+            pathlib.Path(f'{tmpdir}/syncs/sync-1/group1-file3.txt'),
+            pathlib.Path(f'{tmpdir}/syncs/sync-1/group2-file1.txt'),
+            pathlib.Path(f'{tmpdir}/syncs/sync-1/group2-file2.txt'),
+            pathlib.Path(f'{tmpdir}/syncs/sync-2'),
+            pathlib.Path(f'{tmpdir}/syncs/sync-2/group3-file1.txt'),
+            pathlib.Path(f'{tmpdir}/syncs/sync-2/group3-file2.txt'),
+            pathlib.Path(f'{tmpdir}/syncs/sync-2/group4-file1.txt'),
+            pathlib.Path(f'{tmpdir}/syncs/sync-2/group4-file2.txt'),
+        ]
 
 
 class TestConfigError:
@@ -83,25 +142,25 @@ class TestConfigError:
         with file_name.open('w') as f:
             f.write("""
             root-dir: ./asdf
-            plugins:
+            connections:
               - name: mytest-plugin
-                type: smb
+                plugin: smb
                 username: myuser
               - name: another-plugin
-                type: smb
+                plugin: smb
                 username: otheruser
-            syncs:
+            subjects:
               - name: sync-1
-                plugins:
-                  - plugin: mytest-plugin
+                sources:
+                  - connection: mytest-plugin
                     remote-dir: Some/Test/Dir1
-                  - plugin: another-plugin
+                  - connection: another-plugin
                     remote-dir: Another/Test/Dir1
               - name: sync-2
-                plugins:
-                  - plugin: mytest-plugin
+                sources:
+                  - connection: mytest-plugin
                     remote-dir: Some/Test/Dir2
-                  - plugin: another-plugin
+                  - connection: another-plugin
                     remote-dir: Another/Test/Dir2
             """)
         assert syncing.config_error(file_name) is None
@@ -120,46 +179,46 @@ class TestConfigError:
         file_name = pathlib.Path(tmpdir / 'config.yml')
         with file_name.open('w') as f:
             f.write("""
-            plugins: []
-            syncs: []
+            connections: []
+            subjects: []
             """)
         assert syncing.config_error(file_name).startswith("'root-dir' is a required property\n")
 
-    def test_configuration_with_missing_syncs(self, tmpdir: py.path.local):
+    def test_configuration_with_missing_subjects(self, tmpdir: py.path.local):
         file_name = pathlib.Path(tmpdir / 'config.yml')
         with file_name.open('w') as f:
             f.write("""
             root-dir: some-dir
-            plugins: []
+            connctions: []
             """)
-        assert syncing.config_error(file_name).startswith("'syncs' is a required property\n")
+        assert syncing.config_error(file_name).startswith("'subjects' is a required property\n")
 
-    def test_configuration_with_missing_plugins(self, tmpdir: py.path.local):
+    def test_configuration_with_missing_connections(self, tmpdir: py.path.local):
         file_name = pathlib.Path(tmpdir / 'config.yml')
         with file_name.open('w') as f:
             f.write("""
             root-dir: some-dir
-            syncs: []
+            subjects: []
             """)
-        assert syncing.config_error(file_name).startswith("'plugins' is a required property\n")
+        assert syncing.config_error(file_name).startswith("'connections' is a required property\n")
 
-    def test_configuration_with_invalid_syncs(self, tmpdir: py.path.local):
+    def test_configuration_with_invalid_subjects(self, tmpdir: py.path.local):
         file_name = pathlib.Path(tmpdir / 'config.yml')
         with file_name.open('w') as f:
             f.write("""
             root-dir: ./asdf
-            plugins:
+            connections:
               - name: mytest-plugin
-                type: smb
+                plugin: smb
                 username: myuser
-            syncs:
+            subjects:
               - name: sync-1
-                plugins:
+                sources:
                   - remote-dir: Some/Test/Dir2
             """)
-        assert syncing.config_error(file_name).startswith("'plugin' is a required property\n")
+        assert syncing.config_error(file_name).startswith("'connection' is a required property\n")
 
-    def test_configuration_with_invalid_plugins(self, mocker, tmpdir: py.path.local):
+    def test_configuration_with_invalid_connections(self, mocker, tmpdir: py.path.local):
         fake_plugin_obj = FakePlugin()
         manager = mocker.patch('stevedore.driver.DriverManager', autospec=True)
         instance = manager(namespace='kitovu.sync.plugin', name='test',
@@ -170,13 +229,13 @@ class TestConfigError:
         with file_name.open('w') as f:
             f.write("""
             root-dir: ./asdf
-            plugins:
+            connections:
               - name: mytest-plugin
-                type: test
-            syncs:
+                plugin: test
+            subjects:
               - name: sync-1
-                plugins:
-                  - plugin: mytest-plugin
+                sources:
+                  - connection: mytest-plugin
                     remote-dir: Some/Test/Dir
             """)
         assert syncing.config_error(file_name).startswith("'some-required-prop' is a required property\n")

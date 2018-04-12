@@ -42,7 +42,7 @@ class AbstractSyncPlugin(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def list_path(self, path: pathlib.PurePath) -> typing.Iterable[pathlib.PurePath]:
-        """Get a list of files in the given remote path."""
+        """List all files recursively in the given remote path."""
         raise NotImplementedError
 
     @abc.abstractmethod

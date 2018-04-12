@@ -4,9 +4,9 @@ global-ignore:
   - Thumbs.db
   - .DS_Store
 
-plugins:
+connections:
   - name: skripte-server
-    type: smb
+    plugin: smb
     # hostname: svm-c213.hsr.ch
     # port: 445
     # share: skripte
@@ -14,10 +14,10 @@ plugins:
     username: example_user
   # ...
 
-syncs:
+subjects:
   - name: Engineering-Projekt
-    plugins:
-      - plugin: skripte-server
+    sources:
+      - connection: skripte-server
         ignore:
           - SubDir
           - example.txt
