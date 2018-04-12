@@ -22,16 +22,16 @@ class DummyPlugin(syncplugin.AbstractSyncPlugin):
                  remote_digests: typing.Dict[pathlib.PurePath, str]=None):
         super().__init__()
         self.local_digests = local_digests if local_digests else {
-            pathlib.PurePath("/local_dir/test/example1.txt"): "1",
-            pathlib.PurePath("/local_dir/test/example2.txt"): "2",
-            pathlib.PurePath("/local_dir/test/example3.txt"): "3",
-            pathlib.PurePath("/local_dir/test/example4.txt"): "4",
+            pathlib.PurePath("local_dir/test/example1.txt"): "1",
+            pathlib.PurePath("local_dir/test/example2.txt"): "2",
+            pathlib.PurePath("local_dir/test/example3.txt"): "3",
+            pathlib.PurePath("local_dir/test/example4.txt"): "4",
         }
         self.remote_digests = remote_digests if remote_digests else {
-            pathlib.PurePath("/remote_dir/test/example1.txt"): "1",
-            pathlib.PurePath("/remote_dir/test/example2.txt"): "2",
-            pathlib.PurePath("/remote_dir/test/example3.txt"): "3",
-            pathlib.PurePath("/remote_dir/test/example4.txt"): "4",
+            pathlib.PurePath("remote_dir/test/example1.txt"): "1",
+            pathlib.PurePath("remote_dir/test/example2.txt"): "2",
+            pathlib.PurePath("remote_dir/test/example3.txt"): "3",
+            pathlib.PurePath("remote_dir/test/example4.txt"): "4",
         }
         self.is_connected: bool = False
 
