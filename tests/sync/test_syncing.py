@@ -57,23 +57,23 @@ class TestSyncAll:
         with file_name.open('w') as f:
             f.write(f"""
             root-dir: {tmpdir}/syncs
-            plugins:
+            connections:
               - name: mytest-plugin
-                type: dummy
+                plugin: dummy
               - name: another-plugin
-                type: dummy
-            syncs:
+                plugin: dummy
+            subjects:
               - name: sync-1
-                plugins:
-                  - plugin: mytest-plugin
+                sources:
+                  - connection: mytest-plugin
                     remote-dir: Some/Test/Dir1
-                  - plugin: another-plugin
+                  - connection: another-plugin
                     remote-dir: Another/Test/Dir1
               - name: sync-2
-                plugins:
-                  - plugin: mytest-plugin
+                sources:
+                  - connection: mytest-plugin
                     remote-dir: Some/Test/Dir2
-                  - plugin: another-plugin
+                  - connection: another-plugin
                     remote-dir: Another/Test/Dir2
             """)
         syncing.start_all(file_name)

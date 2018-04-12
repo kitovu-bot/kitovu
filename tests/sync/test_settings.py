@@ -1,6 +1,6 @@
 import pathlib
 
-from kitovu.sync.settings import Settings, PluginSettings
+from kitovu.sync.settings import Settings, ConnectionSettings
 
 
 def test_load_a_sample_yaml_file():
@@ -8,13 +8,13 @@ def test_load_a_sample_yaml_file():
 
     expected_root_dir = pathlib.Path(f'{pathlib.Path.home()}/Documents/HSR/semester_06')
     expected_global_ignore = ['Thumbs.db', '.DS_Store']
-    expected_plugins = {
-        'skripte-server': PluginSettings(
-            plugin_type='smb',
+    expected_connections = {
+        'skripte-server': ConnectionSettings(
+            plugin_name='smb',
             connection={
                 'username': 'example_user',
             },
-            syncs=[
+            subjects=[
                 {
                     'name': 'Engineering-Projekt',
                     'ignored': ['SubDir', 'example.txt'],
@@ -27,10 +27,10 @@ def test_load_a_sample_yaml_file():
 
     assert settings.root_dir == expected_root_dir
     assert settings.global_ignore == expected_global_ignore
-    assert settings.plugins == expected_plugins
+    assert settings.connections == expected_connections
 
     assert settings == Settings(
         root_dir=expected_root_dir,
         global_ignore=expected_global_ignore,
-        plugins=expected_plugins,
+        connections=expected_connections,
     )

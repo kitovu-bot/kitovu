@@ -7,7 +7,7 @@ import stevedore.driver
 
 from kitovu import utils
 from kitovu.sync import syncplugin
-from kitovu.sync.settings import Settings, PluginSettings
+from kitovu.sync.settings import Settings, ConnectionSettings
 from kitovu.sync.plugin import smb
 
 
@@ -32,19 +32,19 @@ def _find_plugin(pluginname: str) -> syncplugin.AbstractSyncPlugin:
 def start_all(config_file: pathlib.Path) -> None:
     """Sync all files with the given configuration file."""
     settings = Settings.from_yaml_file(config_file)
-    for _plugin_key, plugin_settings in sorted(settings.plugins.items()):
-        start(plugin_settings)
+    for _plugin_key, connection_settings in sorted(settings.connections.items()):
+        start(connection_settings)
 
 
-def start(plugin_settings: PluginSettings) -> None:
+def start(connection_settings: ConnectionSettings) -> None:
     """Sync files with the given plugin and username."""
-    plugin = _find_plugin(plugin_settings.plugin_type)
-    plugin.configure(plugin_settings.connection)
+    plugin = _find_plugin(connection_settings.plugin_name)
+    plugin.configure(connection_settings.connection)
     plugin.connect()
 
-    for sync in plugin_settings.syncs:
-        remote_path = sync['remote-dir']
-        local_path = sync['local-dir']
+    for subject in connection_settings.subjects:
+        remote_path = subject['remote-dir']
+        local_path = subject['local-dir']
 
         for item in plugin.list_path(remote_path):
             # each plugin should now yield all files recursively with list_path
