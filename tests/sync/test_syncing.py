@@ -77,6 +77,7 @@ class TestFindPlugin:
             subjects=subjects,
         )
 
+
 class TestSyncAll:
     @pytest.fixture(autouse=True)
     def include_dummy_plugin(self, mocker):
