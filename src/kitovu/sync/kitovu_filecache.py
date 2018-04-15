@@ -26,33 +26,31 @@ class File:
     def __init__(self, local_digest_at_synctime: str,
                  relative_path_with_filename: pathlib.PurePath,
                  plugin: syncplugin.AbstractSyncPlugin) -> None:
-        file_properties = {"path": relative_path_with_filename,
-                           "plugin": plugin,
-                           "digests": {
-                                "cached digest": local_digest_at_synctime,
-                                }
-                           }
+        self._cached_digest = local_digest_at_synctime
+        self._relative_path_with_filename: pathlib.PurePath
+        self._plugin = plugin
+        self._remote_digest = ""
+        self._local_digest = ""
 
 
 class FileCache:
-    FILECACHE: str = "filecache.json"
+    def __init__(self, filename: str, path_to_json: pathlib.Path):
+        self._FILECACHE = filename  # filecache.json
+        self._path = path_to_json
 
-    def write_file_to_filecache(self, file: File):
-        file_to_json = json.dumps(file)
+    def write_filecache_to_jsonfile(self, file: typing.List[File]):
+        """"Expects as argument all Files that need to be written to JSON."""
+        filelist_to_json = json.dump(file)
         try:
-            with self.FILECACHE.open("a+") as f:  # a+ = if it exsists, append; if not, create a new one
-                f.write(file_to_json)
+            with pathlib.Path(self._path_to_json).joinpath(self._FILECACHE).open("a+") as f:
+                # a+ = if it exsists, append; if not, create a new one
+                f.write(filelist_to_json)
         except OSError as error:
             raise utils.UsageError(f"Could not write the file, {error}")
 
-    def retrieve_jsonfile_from_filecache(self, file: File) -> File:
-        try:
-            with self.FILECACHE.open("r") as f:
-                json_to_file = json.load(f.read())
-                file = json_to_file["path"]
+    def load_filecache_from_jsonfile(self) -> typing.List[File]:
+        return json.load(pathlib.Path(self._path_to_json).joinpath(self._FILECACHE))
 
-        except FileNotFoundError as error:
-            raise utils.UsageError(f"File not found, {error}")
 
     def update_file_digest(self, file: File) -> None:
         # write File's cached_digest and path
