@@ -22,9 +22,6 @@ class Filestate(Enum):
 
 
 class File:
-    # first param: received in syncing.py:  local_digest = plugin.create_local_digest(output)
-    # second param: received in syncing.py: output = pathlib.Path(outputpath / item.relative_to(path))
-    # the second param identifies a File uniquely
     def __init__(self, local_digest_at_synctime: str,
                  relative_path_with_filename: pathlib.PurePath,
                  plugin: syncplugin.AbstractSyncPlugin) -> None:
@@ -33,17 +30,14 @@ class File:
                            "local digest": "",
                            "remote digest": ""}
 
-    # saves local digest, file name + path, e.g  "/EPJ/2018/Gruppen/erklaerung.txt"
-    # create on the fly: remote digest, local digest (from the downloaded file)
-
-    # methods:
-    # 1. discover what has changed on which side. ENUM: LOCAL; REMOTE; BOTH; NONE
-    # 2. update_Digests
-
-    # FileCache: gets all file-objects, out of which it writes the JSON-File
-
 
 class FileCache:
+
+    def write_file_to_filecache(self, file: File):
+        json.dumps(file)
+
+    def retrieve_file_from_filecache(self, path: pathlib.PurePath):
+        pass
 
     def discover_changes_in_file(self, file: File) -> int:
         # return ENUM: LOCAL; REMOTE; BOTH; NONE
@@ -54,9 +48,4 @@ class FileCache:
         # write File's cached_digest and path
         pass
 
-    def write_file_to_filecache(self, file: File):
-        pass
-
-    def retrieve_file_from_filecache(self, path: pathlib.PurePath):
-        pass
 
