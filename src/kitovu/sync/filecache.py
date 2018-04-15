@@ -25,11 +25,13 @@ class File:
     # first param: received in syncing.py:  local_digest = plugin.create_local_digest(output)
     # second param: received in syncing.py: output = pathlib.Path(outputpath / item.relative_to(path))
     # the second param identifies a File uniquely
-    def __init__(self, local_digest_at_synctime: str, relative_path_with_filename: pathlib.PurePath) -> None:
-        self.cached_digest: str = local_digest_at_synctime
-        self.relative_path_with_filename: pathlib.PurePath = relative_path_with_filename
-        self.local_digest: str = ""
-        self.remote_digest: str = ""
+    def __init__(self, local_digest_at_synctime: str,
+                 relative_path_with_filename: pathlib.PurePath,
+                 plugin: syncplugin.AbstractSyncPlugin) -> None:
+        file_properties = {"path": relative_path_with_filename,
+                           "cached digest": local_digest_at_synctime,
+                           "local digest": "",
+                           "remote digest": ""}
 
     # saves local digest, file name + path, e.g  "/EPJ/2018/Gruppen/erklaerung.txt"
     # create on the fly: remote digest, local digest (from the downloaded file)
@@ -39,12 +41,6 @@ class File:
     # 2. update_Digests
 
     # FileCache: gets all file-objects, out of which it writes the JSON-File
-
-    def set_local_digest(self, ld: str) -> None:
-        self.local_digest = ld
-
-    def set_remote_digest(self, rd: str) -> None:
-        self.remote_digest = rd
 
 
 class FileCache:
