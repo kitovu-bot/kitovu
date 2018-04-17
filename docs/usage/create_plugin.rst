@@ -2,71 +2,97 @@
 Create a Plugin
 ===============
 
-
 Plugin Class
 ------------
+
+Implementation
+~~~~~~~~~~~~~~
 
 To create a plugin that is able to connect to another service you have to first create a plugin class.
 This custom plugin class needs to inherit from :code:`kitovu.sync.syncplugin.AbstractSyncPlugin`.
 
-This example illustrates all required methods::
+For an example implementation see :code:`kitovu.sync.plugin.smb`.
 
- from kitovu.sync import syncplugin
+Registration
+~~~~~~~~~~~~
 
- class ExamplePlugin(syncplugin.AbstractSyncPlugin):
-     """A plugin that handles connections with an example service"""
+The plugin class needs to be registered with stevedore_.
 
-     def configure(self, info: typing.Dict[str, typing.Any]) -> None:
-        """Read a configuration section intended for this plugin.
+You need to create a `setup.py` file like this::
 
-        If a KeyError occurs, it's interpreted as missing setting in the config.
+ from setuptools import setup, find_packages
 
-        Keyword arguments:
-        info -- the dictionary representing the configuration section for this plugin
-        """
-        pass
+ setup(
+     name='my-example-plugin',
+     version='1.0',
 
+     description='An example for a kitovu plugin',
 
-     def connect(self) -> None:
-         """Setup the connection to your service.
+     author='Your Name',
+     author_email='your.name@example.com',
 
-         This should raise an appropriate exception if the connection failed.
-         """
-         pass
+     url='http://example.com/your/url',
 
-     def disconnect(self) -> None:
-         """Close any open connections."""
-         pass
+     classifiers=['Development Status :: 3 - Alpha',
+                  'License :: OSI Approved :: Apache Software License',
+                  'Programming Language :: Python',
+                  'Programming Language :: Python :: 2',
+                  'Programming Language :: Python :: 2.7',
+                  'Programming Language :: Python :: 3',
+                  'Programming Language :: Python :: 3.4',
+                  'Intended Audience :: Developers',
+                  'Environment :: Console',
+                  ],
 
-     def create_local_digest(self, path: pathlib.Path) -> str:
-         """Returns the digest for the local file.
+     platforms=['Any'],
 
-         Keyword arguments:
-         path -- the local path of the file to create the digest for
-         """
-         pass
+     scripts=[],
 
-     def create_remote_digest(self, path: pathlib.PurePath) -> str:
-         """Returns the digest for the remote file.
+     provides=['kitovu.sync.plugin'],
 
-         Keyword arguments:
-         path -- the remote path of the file to create the digest for
-         """
-         pass
+     packages=find_packages(),
+     include_package_data=True,
 
-     def list_path(self, path: pathlib.PurePath) -> typing.Iterable[pathlib.PurePath]:
-         """List all files within the passed directory.
+     entry_points={
+         'kitovu.sync.plugin': [
+             'my-example = my.plugin:ExamplePlugin',
+         ],
+     },
 
-         Keyword arguments:
-         path -- the remote path of the directory from which to show all files
-         """
-         pass
+     zip_safe=False,
+ )
 
-     def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[bytes]) -> None:
-         """Retrieve the file at the specified path and write it to the passed file object.
+The important key is :code:`entry_points`.
+There you can list all plugins you implement.
 
-         Keyword arguments:
-         path -- the remote path of the file to retrieve
-         fileobj -- the IO object of the local file to write to
-         """
-         pass
+`my-example`
+  This is the name of the plugin used in the kitovu configuration.
+`my.plugin:ExamplePlugin`
+  This is the namespace and class of the plugin to use.
+
+For further information see the stevedore documentation for `creating a plugin`_.
+
+.. _stevedore: https://docs.openstack.org/stevedore/latest/
+.. _`creating a plugin`: https://docs.openstack.org/stevedore/latest/user/tutorial/creating_plugins.html
+
+User Output
+------------
+
+Errors
+~~~~~~
+
+If there occurs an error which should cancel the entire execution of the plugin you can throw a :code:`kitovu.utils.UsageError`.
+The command line tool or the user interface will print those messages.
+
+This is used for example if the server rejects a request or is not available.
+
+Any other exception will lead to the kitovu application to terminate.
+
+Warnings
+~~~~~~~~
+
+.. FIXME
+
+If there occurs something that the user should be informed about, but other files can still be synced, you can *[TBD]*
+
+This is used for example if a file disapeard between listing all files and retrieving a file.
