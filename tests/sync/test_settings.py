@@ -1,10 +1,11 @@
 import pathlib
 
 from kitovu.sync.settings import Settings, ConnectionSettings
+from kitovu import utils
 
 
 def test_load_a_sample_yaml_file():
-    settings = Settings.from_yaml_file(pathlib.Path('./tests/assets/smb_example_config.yml'))
+    settings = Settings.from_yaml_file(pathlib.Path('./tests/assets/smb_example_config.yml'), utils.SchemaValidator(abort=True))
 
     expected_root_dir = pathlib.Path.home() / 'Documents/HSR/semester_06'
     expected_global_ignore = ['Thumbs.db', '.DS_Store']

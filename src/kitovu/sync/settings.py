@@ -6,7 +6,6 @@ import os.path
 
 import yaml
 import attr
-import jsonschema
 
 from kitovu import utils
 
@@ -54,26 +53,27 @@ class Settings:
     }
 
     @classmethod
-    def from_yaml_file(cls, path: pathlib.Path) -> 'Settings':
+    def from_yaml_file(cls, path: pathlib.Path, validator: utils.SchemaValidator) -> 'Settings':
         """Load the settings from the specified yaml file"""
         try:
             with path.open('r') as stream:
-                return cls.from_yaml_stream(stream)
+                return cls.from_yaml_stream(stream, validator)
         except FileNotFoundError as error:
             raise utils.UsageError(f'Could not find the file {error.filename}')
 
     @classmethod
-    def from_yaml_stream(cls, stream: typing.IO) -> 'Settings':
+    def from_yaml_stream(cls, stream: typing.IO, validator: utils.SchemaValidator) -> 'Settings':
         """Load the settings from the specified stream"""
         # FIXME handle OSError and UnicodeDecodeError
         data = yaml.load(stream)
 
-        jsonschema.validate(data, cls.settings_schema)
+        validator.validate(data, cls.settings_schema)
 
         root_dir = pathlib.Path(os.path.expanduser(data.pop('root-dir')))
         global_ignore = data.pop('global-ignore', [])
 
         connections = cls._get_connection_settings(
+            validator=validator,
             raw_connections=data.pop('connections'),
             raw_subjects=data.pop('subjects'),
             root_dir=root_dir,
@@ -86,7 +86,8 @@ class Settings:
         )
 
     @classmethod
-    def _get_connection_settings(cls, raw_connections: typing.List[SimpleDict],
+    def _get_connection_settings(cls, validator: utils.SchemaValidator,
+                                 raw_connections: typing.List[SimpleDict],
                                  raw_subjects: typing.List[SimpleDict],
                                  root_dir: pathlib.Path) -> typing.Dict[str, ConnectionSettings]:
         """Create the ConnectionSettings for the specified connections and subjects."""
@@ -137,7 +138,7 @@ class Settings:
             },
         }
 
-        jsonschema.validate(raw_subjects, subject_schema)
+        validator.validate(raw_subjects, subject_schema)
 
         for subject in raw_subjects:
             name = subject.pop('name')

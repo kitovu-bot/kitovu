@@ -50,7 +50,7 @@ class FakePlugin(AbstractSyncPlugin):
 class TestFindPlugin:
 
     def test_find_plugin_builtin(self):
-        plugin = syncing._find_plugin(self._get_settings('smb', connection={'username': 'test'}))
+        plugin = syncing._find_plugin(self._get_settings('smb', connection={'username': 'test'}), utils.SchemaValidator(abort=True))
         assert isinstance(plugin, smb.SmbPlugin)
 
     def test_find_plugin_missing_external(self, mocker):
@@ -58,7 +58,7 @@ class TestFindPlugin:
                      side_effect=stevedore.exception.NoMatches)
 
         with pytest.raises(utils.NoPluginError, match='The plugin doesnotexist was not found'):
-            syncing._find_plugin(self._get_settings('doesnotexist'))
+            syncing._find_plugin(self._get_settings('doesnotexist'), utils.SchemaValidator(abort=True))
 
     def test_find_plugin_external(self, mocker):
         fake_plugin_obj = FakePlugin()
@@ -67,7 +67,8 @@ class TestFindPlugin:
                            invoke_on_load=True)
         instance.driver = fake_plugin_obj
 
-        plugin = syncing._find_plugin(self._get_settings('test', connection={'some-required-prop': 'test'}))
+        settings = self._get_settings('test', connection={'some-required-prop': 'test'})
+        plugin = syncing._find_plugin(settings, utils.SchemaValidator(abort=True))
         assert plugin is fake_plugin_obj
 
     def _get_settings(self, plugin_name, connection={}, subjects=[]):

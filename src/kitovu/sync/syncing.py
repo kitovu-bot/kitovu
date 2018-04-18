@@ -5,7 +5,6 @@ import typing
 
 import stevedore
 import stevedore.driver
-import jsonschema
 
 from kitovu import utils
 from kitovu.sync import syncplugin
@@ -13,7 +12,8 @@ from kitovu.sync.settings import Settings, ConnectionSettings
 from kitovu.sync.plugin import smb
 
 
-def _find_plugin(plugin_settings: ConnectionSettings) -> syncplugin.AbstractSyncPlugin:
+def _find_plugin(plugin_settings: ConnectionSettings,
+                 validator: utils.SchemaValidator) -> syncplugin.AbstractSyncPlugin:
     """Find an appropriate sync plugin with the given settings."""
     builtin_plugins = {
         'smb': smb.SmbPlugin(),
@@ -30,21 +30,21 @@ def _find_plugin(plugin_settings: ConnectionSettings) -> syncplugin.AbstractSync
 
         plugin = manager.driver
 
-    jsonschema.validate(plugin_settings.connection, plugin.connection_schema())
+    validator.validate(plugin_settings.connection, plugin.connection_schema())
 
     return plugin
 
 
 def start_all(config_file: pathlib.Path) -> None:
     """Sync all files with the given configuration file."""
-    settings = Settings.from_yaml_file(config_file)
+    settings = Settings.from_yaml_file(config_file, utils.SchemaValidator(abort=True))
     for _plugin_key, connection_settings in sorted(settings.connections.items()):
         start(connection_settings)
 
 
 def start(connection_settings: ConnectionSettings) -> None:
     """Sync files with the given plugin and username."""
-    plugin = _find_plugin(connection_settings)
+    plugin = _find_plugin(connection_settings, utils.SchemaValidator(abort=True))
     plugin.configure(connection_settings.connection)
     plugin.connect()
 
@@ -77,9 +77,12 @@ def config_error(config_file: pathlib.Path) -> typing.Union[str, None]:
 
     Returns either an error message or None if it's valid."""
     try:
-        settings = Settings.from_yaml_file(config_file)
+        settings = Settings.from_yaml_file(config_file, utils.SchemaValidator(abort=True))
+        validator = utils.SchemaValidator(abort=False)
         for _connection_key, connection_settings in sorted(settings.connections.items()):
-            _find_plugin(connection_settings)
-        return None
-    except (jsonschema.exceptions.ValidationError, utils.UsageError) as error:
+            _find_plugin(connection_settings, validator)
+        if validator.valid:
+            return None
+        return validator.error_message
+    except utils.UsageError as error:
         return str(error)
