@@ -4,6 +4,7 @@ import pathlib
 import typing
 import os.path
 
+import appdirs
 import yaml
 import attr
 
@@ -31,8 +32,10 @@ class Settings:
     connections: typing.Dict[str, ConnectionSettings] = attr.ib()
 
     @classmethod
-    def from_yaml_file(cls, path: pathlib.Path) -> 'Settings':
+    def from_yaml_file(cls, path: typing.Optional[pathlib.Path] = None) -> 'Settings':
         """Load the settings from the specified yaml file"""
+        if path is None:
+            path = get_config_file_path()
         with path.open('r') as stream:
             return cls.from_yaml_stream(stream)
 
@@ -94,3 +97,11 @@ class Settings:
         """Raise an error if the specified dictionary is not empty."""
         if data:
             raise utils.UnknownSettingKeysError(list(data.keys()))
+
+
+def get_config_dir_path() -> pathlib.Path:
+    return pathlib.Path(appdirs.user_config_dir('kitovu'))
+
+
+def get_config_file_path() -> pathlib.Path:
+    return get_config_dir_path() / 'kitovu.yaml'

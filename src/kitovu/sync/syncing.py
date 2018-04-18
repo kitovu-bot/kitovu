@@ -1,6 +1,7 @@
 """Logic related to actually syncing files."""
 
 import pathlib
+import typing
 
 import stevedore
 import stevedore.driver
@@ -29,7 +30,7 @@ def _find_plugin(pluginname: str) -> syncplugin.AbstractSyncPlugin:
     return plugin
 
 
-def start_all(config_file: pathlib.Path) -> None:
+def start_all(config_file: typing.Optional[pathlib.Path]) -> None:
     """Sync all files with the given configuration file."""
     settings = Settings.from_yaml_file(config_file)
     for _plugin_key, connection_settings in sorted(settings.connections.items()):
