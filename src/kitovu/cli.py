@@ -16,6 +16,7 @@ Why does this file exist, and why not put this in __main__?
 """
 
 import pathlib
+import typing
 import sys
 
 import click
@@ -30,11 +31,11 @@ def cli() -> None:
 
 
 @cli.command()
-@click.argument('config_file', type=pathlib.Path)
-def sync(config_file: pathlib.Path) -> None:
+@click.option('--config', type=pathlib.Path, help="The configuration file to use")
+def sync(config: typing.Optional[pathlib.Path] = None) -> None:
     """Synchronize with the given configuration file."""
     try:
-        syncing.start_all(config_file)
+        syncing.start_all(config)
     except utils.UsageError as ex:
         raise click.ClickException(str(ex))
 

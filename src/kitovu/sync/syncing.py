@@ -35,7 +35,7 @@ def _find_plugin(plugin_settings: ConnectionSettings,
     return plugin
 
 
-def start_all(config_file: pathlib.Path) -> None:
+def start_all(config_file: typing.Optional[pathlib.Path]) -> None:
     """Sync all files with the given configuration file."""
     settings = Settings.from_yaml_file(config_file, utils.SchemaValidator(abort=True))
     for _plugin_key, connection_settings in sorted(settings.connections.items()):

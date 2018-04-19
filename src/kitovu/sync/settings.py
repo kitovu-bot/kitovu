@@ -4,6 +4,7 @@ import pathlib
 import typing
 import os.path
 
+import appdirs
 import yaml
 import attr
 
@@ -53,8 +54,11 @@ class Settings:
     }
 
     @classmethod
-    def from_yaml_file(cls, path: pathlib.Path, validator: utils.SchemaValidator) -> 'Settings':
+    def from_yaml_file(cls, path: typing.Optional[pathlib.Path],
+                       validator: utils.SchemaValidator) -> 'Settings':
         """Load the settings from the specified yaml file"""
+        if path is None:
+            path = get_config_file_path()
         try:
             with path.open('r') as stream:
                 return cls.from_yaml_stream(stream, validator)
@@ -150,3 +154,11 @@ class Settings:
                 connections[connection_usage.pop('connection')].subjects.append(connection_usage)
 
         return connections
+
+
+def get_config_dir_path() -> pathlib.Path:
+    return pathlib.Path(appdirs.user_config_dir('kitovu'))
+
+
+def get_config_file_path() -> pathlib.Path:
+    return get_config_dir_path() / 'kitovu.yaml'
