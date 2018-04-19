@@ -7,14 +7,17 @@ import stevedore
 import stevedore.driver
 
 from kitovu import utils
-from kitovu.sync import syncplugin
+from kitovu.sync.syncplugin import AbstractSyncPlugin
 from kitovu.sync.settings import Settings, ConnectionSettings
 from kitovu.sync.plugin import smb
 
 
-def _find_plugin(validator: utils.SchemaValidator,
-                 plugin_settings: ConnectionSettings) -> syncplugin.AbstractSyncPlugin:
+def _find_plugin(plugin_settings: ConnectionSettings,
+                 validator: typing.Optional[utils.SchemaValidator] = None) -> AbstractSyncPlugin:
     """Find an appropriate sync plugin with the given settings."""
+    if validator is None:
+        validator = utils.SchemaValidator()
+
     builtin_plugins = {
         'smb': smb.SmbPlugin(),
     }
@@ -37,14 +40,14 @@ def _find_plugin(validator: utils.SchemaValidator,
 
 def start_all(config_file: typing.Optional[pathlib.Path]) -> None:
     """Sync all files with the given configuration file."""
-    settings = Settings.from_yaml_file(utils.SchemaValidator(abort=True), config_file)
+    settings = Settings.from_yaml_file(config_file)
     for _plugin_key, connection_settings in sorted(settings.connections.items()):
         start(connection_settings)
 
 
 def start(connection_settings: ConnectionSettings) -> None:
     """Sync files with the given plugin and username."""
-    plugin = _find_plugin(utils.SchemaValidator(abort=True), connection_settings)
+    plugin = _find_plugin(connection_settings)
     plugin.configure(connection_settings.connection)
     plugin.connect()
 
@@ -77,10 +80,10 @@ def config_error(config_file: pathlib.Path) -> typing.Union[str, None]:
 
     Returns either an error message or None if it's valid."""
     try:
-        settings = Settings.from_yaml_file(utils.SchemaValidator(abort=True), config_file)
+        settings = Settings.from_yaml_file(config_file)
         validator = utils.SchemaValidator(abort=False)
         for _connection_key, connection_settings in sorted(settings.connections.items()):
-            _find_plugin(validator, connection_settings)
+            _find_plugin(connection_settings, validator)
         if validator.valid:
             return None
         return validator.error_message

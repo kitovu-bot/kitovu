@@ -50,7 +50,7 @@ class FakePlugin(AbstractSyncPlugin):
 class TestFindPlugin:
 
     def test_find_plugin_builtin(self):
-        plugin = syncing._find_plugin(utils.SchemaValidator(abort=True), self._get_settings('smb', connection={'username': 'test'}))
+        plugin = syncing._find_plugin(self._get_settings('smb', connection={'username': 'test'}))
         assert isinstance(plugin, smb.SmbPlugin)
 
     def test_find_plugin_missing_external(self, mocker):
@@ -58,7 +58,7 @@ class TestFindPlugin:
                      side_effect=stevedore.exception.NoMatches)
 
         with pytest.raises(utils.NoPluginError, match='The plugin doesnotexist was not found'):
-            syncing._find_plugin(utils.SchemaValidator(abort=True), self._get_settings('doesnotexist'))
+            syncing._find_plugin(self._get_settings('doesnotexist'))
 
     def test_find_plugin_external(self, mocker):
         fake_plugin_obj = FakePlugin()
@@ -68,7 +68,7 @@ class TestFindPlugin:
         instance.driver = fake_plugin_obj
 
         settings = self._get_settings('test', connection={'some-required-prop': 'test'})
-        plugin = syncing._find_plugin(utils.SchemaValidator(abort=True), settings)
+        plugin = syncing._find_plugin(settings)
         assert plugin is fake_plugin_obj
 
     def _get_settings(self, plugin_name, connection={}, subjects=[]):
@@ -175,7 +175,7 @@ class TestConfigError:
         file_name = pathlib.Path(tmpdir / 'config.yml')
         with file_name.open('w') as f:
             f.write("")
-        assert syncing.config_error(file_name).startswith("None is not of type 'object'\n")
+        assert self._get_config_errors(file_name) == ["None is not of type 'object'"]
 
     def test_configuration_with_missing_root_dir(self, tmpdir: py.path.local):
         file_name = pathlib.Path(tmpdir / 'config.yml')
@@ -184,16 +184,16 @@ class TestConfigError:
             connections: []
             subjects: []
             """)
-        assert syncing.config_error(file_name).startswith("'root-dir' is a required property\n")
+        assert self._get_config_errors(file_name) == ["'root-dir' is a required property"]
 
     def test_configuration_with_missing_subjects(self, tmpdir: py.path.local):
         file_name = pathlib.Path(tmpdir / 'config.yml')
         with file_name.open('w') as f:
             f.write("""
             root-dir: some-dir
-            connctions: []
+            connections: []
             """)
-        assert syncing.config_error(file_name).startswith("'subjects' is a required property\n")
+        assert self._get_config_errors(file_name) == ["'subjects' is a required property"]
 
     def test_configuration_with_missing_connections(self, tmpdir: py.path.local):
         file_name = pathlib.Path(tmpdir / 'config.yml')
@@ -202,7 +202,7 @@ class TestConfigError:
             root-dir: some-dir
             subjects: []
             """)
-        assert syncing.config_error(file_name).startswith("'connections' is a required property\n")
+        assert self._get_config_errors(file_name) == ["'connections' is a required property"]
 
     def test_configuration_with_invalid_subjects(self, tmpdir: py.path.local):
         file_name = pathlib.Path(tmpdir / 'config.yml')
@@ -215,10 +215,14 @@ class TestConfigError:
                 username: myuser
             subjects:
               - name: sync-1
+                unexpected_prop: asdf
                 sources:
                   - remote-dir: Some/Test/Dir2
             """)
-        assert syncing.config_error(file_name).startswith("'connection' is a required property\n")
+        assert self._get_config_errors(file_name) == [
+            "'connection' is a required property",
+            "Additional properties are not allowed ('unexpected_prop' was unexpected)",
+        ]
 
     def test_configuration_with_invalid_connections(self, mocker, tmpdir: py.path.local):
         fake_plugin_obj = FakePlugin()
@@ -240,4 +244,43 @@ class TestConfigError:
                   - connection: mytest-plugin
                     remote-dir: Some/Test/Dir
             """)
-        assert syncing.config_error(file_name).startswith("'some-required-prop' is a required property\n")
+        assert self._get_config_errors(file_name) == ["'some-required-prop' is a required property"]
+
+    def test_configuration_with_an_empty_connection(self, mocker, tmpdir: py.path.local):
+        file_name = pathlib.Path(tmpdir / 'config.yml')
+        with file_name.open('w') as f:
+            f.write("""
+            root-dir: ./asdf
+            connections:
+              - {}
+            subjects:
+              - name: sync-1
+                sources:
+                  - connection: mytest-plugin
+                    remote-dir: Some/Test/Dir
+            """)
+        assert self._get_config_errors(file_name) == [
+            "'name' is a required property",
+            "'plugin' is a required property",
+        ]
+
+    def test_configuration_with_an_empty_subject(self, mocker, tmpdir: py.path.local):
+        file_name = pathlib.Path(tmpdir / 'config.yml')
+        with file_name.open('w') as f:
+            f.write("""
+            root-dir: ./asdf
+            connections:
+              - name: mytest-plugin
+                plugin: smb
+                username: myuser
+            subjects:
+              - {}
+            """)
+        assert self._get_config_errors(file_name) == [
+            "'name' is a required property",
+            "'sources' is a required property",
+        ]
+
+    def _get_config_errors(self, file_name):
+        lines = syncing.config_error(file_name).split('\n')
+        return [line for line in lines if line and not line.startswith('\t')]

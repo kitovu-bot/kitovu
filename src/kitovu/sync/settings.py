@@ -41,7 +41,14 @@ class Settings:
             },
             'connections': {
                 'type': 'array',
-                'items': {'type': 'object'},
+                'items': {
+                    'type': 'object',
+                    'properties': {
+                        'name': {'type': 'string'},
+                        'plugin': {'type': 'string'},
+                    },
+                    'required': ['name', 'plugin'],
+                },
             },
             'global-ignore': {'type': 'array'},
         },
@@ -54,20 +61,24 @@ class Settings:
     }
 
     @classmethod
-    def from_yaml_file(cls, validator: utils.SchemaValidator,
-                       path: typing.Optional[pathlib.Path] = None) -> 'Settings':
+    def from_yaml_file(cls, path: typing.Optional[pathlib.Path] = None,
+                       validator: typing.Optional[utils.SchemaValidator] = None) -> 'Settings':
         """Load the settings from the specified yaml file"""
         if path is None:
             path = get_config_file_path()
         try:
             with path.open('r') as stream:
-                return cls.from_yaml_stream(validator, stream)
+                return cls.from_yaml_stream(stream, validator)
         except FileNotFoundError as error:
             raise utils.UsageError(f'Could not find the file {error.filename}')
 
     @classmethod
-    def from_yaml_stream(cls, validator: utils.SchemaValidator, stream: typing.IO) -> 'Settings':
+    def from_yaml_stream(cls, stream: typing.IO,
+                         validator: typing.Optional[utils.SchemaValidator] = None) -> 'Settings':
         """Load the settings from the specified stream"""
+        if validator is None:
+            validator = utils.SchemaValidator()
+
         # FIXME handle OSError and UnicodeDecodeError
         data = yaml.load(stream)
 

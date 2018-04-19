@@ -26,7 +26,7 @@ def get_password(plugin: str, identifier: str) -> str:
 class SchemaValidator:
     """A validator for creating and merging errors in schema definitions."""
 
-    def __init__(self, abort: bool) -> None:
+    def __init__(self, abort: bool = True) -> None:
         self.errors: typing.List[str] = []
         self.abort: bool = abort
 
