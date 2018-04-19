@@ -9,9 +9,9 @@ Implementation
 ~~~~~~~~~~~~~~
 
 To create a plugin that is able to connect to another service you have to first create a plugin class.
-This custom plugin class needs to inherit from :code:`kitovu.sync.syncplugin.AbstractSyncPlugin`.
+This custom plugin class needs to inherit from :class:`kitovu.sync.syncplugin.AbstractSyncPlugin`.
 
-For an example implementation see :code:`kitovu.sync.plugin.smb`.
+For an example implementation see :mod:`kitovu.sync.plugin.smb`.
 
 Registration
 ~~~~~~~~~~~~
@@ -20,38 +20,10 @@ The plugin class needs to be registered with stevedore_.
 
 You need to create a `setup.py` file like this::
 
- from setuptools import setup, find_packages
+ from setuptools import setup
 
  setup(
-     name='my-example-plugin',
-     version='1.0',
-
-     description='An example for a kitovu plugin',
-
-     author='Your Name',
-     author_email='your.name@example.com',
-
-     url='http://example.com/your/url',
-
-     classifiers=['Development Status :: 3 - Alpha',
-                  'License :: OSI Approved :: Apache Software License',
-                  'Programming Language :: Python',
-                  'Programming Language :: Python :: 2',
-                  'Programming Language :: Python :: 2.7',
-                  'Programming Language :: Python :: 3',
-                  'Programming Language :: Python :: 3.4',
-                  'Intended Audience :: Developers',
-                  'Environment :: Console',
-                  ],
-
-     platforms=['Any'],
-
-     scripts=[],
-
-     provides=['kitovu.sync.plugin'],
-
-     packages=find_packages(),
-     include_package_data=True,
+     # other setup parameters
 
      entry_points={
          'kitovu.sync.plugin': [
@@ -59,11 +31,11 @@ You need to create a `setup.py` file like this::
          ],
      },
 
-     zip_safe=False,
+     # other setup parameters
  )
 
-The important key is :code:`entry_points`.
-There you can list all plugins you implement.
+Your need to set :code:`entry_points`.
+There you can list all plugins you implement in this package.
 
 `my-example`
   This is the name of the plugin used in the kitovu configuration.
