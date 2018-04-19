@@ -41,10 +41,10 @@ def sync(config: typing.Optional[pathlib.Path] = None) -> None:
 
 
 @cli.command()
-@click.argument('config_file', type=pathlib.Path)
-def validate(config_file: pathlib.Path) -> None:
+@click.option('--config', type=pathlib.Path, help="The configuration file to validate")
+def validate(config: typing.Optional[pathlib.Path] = None) -> None:
     """Validates the specified configuration file."""
-    error = syncing.config_error(config_file)
+    error = syncing.config_error(config)
     if error:
         print(error)
         sys.exit(1)
