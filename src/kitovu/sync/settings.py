@@ -54,19 +54,19 @@ class Settings:
     }
 
     @classmethod
-    def from_yaml_file(cls, path: typing.Optional[pathlib.Path],
-                       validator: utils.SchemaValidator) -> 'Settings':
+    def from_yaml_file(cls, validator: utils.SchemaValidator,
+                       path: typing.Optional[pathlib.Path] = None) -> 'Settings':
         """Load the settings from the specified yaml file"""
         if path is None:
             path = get_config_file_path()
         try:
             with path.open('r') as stream:
-                return cls.from_yaml_stream(stream, validator)
+                return cls.from_yaml_stream(validator, stream)
         except FileNotFoundError as error:
             raise utils.UsageError(f'Could not find the file {error.filename}')
 
     @classmethod
-    def from_yaml_stream(cls, stream: typing.IO, validator: utils.SchemaValidator) -> 'Settings':
+    def from_yaml_stream(cls, validator: utils.SchemaValidator, stream: typing.IO) -> 'Settings':
         """Load the settings from the specified stream"""
         # FIXME handle OSError and UnicodeDecodeError
         data = yaml.load(stream)
