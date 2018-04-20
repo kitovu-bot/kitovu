@@ -1,17 +1,19 @@
 """Logic related to actually syncing files."""
 
 import pathlib
+import typing
 
 import stevedore
 import stevedore.driver
 
 from kitovu import utils
 from kitovu.sync import syncplugin
+from kitovu.sync.settings import Settings, ConnectionSettings
 from kitovu.sync.plugin import smb
 
 
 def _find_plugin(pluginname: str) -> syncplugin.AbstractSyncPlugin:
-    """Find an appropriate sync plugin with the given name."""
+    """Find an appropriate sync plugin with the given settings."""
     builtin_plugins = {
         'smb': smb.SmbPlugin(),
     }
@@ -28,31 +30,38 @@ def _find_plugin(pluginname: str) -> syncplugin.AbstractSyncPlugin:
     return plugin
 
 
-def start(pluginname: str, username: str) -> None:
+def start_all(config_file: typing.Optional[pathlib.Path]) -> None:
+    """Sync all files with the given configuration file."""
+    settings = Settings.from_yaml_file(config_file)
+    for _plugin_key, connection_settings in sorted(settings.connections.items()):
+        start(connection_settings)
+
+
+def start(connection_settings: ConnectionSettings) -> None:
     """Sync files with the given plugin and username."""
-    plugin = _find_plugin(pluginname)
-    plugin.configure({'username': username})
+    plugin = _find_plugin(connection_settings.plugin_name)
+    plugin.configure(connection_settings.connection)
     plugin.connect()
 
-    # FIXME hardcoded paths that will be replaced from entries in the config-file
-    path = pathlib.PurePath('/Informatik/Fachbereich/Engineering-Projekt/EPJ/FS2018/')
-    outputpath = pathlib.Path(".") / "kitovu-output-files"
+    for subject in connection_settings.subjects:
+        remote_path = subject['remote-dir']
+        local_path = subject['local-dir']
 
-    for item in plugin.list_path(path):
+        for item in plugin.list_path(remote_path):
+            # each plugin should now yield all files recursively with list_path
+            print(f'Downloading: {item}')
 
-        # each plugin should now yield all files recursively with list_path
-        print(f'Downloading: {item}')
+            digest = plugin.create_remote_digest(item)
+            print(f'Remote digest: {digest}')
 
-        remote_digest = plugin.create_remote_digest(item)
-        print(f'Remote digest: {remote_digest}')
+            output = pathlib.Path(local_path / item.relative_to(remote_path))
 
-        output = pathlib.Path(outputpath / item.relative_to(path))
+            pathlib.Path(output.parent).mkdir(parents=True, exist_ok=True)
 
-        pathlib.Path(output.parent).mkdir(parents=True, exist_ok=True)
+            with output.open('wb') as fileobj:
+                plugin.retrieve_file(item, fileobj)
 
-        with output.open('wb') as fileobj:
-            plugin.retrieve_file(item, fileobj)
+            digest = plugin.create_local_digest(output)
+            print(f'Local digest: {digest}')
 
-        local_digest = plugin.create_local_digest(output)
-        print(f'Local digest: {local_digest}')
-        # create File object, that writes output, remote_digest, local_digest to file
+    plugin.disconnect()
