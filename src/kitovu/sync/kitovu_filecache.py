@@ -56,21 +56,22 @@ class FileCache:
         with self._filename.open("w") as f:
             json.dump(json_data, f)
 
-    def load(self) -> typing.List[File]:
-        json.load(pathlib.Path(self._path_to_json).joinpath(self._FILECACHE))
-
-
-    def update_file_digest(self, file: File) -> None:
-        # write File's cached_digest and path
-        pass
+    def load(self) -> None:
+        """What is called first when the synchronisation process is started."""
+        with self._filename.open("r") as f:
+            json_data = json.load(f)
+        for key, value in json_data.items():
+            digest: str = value["digest"]
+            plugin: str = value["plugin"]
+            self._data[pathlib.PurePath(key)] = File(local_digest_at_synctime=digest, plugin=plugin) # should be of type AbstractSyncPlugin
 
     def modify(self):
         pass
 
-    def discover_changes(self, file: File) -> int:
-
+    def discover_changes(self, path: pathlib.PurePath) -> Filestate:
+        # use path as index into already loaded _data
+        # get cached_digest, compare it to file that is synchronised
         # return ENUM: LOCAL; REMOTE; BOTH; NONE
-        # queries Filecache, compare all this to decide what enum to return
         pass
 
 
