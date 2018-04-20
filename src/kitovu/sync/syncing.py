@@ -36,6 +36,8 @@ def start_all(config_file: typing.Optional[pathlib.Path]) -> None:
     for _plugin_key, connection_settings in sorted(settings.connections.items()):
         start(connection_settings)
 
+# synchronisation process: define here filename of FileCache / write with appdirs to disk
+
 
 def start(connection_settings: ConnectionSettings) -> None:
     """Sync files with the given plugin and username."""
