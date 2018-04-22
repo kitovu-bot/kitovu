@@ -29,9 +29,9 @@ class File:
     def __init__(self, local_digest_at_synctime: str,
                  relative_path_with_filename: pathlib.PurePath,
                  plugin: syncplugin.AbstractSyncPlugin) -> None:
-        self._cached_digest = local_digest_at_synctime # value
-        self._relative_path_with_filename: pathlib.PurePath = relative_path_with_filename  # key
-        self._plugin = plugin  # value
+        self._cached_digest = local_digest_at_synctime  # dict-value
+        self._relative_path_with_filename: pathlib.PurePath = relative_path_with_filename  # dict-key
+        self._plugin = plugin  # dict-value
         self._remote_digest = ""
         self._local_digest = ""
 
@@ -46,6 +46,34 @@ class FileCache:
         self._filename: pathlib.Path = filename
         self._data: typing.Dict[pathlib.PurePath, File] = {}
 
+    def _compare_digests(self, remote_digest: str, local_digest: str, cached_digest: str) -> Filestate:
+        if remote_digest == local_digest == cached_digest:  # case 5
+            return Filestate.NONE
+        elif (remote_digest != cached_digest) and (local_digest == cached_digest):  # case 4
+            return Filestate.REMOTE
+        elif (remote_digest == cached_digest) and (local_digest != cached_digest):  # case 6
+            return Filestate.LOCAL
+        elif (remote_digest != cached_digest) and (local_digest != cached_digest):  # case 7
+            return Filestate.BOTH
+
+        # new file B is discovered when remote_digest != cached_digest
+
+        # Cases:
+        # 1. remote deleted (triggers exception), local exists => REMOTE*
+        # 2. remote deleted (triggers exception), local exists AND changed (local_digest and cached_digest differ) => BOTH*
+        # case 1 and 2 special, dealt with separately, FIXME externally
+
+        # Normal Cases:
+        # 3. new file remote, local none => REMOTE, download FIXME externally
+        # 4. remote B, local A => remote_digest and cached digest differ, but local digest and cached digest same => REMOTE, download
+
+        # 5. remote and local same  => NONE
+
+        # 6. remote A unchanged, local changed => remote_digest and cached_digest same, but local_digest and cached_digest differ => LOCAL
+        # 7. remote B, local changed => remote_digest and cached_digest differ, local_digest and cached_digest differ => BOTH
+        # 8. remote B, local b => remote_digest and cached_digest same, but local_digest and cached_digest differ => case 6, update Filecache
+        # case 8 is basically the same as 6, it simply triggers the user's decision and needs to update the filecache
+
     def write(self) -> None:
         """"Writes the data-dict to JSON."""
         json_data: typing.Dict[str, typing.Dict[str, str]] = {}
@@ -57,24 +85,29 @@ class FileCache:
             json.dump(json_data, f)
 
     def load(self) -> None:
-        """What is called first when the synchronisation process is started."""
+        """This is called first when the synchronisation process is started."""
         with self._filename.open("r") as f:
             json_data = json.load(f)
         for key, value in json_data.items():
             digest: str = value["digest"]
             plugin: str = value["plugin"]
-            self._data[pathlib.PurePath(key)] = File(local_digest_at_synctime=digest, plugin=plugin) # should be of type AbstractSyncPlugin
+            self._data[pathlib.PurePath(key)] = File(local_digest_at_synctime=digest, plugin=plugin)
+            # FIXME should be of type AbstractSyncPlugin - conversion?
 
     def modify(self):
         pass
 
-    def discover_changes(self, path: pathlib.PurePath) -> Filestate:
+    def discover_changes(self, path: pathlib.PurePath, plugin: syncplugin.AbstractSyncPlugin) -> Filestate:
+        """checks if the file that is currently downloaded (path-argument) has changed in comparison to the local filecache)."""
+        # FIXME error handling to see if _data has been loaded already
+
         # use path as index into already loaded _data
+        file: File = self._data[path]
+        cached_digest = file["digest"]
+
         # get cached_digest, compare it to file that is synchronised
+        remote_digest = plugin.create_remote_digest(path)
+        local_digest = plugin.create_local_digest(path)
+        return self._compare_digests(remote_digest, local_digest, cached_digest)
         # return ENUM: LOCAL; REMOTE; BOTH; NONE
-        pass
-
-
-
-
 
