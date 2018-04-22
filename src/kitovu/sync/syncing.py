@@ -10,6 +10,7 @@ from kitovu import utils
 from kitovu.sync import syncplugin
 from kitovu.sync.settings import Settings, ConnectionSettings
 from kitovu.sync.plugin import smb
+from kitovu.sync import kitovu_filecache
 
 
 def _find_plugin(pluginname: str) -> syncplugin.AbstractSyncPlugin:
@@ -44,6 +45,8 @@ def start(connection_settings: ConnectionSettings) -> None:
     plugin = _find_plugin(connection_settings.plugin_name)
     plugin.configure(connection_settings.connection)
     plugin.connect()
+    filecache: kitovu_filecache.FileCache = kitovu_filecache.FileCache(pathlib.PurePath("filecache.json"))
+    # FIXME add path from settings
 
     for subject in connection_settings.subjects:
         remote_path = subject['remote-dir']

@@ -98,7 +98,8 @@ class FileCache:
         pass
 
     def discover_changes(self, path: pathlib.PurePath, plugin: syncplugin.AbstractSyncPlugin) -> Filestate:
-        """checks if the file that is currently downloaded (path-argument) has changed in comparison to the local filecache)."""
+        """checks if the file that is currently downloaded (path-argument) has changed
+        in comparison to the local filecache and local file)."""
         # FIXME error handling to see if _data has been loaded already
 
         # use path as index into already loaded _data
@@ -109,5 +110,4 @@ class FileCache:
         remote_digest = plugin.create_remote_digest(path)
         local_digest = plugin.create_local_digest(path)
         return self._compare_digests(remote_digest, local_digest, cached_digest)
-        # return ENUM: LOCAL; REMOTE; BOTH; NONE
 
