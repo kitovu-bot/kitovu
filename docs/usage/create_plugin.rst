@@ -63,8 +63,6 @@ Any other exception will lead to the kitovu application to terminate.
 Warnings
 ~~~~~~~~
 
-.. FIXME
+If there occurs something that the user should be informed about, but other files can still be synced, you can print warnings. This is done with the reporter instance variable on the plugin class. You can use :code:`self.reporter.warn("My Message for the user")`.
 
-If there occurs something that the user should be informed about, but other files can still be synced, you can *[TBD]*
-
-This is used for example if a file disapeard between listing all files and retrieving a file.
+This is used for example if a file disappeard between listing all files and retrieving a file.
