@@ -30,16 +30,17 @@ def _find_plugin(pluginname: str) -> syncplugin.AbstractSyncPlugin:
     return plugin
 
 
-def start_all(config_file: typing.Optional[pathlib.Path]) -> None:
+def start_all(config_file: typing.Optional[pathlib.Path], reporter: utils.AbstractReporter) -> None:
     """Sync all files with the given configuration file."""
     settings = Settings.from_yaml_file(config_file)
     for _plugin_key, connection_settings in sorted(settings.connections.items()):
-        start(connection_settings)
+        start(connection_settings, reporter)
 
 
-def start(connection_settings: ConnectionSettings) -> None:
+def start(connection_settings: ConnectionSettings, reporter: utils.AbstractReporter) -> None:
     """Sync files with the given plugin and username."""
     plugin = _find_plugin(connection_settings.plugin_name)
+    plugin.reporter = reporter
     plugin.configure(connection_settings.connection)
     plugin.connect()
 

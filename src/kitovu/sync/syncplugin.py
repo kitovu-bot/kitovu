@@ -4,6 +4,8 @@ import abc
 import pathlib
 import typing
 
+from kitovu import utils
+
 
 class AbstractSyncPlugin(metaclass=abc.ABCMeta):
 
@@ -11,6 +13,8 @@ class AbstractSyncPlugin(metaclass=abc.ABCMeta):
 
     Every abstract method in this class is a plugin hook.
     """
+
+    reporter: utils.AbstractReporter
 
     @abc.abstractmethod
     def configure(self, info: typing.Dict[str, typing.Any]) -> None:

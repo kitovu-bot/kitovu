@@ -7,7 +7,7 @@ import stevedore
 from kitovu import utils
 from kitovu.sync import syncing
 from kitovu.sync.plugin import smb
-from helpers import dummyplugin
+from helpers import dummyplugin, reporter
 
 
 class TestFindPlugin:
@@ -76,7 +76,7 @@ class TestSyncAll:
                   - connection: another-plugin
                     remote-dir: Another/Test/Dir2
             """)
-        syncing.start_all(file_name)
+        syncing.start_all(file_name, reporter.TestReporter())
 
         assert sorted(pathlib.Path(tmpdir).glob("syncs/**/*")) == [
             pathlib.Path(f'{tmpdir}/syncs/sync-1'),

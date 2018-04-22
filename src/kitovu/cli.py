@@ -24,6 +24,11 @@ from kitovu import utils
 from kitovu.sync import syncing
 
 
+class CliReporter(utils.AbstractReporter):
+    def warning(self, message: str) -> None:
+        print(message)
+
+
 @click.group()
 def cli() -> None:
     pass
@@ -34,6 +39,6 @@ def cli() -> None:
 def sync(config: typing.Optional[pathlib.Path] = None) -> None:
     """Synchronize with the given configuration file."""
     try:
-        syncing.start_all(config)
+        syncing.start_all(config, CliReporter())
     except utils.UsageError as ex:
         raise click.ClickException(str(ex))
