@@ -75,7 +75,7 @@ def start(connection_settings: ConnectionSettings) -> None:
     plugin.disconnect()
 
 
-def config_error(config_file: pathlib.Path) -> typing.Union[str, None]:
+def config_error(config_file: typing.Optional[pathlib.Path]) -> typing.Union[str, None]:
     """Validates the given configuration file.
 
     Returns either an error message or None if it's valid."""
