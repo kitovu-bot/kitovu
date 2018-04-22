@@ -27,10 +27,10 @@ class Filestate(Enum):
 class File:
 
     def __init__(self, local_digest_at_synctime: str,
-                 relative_path_with_filename: pathlib.PurePath,
+                 relative_path_with_filename: pathlib.Path,
                  plugin: syncplugin.AbstractSyncPlugin) -> None:
         self._cached_digest = local_digest_at_synctime  # dict-value
-        self._relative_path_with_filename: pathlib.PurePath = relative_path_with_filename  # dict-key
+        self._relative_path_with_filename: pathlib.Path = relative_path_with_filename  # dict-key
         self._plugin = plugin  # dict-value
         self._remote_digest = ""
         self._local_digest = ""
@@ -44,7 +44,7 @@ class FileCache:
 
     def __init__(self, filename: pathlib.Path):
         self._filename: pathlib.Path = filename
-        self._data: typing.Dict[pathlib.PurePath, File] = {}
+        self._data: typing.Dict[pathlib.Path, File] = {}
 
     def _compare_digests(self, remote_digest: str, local_digest: str, cached_digest: str) -> Filestate:
         if remote_digest == local_digest == cached_digest:  # case 5
@@ -65,10 +65,9 @@ class FileCache:
 
         # Normal Cases:
         # 3. new file remote, local none => REMOTE, download FIXME externally
-        # 4. remote B, local A => remote_digest and cached digest differ, but local digest and cached digest same => REMOTE, download
+        # 4. remote B, local A => remote_digest and local digest differ, but local digest and cached digest same => REMOTE, download
 
         # 5. remote and local same  => NONE
-
         # 6. remote A unchanged, local changed => remote_digest and cached_digest same, but local_digest and cached_digest differ => LOCAL
         # 7. remote B, local changed => remote_digest and cached_digest differ, local_digest and cached_digest differ => BOTH
         # 8. remote B, local b => remote_digest and cached_digest same, but local_digest and cached_digest differ => case 6, update Filecache
@@ -91,13 +90,13 @@ class FileCache:
         for key, value in json_data.items():
             digest: str = value["digest"]
             plugin: str = value["plugin"]
-            self._data[pathlib.PurePath(key)] = File(local_digest_at_synctime=digest, plugin=plugin)
+            self._data[pathlib.Path(key)] = File(local_digest_at_synctime=digest, plugin=plugin)
             # FIXME should be of type AbstractSyncPlugin - conversion?
 
-    def modify(self):
-        pass
+    def update(self, path: pathlib.Path, plugin: syncplugin.AbstractSyncPlugin, local_digest_at_synctime):
+        self._data.update(path, File(local_digest_at_synctime=local_digest_at_synctime, plugin=plugin))
 
-    def discover_changes(self, path: pathlib.PurePath, plugin: syncplugin.AbstractSyncPlugin) -> Filestate:
+    def discover_changes(self, path: pathlib.Path, plugin: syncplugin.AbstractSyncPlugin) -> Filestate:
         """checks if the file that is currently downloaded (path-argument) has changed
         in comparison to the local filecache and local file)."""
         # FIXME error handling to see if _data has been loaded already

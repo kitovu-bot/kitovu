@@ -30,7 +30,6 @@ def _find_plugin(pluginname: str) -> syncplugin.AbstractSyncPlugin:
     plugin: syncplugin.AbstractSyncPlugin = manager.driver
     return plugin
 
-
 def start_all(config_file: typing.Optional[pathlib.Path]) -> None:
     """Sync all files with the given configuration file."""
     settings = Settings.from_yaml_file(config_file)
@@ -46,7 +45,12 @@ def start(connection_settings: ConnectionSettings) -> None:
     plugin.configure(connection_settings.connection)
     plugin.connect()
     filecache: kitovu_filecache.FileCache = kitovu_filecache.FileCache(pathlib.PurePath("filecache.json"))
-    # FIXME add path from settings
+    # FIXME add path from settings instead of filecache.json
+    filecache.load()
+
+    # special filecache cases which FIXME here
+    # 1. remote deleted (triggers exception), local exists => REMOTE*
+    # 2. remote deleted (triggers exception), local exists AND changed (local_digest and cached_digest differ) => BOTH*
 
     for subject in connection_settings.subjects:
         remote_path = subject['remote-dir']
@@ -56,17 +60,36 @@ def start(connection_settings: ConnectionSettings) -> None:
             # each plugin should now yield all files recursively with list_path
             print(f'Downloading: {item}')
 
-            digest = plugin.create_remote_digest(item)
-            print(f'Remote digest: {digest}')
+            remote_digest = plugin.create_remote_digest(item)
+            print(f'Remote digest: {remote_digest}')
 
-            output = pathlib.Path(local_path / item.relative_to(remote_path))
+            # test if file remotely: case 1 and 2 are special
+                # 1. remote deleted (triggers exception), local exists => REMOTE*
+                # 2. remote deleted (triggers exception), local exists AND changed (local_digest and cached_digest differ) => BOTH*
 
-            pathlib.Path(output.parent).mkdir(parents=True, exist_ok=True)
 
-            with output.open('wb') as fileobj:
-                plugin.retrieve_file(item, fileobj)
+            # if file doesn't exist: case 3 (normal case)
+            if not pathlib.Path(local_path / item.relative_to(remote_path)).exists():
+                output = pathlib.Path(local_path / item.relative_to(remote_path))
+                pathlib.Path(output.parent).mkdir(parents=True, exist_ok=True)
 
-            digest = plugin.create_local_digest(output)
-            print(f'Local digest: {digest}')
+                with output.open('wb') as fileobj:
+                    plugin.retrieve_file(item, fileobj)
+
+                local_digest = plugin.create_local_digest(output)
+                print(f'Local digest: {local_digest}')
+                filecache.update(local_digest, output, plugin)
+                # Fixme case 4. remote B, local A => remote_digest and local digest differ, but local digest and cached digest same => REMOTE, download
+            else: # file exists already
+                state_of_file: int = filecache.discover_changes(output, plugin)
+                if state_of_file == kitovu_filecache.Filestate.NONE:
+                    pass
+                elif state_of_file == kitovu_filecache.Filestate.REMOTE:
+
+                elif state_of_file == kitovu_filecache.Filestate.LOCAL:
+                    filecache.update(local_digest, output, plugin)
+                elif state_of_file == kitovu_filecache.Filestate.BOTH: # override
+
+
 
     plugin.disconnect()
