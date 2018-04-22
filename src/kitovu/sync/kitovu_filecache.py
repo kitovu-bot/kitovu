@@ -91,10 +91,11 @@ class FileCache:
             digest: str = value["digest"]
             plugin: str = value["plugin"]
             self._data[pathlib.Path(key)] = File(local_digest_at_synctime=digest, plugin=plugin)
-            # FIXME should be of type AbstractSyncPlugin - conversion?
+            # FIXME should be of type AbstractSyncPlugin - conversion needed?
 
     def update(self, path: pathlib.Path, plugin: syncplugin.AbstractSyncPlugin, local_digest_at_synctime):
-        self._data.update(path, File(local_digest_at_synctime=local_digest_at_synctime, plugin=plugin))
+        file = File(local_digest_at_synctime=local_digest_at_synctime, plugin=plugin)
+        self._data.update(path, file)
 
     def discover_changes(self, path: pathlib.Path, plugin: syncplugin.AbstractSyncPlugin) -> Filestate:
         """checks if the file that is currently downloaded (path-argument) has changed
