@@ -76,6 +76,6 @@ class UnknownSettingKeysError(InvalidSettingsError):
 class AbstractReporter(metaclass=abc.ABCMeta):
     """A class that handles the reporting of warnings to the UI or CLI."""
     @abc.abstractmethod
-    def warning(self, message: str) -> None:
+    def warn(self, message: str) -> None:
         """Print the warning according to the current interface."""
         raise NotImplementedError

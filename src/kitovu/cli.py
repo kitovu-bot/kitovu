@@ -25,7 +25,7 @@ from kitovu.sync import syncing
 
 
 class CliReporter(utils.AbstractReporter):
-    def warning(self, message: str) -> None:
+    def warn(self, message: str) -> None:
         print(message)
 
 
