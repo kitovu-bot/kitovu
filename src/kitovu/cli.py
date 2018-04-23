@@ -17,16 +17,24 @@ Why does this file exist, and why not put this in __main__?
 
 import pathlib
 import typing
+import sys
 
 import click
 
 from kitovu import utils
 from kitovu.sync import syncing
+from kitovu.gui import app as guiapp
 
 
 @click.group()
 def cli() -> None:
     pass
+
+
+@cli.command()
+def gui() -> None:
+    """Start the kitovu GUI."""
+    sys.exit(guiapp.run())
 
 
 @cli.command()
