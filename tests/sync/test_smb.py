@@ -201,6 +201,9 @@ class TestValidations:
                 share: my-share
                 domain: my-domain
                 username: myuser
+                sign_options: never
+                use_ntlm_v2: true
+                is_direct_tcp: false
             subjects:
               - name: test-subject
                 sources:
@@ -218,7 +221,7 @@ class TestValidations:
               - name: mytest-plugin
                 plugin: smb
                 host: example.com
-                port_number: 1234
+                sign_options: some-other-value
             subjects:
               - name: test-subject
                 sources:
@@ -226,8 +229,9 @@ class TestValidations:
                     remote-dir: /test/dir
             """)
         assert self._get_config_errors(file_name) == [
+            "'some-other-value' is not one of ['never', 'when_supported', 'when_required']",
             "'username' is a required property",
-            "Additional properties are not allowed ('port_number', 'host' were unexpected)",
+            "Additional properties are not allowed ('host' was unexpected)",
         ]
 
     def _get_config_errors(self, file_name):
