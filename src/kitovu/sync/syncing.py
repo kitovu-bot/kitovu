@@ -84,7 +84,7 @@ def config_error(config_file: typing.Optional[pathlib.Path]) -> typing.Union[str
         validator = utils.SchemaValidator(abort=False)
         for _connection_key, connection_settings in sorted(settings.connections.items()):
             _find_plugin(connection_settings, validator)
-        if validator.valid:
+        if validator.is_valid:
             return None
         return validator.error_message
     except utils.UsageError as error:

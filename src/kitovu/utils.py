@@ -34,11 +34,11 @@ class SchemaValidator:
         """Validates the given data with the schema."""
         validator_type = jsonschema.validators.validator_for(schema)
         self.errors.extend(validator_type(schema).iter_errors(data))
-        if self.abort and not self.valid:
+        if self.abort and not self.is_valid:
             raise InvalidSettingsError(self)
 
     @property
-    def valid(self) -> bool:
+    def is_valid(self) -> bool:
         """Wether or not the already validated data is valid or not."""
         return not self.errors
 
