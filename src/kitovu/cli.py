@@ -46,5 +46,5 @@ def validate(config: typing.Optional[pathlib.Path] = None) -> None:
     """Validates the specified configuration file."""
     error = syncing.config_error(config)
     if error:
-        print(error)
+        print(error, file=sys.stderr)
         sys.exit(1)
