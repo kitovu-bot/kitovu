@@ -50,7 +50,7 @@ class Settings:
                     'required': ['name', 'plugin'],
                 },
             },
-            'global-ignore': {'type': 'array'},
+            'global-ignore': {'type': 'array', 'items': {'type': 'string'}},
         },
         'required': [
             'root-dir',
