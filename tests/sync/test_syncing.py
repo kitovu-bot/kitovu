@@ -1,5 +1,4 @@
 import pytest
-import typing
 import pathlib
 import py.path
 
@@ -9,7 +8,6 @@ from kitovu import utils
 from kitovu.sync import syncing
 from kitovu.sync.plugin import smb
 from kitovu.sync.settings import ConnectionSettings
-from kitovu.sync.syncplugin import AbstractSyncPlugin
 from helpers import dummyplugin
 
 
@@ -24,6 +22,7 @@ def dummy_plugin():
         'required': ['some-required-prop'],
         'additionalProperties': False,
     })
+
 
 class TestFindPlugin:
 

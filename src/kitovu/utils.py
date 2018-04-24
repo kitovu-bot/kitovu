@@ -37,7 +37,8 @@ class SchemaValidator:
         if self.abort and not self.is_valid:
             self.raise_error()
 
-    def raise_error(self):
+    def raise_error(self) -> None:
+        """Raises itself as an InvalidSettingsError."""
         raise InvalidSettingsError(self)
 
     @property

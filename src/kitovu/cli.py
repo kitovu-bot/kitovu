@@ -17,7 +17,6 @@ Why does this file exist, and why not put this in __main__?
 
 import pathlib
 import typing
-import sys
 
 import click
 
