@@ -50,11 +50,11 @@ class FileCache:
     def _compare_digests(self, remote_digest: str, local_digest: str, cached_digest: str) -> Filestate:
         local_changed: bool = local_digest != cached_digest
         remote_changed: bool = remote_digest != cached_digest
-        if remote_digest == local_digest == cached_digest:  # case 5
+        if not remote_changed and not local_changed:  # case 5
             return Filestate.NONE
-        elif remote_changed and (local_digest == cached_digest):  # case 4
+        elif remote_changed and not local_changed:  # case 4
             return Filestate.REMOTE
-        elif (remote_digest == cached_digest) and local_changed:  # case 6
+        elif not remote_changed and local_changed:  # case 6
             return Filestate.LOCAL
         elif remote_changed and local_changed:  # case 7
             return Filestate.BOTH
