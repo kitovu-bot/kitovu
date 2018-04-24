@@ -1,7 +1,6 @@
 """FileCache keeps track of the state of the files, remotely and locally. It exists to determine if the local file
 has been changed between two synchronisation processes and allows for a conflict handling accordingly."""
 
-import appdirs
 from enum import Enum
 import json
 import pathlib
@@ -23,7 +22,7 @@ class Filestate(Enum):
     NONE = 4
 
 
-# refactor with attrs.?
+# #FIXME refactor with attrs.?
 class File:
 
     def __init__(self, local_digest_at_synctime: str,
@@ -36,7 +35,7 @@ class File:
         self._local_digest = ""
 
     def to_dict(self) -> typing.Dict[str, str]:
-        return {"plugin": self._plugin.name,
+        return {"plugin": self._plugin.name,  # FIXME doesn't resolve
                 "digest": self._cached_digest}
 
 
@@ -47,13 +46,15 @@ class FileCache:
         self._data: typing.Dict[pathlib.Path, File] = {}
 
     def _compare_digests(self, remote_digest: str, local_digest: str, cached_digest: str) -> Filestate:
+        local_changed: bool = local_digest != cached_digest
+        remote_changed: bool = remote_digest != cached_digest
         if remote_digest == local_digest == cached_digest:  # case 5
             return Filestate.NONE
-        elif (remote_digest != cached_digest) and (local_digest == cached_digest):  # case 4
+        elif remote_changed and (local_digest == cached_digest):  # case 4
             return Filestate.REMOTE
-        elif (remote_digest == cached_digest) and (local_digest != cached_digest):  # case 6
+        elif (remote_digest == cached_digest) and local_changed:  # case 6
             return Filestate.LOCAL
-        elif (remote_digest != cached_digest) and (local_digest != cached_digest):  # case 7
+        elif remote_changed and local_changed:  # case 7
             return Filestate.BOTH
 
         # new file B is discovered when remote_digest != cached_digest
@@ -93,21 +94,22 @@ class FileCache:
             self._data[pathlib.Path(key)] = File(local_digest_at_synctime=digest, plugin=plugin)
             # FIXME should be of type AbstractSyncPlugin - conversion needed?
 
-    def update(self, path: pathlib.Path, plugin: syncplugin.AbstractSyncPlugin, local_digest_at_synctime):
+    def modify(self, path: pathlib.Path, plugin: syncplugin.AbstractSyncPlugin, local_digest_at_synctime: str):
         file = File(local_digest_at_synctime=local_digest_at_synctime, plugin=plugin)
-        self._data.update(path, file)
+        self._data[path] = file
 
     def discover_changes(self, path: pathlib.Path, plugin: syncplugin.AbstractSyncPlugin) -> Filestate:
-        """checks if the file that is currently downloaded (path-argument) has changed
-        in comparison to the local filecache and local file)."""
+        """Check if the file that is currently downloaded (path-argument) has changed.
+
+        Change is discovered between local filecache and local file."""
         # FIXME error handling to see if _data has been loaded already
 
         # use path as index into already loaded _data
         file: File = self._data[path]
-        cached_digest = file["digest"]
+        cached_digest: str = file["digest"]
 
         # get cached_digest, compare it to file that is synchronised
-        remote_digest = plugin.create_remote_digest(path)
-        local_digest = plugin.create_local_digest(path)
+        remote_digest: str = plugin.create_remote_digest(path)
+        local_digest: str = plugin.create_local_digest(path)
         return self._compare_digests(remote_digest, local_digest, cached_digest)
 

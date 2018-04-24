@@ -1,5 +1,6 @@
 """Logic related to actually syncing files."""
 
+import appdirs
 import pathlib
 import typing
 
@@ -30,13 +31,12 @@ def _find_plugin(pluginname: str) -> syncplugin.AbstractSyncPlugin:
     plugin: syncplugin.AbstractSyncPlugin = manager.driver
     return plugin
 
+
 def start_all(config_file: typing.Optional[pathlib.Path]) -> None:
     """Sync all files with the given configuration file."""
     settings = Settings.from_yaml_file(config_file)
     for _plugin_key, connection_settings in sorted(settings.connections.items()):
         start(connection_settings)
-
-# synchronisation process: define here filename of FileCache / write with appdirs to disk
 
 
 def start(connection_settings: ConnectionSettings) -> None:
@@ -44,7 +44,8 @@ def start(connection_settings: ConnectionSettings) -> None:
     plugin = _find_plugin(connection_settings.plugin_name)
     plugin.configure(connection_settings.connection)
     plugin.connect()
-    filecache: kitovu_filecache.FileCache = kitovu_filecache.FileCache(pathlib.PurePath("filecache.json"))
+    filecache: kitovu_filecache.FileCache = kitovu_filecache.FileCache(
+        pathlib.Path(appdirs.user_data_dir('kitovu')) / 'filecache.json')
     # FIXME add path from settings instead of filecache.json
     filecache.load()
 
@@ -73,7 +74,7 @@ def start(connection_settings: ConnectionSettings) -> None:
 
                 local_digest = plugin.create_local_digest(output)
                 print(f'Local digest: {local_digest}')
-                filecache.update(local_digest, output, plugin)
+                filecache.modify(output, plugin, local_digest)
                 # Fixme case 4: remote B, local A
                 # => remote_digest and local digest differ, local digest and cached digest same => REMOTE, download
             else:  # file exists already
@@ -89,7 +90,7 @@ def start(connection_settings: ConnectionSettings) -> None:
 
                     local_digest = plugin.create_local_digest(output)
                     print(f'Local digest: {local_digest}')
-                    filecache.update(local_digest, output, plugin)
+                    filecache.modify(output, plugin, local_digest)
                 elif state_of_file == kitovu_filecache.Filestate.LOCAL:
                     pass
                 elif state_of_file == kitovu_filecache.Filestate.BOTH:  # override
@@ -101,6 +102,6 @@ def start(connection_settings: ConnectionSettings) -> None:
 
                     local_digest = plugin.create_local_digest(output)
                     print(f'Local digest: {local_digest}')
-                    filecache.update(local_digest, output, plugin)
+                    filecache.modify(output, plugin, local_digest)
     filecache.write()
     plugin.disconnect()
