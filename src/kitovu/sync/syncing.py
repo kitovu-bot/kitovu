@@ -11,7 +11,7 @@ from kitovu import utils
 from kitovu.sync import syncplugin
 from kitovu.sync.settings import Settings, ConnectionSettings
 from kitovu.sync.plugin import smb
-from kitovu.sync import kitovu_filecache
+from kitovu.sync import filecache
 
 
 def _find_plugin(pluginname: str) -> syncplugin.AbstractSyncPlugin:
@@ -44,7 +44,7 @@ def start(connection_settings: ConnectionSettings) -> None:
     plugin = _find_plugin(connection_settings.plugin_name)
     plugin.configure(connection_settings.connection)
     plugin.connect()
-    filecache: kitovu_filecache.FileCache = kitovu_filecache.FileCache(
+    filecache: filecache.FileCache = filecache.FileCache(
         pathlib.Path(appdirs.user_data_dir('kitovu')) / 'filecache.json')
     # FIXME add path from settings instead of filecache.json
     filecache.load()
@@ -79,9 +79,9 @@ def start(connection_settings: ConnectionSettings) -> None:
                 # => remote_digest and local digest differ, local digest and cached digest same => REMOTE, download
             else:  # file exists already
                 state_of_file: int = filecache.discover_changes(output, plugin)
-                if state_of_file == kitovu_filecache.Filestate.NONE:
+                if state_of_file == filecache.Filestate.NONE:
                     pass
-                elif state_of_file == kitovu_filecache.Filestate.REMOTE:
+                elif state_of_file == filecache.Filestate.REMOTE:
                     output = pathlib.Path(local_path / item.relative_to(remote_path))
                     pathlib.Path(output.parent).mkdir(parents=True, exist_ok=True)
 
@@ -91,9 +91,9 @@ def start(connection_settings: ConnectionSettings) -> None:
                     local_digest = plugin.create_local_digest(output)
                     print(f'Local digest: {local_digest}')
                     filecache.modify(output, plugin, local_digest)
-                elif state_of_file == kitovu_filecache.Filestate.LOCAL:
+                elif state_of_file == filecache.Filestate.LOCAL:
                     pass
-                elif state_of_file == kitovu_filecache.Filestate.BOTH:  # override
+                elif state_of_file == filecache.Filestate.BOTH:  # override
                     output = pathlib.Path(local_path / item.relative_to(remote_path))
                     pathlib.Path(output.parent).mkdir(parents=True, exist_ok=True)
 
