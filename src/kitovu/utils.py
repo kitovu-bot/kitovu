@@ -27,7 +27,7 @@ class SchemaValidator:
     """A validator for creating and merging errors in schema definitions."""
 
     def __init__(self, abort: bool = True) -> None:
-        self.errors: typing.List[str] = []
+        self.errors: typing.List[jsonschema.exceptions.ValidationError] = []
         self.abort: bool = abort
 
     def validate(self, data: typing.Any, schema: typing.Dict[str, typing.Any]) -> None:
@@ -35,7 +35,10 @@ class SchemaValidator:
         validator_type = jsonschema.validators.validator_for(schema)
         self.errors.extend(validator_type(schema).iter_errors(data))
         if self.abort and not self.is_valid:
-            raise InvalidSettingsError(self)
+            self.raise_error()
+
+    def raise_error(self):
+        raise InvalidSettingsError(self)
 
     @property
     def is_valid(self) -> bool:
@@ -67,5 +70,5 @@ class InvalidSettingsError(UsageError):
     """Thrown when the settings file is invalid."""
 
     def __init__(self, validator: SchemaValidator) -> None:
-        self.validator: SchemaValidator = validator
+        self.errors: typing.List[str] = validator.errors
         super().__init__(validator.error_message)

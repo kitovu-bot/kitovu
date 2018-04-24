@@ -44,7 +44,7 @@ def sync(config: typing.Optional[pathlib.Path] = None) -> None:
 @click.option('--config', type=pathlib.Path, help="The configuration file to validate")
 def validate(config: typing.Optional[pathlib.Path] = None) -> None:
     """Validates the specified configuration file."""
-    error = syncing.config_error(config)
-    if error:
-        print(error, file=sys.stderr)
-        sys.exit(1)
+    try:
+        syncing.validate_config(config)
+    except utils.UsageError as ex:
+        raise click.ClickException(str(ex))

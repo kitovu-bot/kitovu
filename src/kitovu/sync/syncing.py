@@ -75,17 +75,13 @@ def start(connection_settings: ConnectionSettings) -> None:
     plugin.disconnect()
 
 
-def config_error(config_file: typing.Optional[pathlib.Path]) -> typing.Union[str, None]:
+def validate_config(config_file: typing.Optional[pathlib.Path]) -> None:
     """Validates the given configuration file.
 
-    Returns either an error message or None if it's valid."""
-    try:
-        settings = Settings.from_yaml_file(config_file)
-        validator = utils.SchemaValidator(abort=False)
-        for _connection_key, connection_settings in sorted(settings.connections.items()):
-            _find_plugin(connection_settings, validator)
-        if validator.is_valid:
-            return None
-        return validator.error_message
-    except utils.UsageError as error:
-        return str(error)
+    Raises an UsageError if the configuration is not valid."""
+    settings = Settings.from_yaml_file(config_file)
+    validator = utils.SchemaValidator(abort=False)
+    for _connection_key, connection_settings in sorted(settings.connections.items()):
+        _find_plugin(connection_settings, validator)
+    if not validator.is_valid:
+        validator.raise_error()

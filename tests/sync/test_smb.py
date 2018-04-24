@@ -8,6 +8,7 @@ from smb.SMBConnection import SMBConnection
 
 from kitovu.sync.plugin import smb
 from kitovu.sync import syncing
+from kitovu import utils
 
 
 @pytest.fixture(autouse=True)
@@ -172,71 +173,69 @@ class TestWithConnectedPlugin:
 class TestValidations:
 
     def test_configuration_with_the_minimum_required_fields(self, mocker, tmpdir: py.path.local):
-        file_name = pathlib.Path(tmpdir / 'config.yml')
-        with file_name.open('w') as f:
-            f.write("""
-            root-dir: ./asdf
-            connections:
-              - name: mytest-plugin
-                plugin: smb
-                username: myuser
-            subjects:
-              - name: test-subject
-                sources:
-                  - connection: mytest-plugin
-                    remote-dir: /test/dir
-            """)
-        assert self._get_config_errors(file_name) is None
+        config_yml = tmpdir / 'config.yml'
+        config_yml.write_text("""
+        root-dir: ./asdf
+        connections:
+          - name: mytest-plugin
+            plugin: smb
+            username: myuser
+        subjects:
+          - name: test-subject
+            sources:
+              - connection: mytest-plugin
+                remote-dir: /test/dir
+        """, encoding='utf-8')
+
+        syncing.validate_config(config_yml)
 
     def test_configuration_with_the_all_available_fields(self, mocker, tmpdir: py.path.local):
-        file_name = pathlib.Path(tmpdir / 'config.yml')
-        with file_name.open('w') as f:
-            f.write("""
-            root-dir: ./asdf
-            connections:
-              - name: mytest-plugin
-                plugin: smb
-                hostname: example.com
-                port: 1234
-                share: my-share
-                domain: my-domain
-                username: myuser
-                sign_options: never
-                use_ntlm_v2: true
-                is_direct_tcp: false
-            subjects:
-              - name: test-subject
-                sources:
-                  - connection: mytest-plugin
-                    remote-dir: /test/dir
-            """)
-        assert self._get_config_errors(file_name) is None
+        config_yml = tmpdir / 'config.yml'
+        config_yml.write_text("""
+        root-dir: ./asdf
+        connections:
+          - name: mytest-plugin
+            plugin: smb
+            hostname: example.com
+            port: 1234
+            share: my-share
+            domain: my-domain
+            username: myuser
+            sign_options: never
+            use_ntlm_v2: true
+            is_direct_tcp: false
+        subjects:
+          - name: test-subject
+            sources:
+              - connection: mytest-plugin
+                remote-dir: /test/dir
+        """, encoding='utf-8')
+
+        syncing.validate_config(config_yml)
 
     def test_configuration_with_unexpected_fields(self, mocker, tmpdir: py.path.local):
-        file_name = pathlib.Path(tmpdir / 'config.yml')
-        with file_name.open('w') as f:
-            f.write("""
-            root-dir: ./asdf
-            connections:
-              - name: mytest-plugin
-                plugin: smb
-                host: example.com
-                sign_options: some-other-value
-            subjects:
-              - name: test-subject
-                sources:
-                  - connection: mytest-plugin
-                    remote-dir: /test/dir
-            """)
-        assert self._get_config_errors(file_name) == [
+        config_yml = tmpdir / 'config.yml'
+        config_yml.write_text("""
+        root-dir: ./asdf
+        connections:
+          - name: mytest-plugin
+            plugin: smb
+            host: example.com
+            sign_options: some-other-value
+        subjects:
+          - name: test-subject
+            sources:
+              - connection: mytest-plugin
+                remote-dir: /test/dir
+        """, encoding='utf-8')
+
+        assert self._get_config_errors(config_yml) == [
             "'some-other-value' is not one of ['never', 'when_supported', 'when_required']",
             "'username' is a required property",
             "Additional properties are not allowed ('host' was unexpected)",
         ]
 
-    def _get_config_errors(self, file_name):
-        error = syncing.config_error(file_name)
-        if error is None:
-            return None
-        lines = error.split('\n')
-        return [line for line in lines if line and not line.startswith('\t')]
+    def _get_config_errors(self, config_yml):
+        with pytest.raises(utils.InvalidSettingsError) as excinfo:
+            syncing.validate_config(config_yml)
+        return [error.message for error in excinfo.value.errors]
