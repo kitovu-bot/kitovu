@@ -1,11 +1,13 @@
 import pathlib
 
 import pytest
+import py.path
 import attr
 import keyring
 from smb.SMBConnection import SMBConnection
 
 from kitovu.sync.plugin import smb
+from kitovu.sync import syncing
 
 
 @pytest.fixture(autouse=True)
@@ -165,3 +167,72 @@ class TestWithConnectedPlugin:
             pathlib.PurePath('/some/test/dir/sub/sub_file'),
             pathlib.PurePath('/some/test/dir/last_file'),
         ]
+
+
+class TestValidations:
+
+    def test_configuration_with_the_minimum_required_fields(self, mocker, tmpdir: py.path.local):
+        file_name = pathlib.Path(tmpdir / 'config.yml')
+        with file_name.open('w') as f:
+            f.write("""
+            root-dir: ./asdf
+            connections:
+              - name: mytest-plugin
+                plugin: smb
+                username: myuser
+            subjects:
+              - name: test-subject
+                sources:
+                  - connection: mytest-plugin
+                    remote-dir: /test/dir
+            """)
+        assert self._get_config_errors(file_name) is None
+
+    def test_configuration_with_the_all_available_fields(self, mocker, tmpdir: py.path.local):
+        file_name = pathlib.Path(tmpdir / 'config.yml')
+        with file_name.open('w') as f:
+            f.write("""
+            root-dir: ./asdf
+            connections:
+              - name: mytest-plugin
+                plugin: smb
+                hostname: example.com
+                port: 1234
+                share: my-share
+                domain: my-domain
+                username: myuser
+            subjects:
+              - name: test-subject
+                sources:
+                  - connection: mytest-plugin
+                    remote-dir: /test/dir
+            """)
+        assert self._get_config_errors(file_name) is None
+
+    def test_configuration_with_unexpected_fields(self, mocker, tmpdir: py.path.local):
+        file_name = pathlib.Path(tmpdir / 'config.yml')
+        with file_name.open('w') as f:
+            f.write("""
+            root-dir: ./asdf
+            connections:
+              - name: mytest-plugin
+                plugin: smb
+                host: example.com
+                port_number: 1234
+            subjects:
+              - name: test-subject
+                sources:
+                  - connection: mytest-plugin
+                    remote-dir: /test/dir
+            """)
+        assert self._get_config_errors(file_name) == [
+            "'username' is a required property",
+            "Additional properties are not allowed ('port_number', 'host' were unexpected)",
+        ]
+
+    def _get_config_errors(self, file_name):
+        error = syncing.config_error(file_name)
+        if error is None:
+            return None
+        lines = error.split('\n')
+        return [line for line in lines if line and not line.startswith('\t')]

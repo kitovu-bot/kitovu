@@ -139,8 +139,8 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
         return {
             'type': 'object',
             'properties': {
-                'hostame': {'type': 'string'},
-                'port': {'type': 'string'},
+                'hostname': {'type': 'string'},
+                'port': {'type': 'number'},
                 'share': {'type': 'string'},
                 'domain': {'type': 'string'},
                 'username': {'type': 'string'},
