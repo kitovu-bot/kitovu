@@ -1,5 +1,6 @@
 """FileCache keeps track of the state of the files, remotely and locally. It exists to determine if the local file
 has been changed between two synchronisation processes and allows for a conflict handling accordingly."""
+# FIXME insert nice, full description of what happens in this document
 
 from enum import Enum
 import json
@@ -41,9 +42,10 @@ class File:
 
 class FileCache:
 
-    def __init__(self, filename: pathlib.Path):
+    def __init__(self, filename: pathlib.Path, plugins: typing.Dict[str, syncplugin.AbstractSyncPlugin]):
         self._filename: pathlib.Path = filename
         self._data: typing.Dict[pathlib.Path, File] = {}
+        self._plugins = plugins
 
     def _compare_digests(self, remote_digest: str, local_digest: str, cached_digest: str) -> Filestate:
         local_changed: bool = local_digest != cached_digest

@@ -31,6 +31,8 @@ def _find_plugin(pluginname: str) -> syncplugin.AbstractSyncPlugin:
     plugin: syncplugin.AbstractSyncPlugin = manager.driver
     return plugin
 
+def load_plugins() -> typing.Dict[str, syncplugin.AbstractSyncPlugin]: # returns mapping from plugin-name to plugin
+    pass
 
 def start_all(config_file: typing.Optional[pathlib.Path]) -> None:
     """Sync all files with the given configuration file."""
@@ -44,10 +46,10 @@ def start(connection_settings: ConnectionSettings) -> None:
     plugin = _find_plugin(connection_settings.plugin_name)
     plugin.configure(connection_settings.connection)
     plugin.connect()
-    filecache: filecache.FileCache = filecache.FileCache(
+    cache: filecache.FileCache = filecache.FileCache(
         pathlib.Path(appdirs.user_data_dir('kitovu')) / 'filecache.json')
     # FIXME add path from settings instead of filecache.json
-    filecache.load()
+    cache.load()
 
     for subject in connection_settings.subjects:
         remote_path = subject['remote-dir']
@@ -74,11 +76,11 @@ def start(connection_settings: ConnectionSettings) -> None:
 
                 local_digest = plugin.create_local_digest(output)
                 print(f'Local digest: {local_digest}')
-                filecache.modify(output, plugin, local_digest)
+                cache.modify(output, plugin, local_digest)
                 # Fixme case 4: remote B, local A
                 # => remote_digest and local digest differ, local digest and cached digest same => REMOTE, download
             else:  # file exists already
-                state_of_file: int = filecache.discover_changes(output, plugin)
+                state_of_file: int = cache.discover_changes(output, plugin)
                 if state_of_file == filecache.Filestate.NONE:
                     pass
                 elif state_of_file == filecache.Filestate.REMOTE:
@@ -90,7 +92,7 @@ def start(connection_settings: ConnectionSettings) -> None:
 
                     local_digest = plugin.create_local_digest(output)
                     print(f'Local digest: {local_digest}')
-                    filecache.modify(output, plugin, local_digest)
+                    cache.modify(output, plugin, local_digest)
                 elif state_of_file == filecache.Filestate.LOCAL:
                     pass
                 elif state_of_file == filecache.Filestate.BOTH:  # override
@@ -102,6 +104,6 @@ def start(connection_settings: ConnectionSettings) -> None:
 
                     local_digest = plugin.create_local_digest(output)
                     print(f'Local digest: {local_digest}')
-                    filecache.modify(output, plugin, local_digest)
-    filecache.write()
+                    cache.modify(output, plugin, local_digest)
+    cache.write()
     plugin.disconnect()

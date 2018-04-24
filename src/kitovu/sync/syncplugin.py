@@ -12,6 +12,8 @@ class AbstractSyncPlugin(metaclass=abc.ABCMeta):
     Every abstract method in this class is a plugin hook.
     """
 
+    # FIXME property "name"
+
     @abc.abstractmethod
     def configure(self, info: typing.Dict[str, typing.Any]) -> None:
         """Read a configuration section intended for this plugin.
