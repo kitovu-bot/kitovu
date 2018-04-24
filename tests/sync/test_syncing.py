@@ -43,7 +43,7 @@ class FakePlugin(AbstractSyncPlugin):
                 'some-optional-prop': {'type': 'string'},
             },
             'required': ['some-required-prop'],
-            'allowAdditional': False,
+            'additionalProperties': False,
         }
 
 
