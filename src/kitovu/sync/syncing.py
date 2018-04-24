@@ -12,17 +12,19 @@ from kitovu.sync.settings import Settings, ConnectionSettings
 from kitovu.sync.plugin import smb
 
 
-def _find_plugin(pluginname: str) -> syncplugin.AbstractSyncPlugin:
+def _find_plugin(pluginname: str,
+                 reporter: utils.AbstractReporter) -> syncplugin.AbstractSyncPlugin:
     """Find an appropriate sync plugin with the given settings."""
     builtin_plugins = {
-        'smb': smb.SmbPlugin(),
+        'smb': smb.SmbPlugin(reporter),
     }
     if pluginname in builtin_plugins:
         return builtin_plugins[pluginname]
 
     try:
         manager = stevedore.driver.DriverManager(namespace='kitovu.sync.plugin',
-                                                 name=pluginname, invoke_on_load=True)
+                                                 name=pluginname, invoke_on_load=True,
+                                                 invoke_args=(reporter))
     except stevedore.exception.NoMatches:
         raise utils.NoPluginError(f"The plugin {pluginname} was not found")
 
@@ -39,8 +41,7 @@ def start_all(config_file: typing.Optional[pathlib.Path], reporter: utils.Abstra
 
 def start(connection_settings: ConnectionSettings, reporter: utils.AbstractReporter) -> None:
     """Sync files with the given plugin and username."""
-    plugin = _find_plugin(connection_settings.plugin_name)
-    plugin.reporter = reporter
+    plugin = _find_plugin(connection_settings.plugin_name, reporter)
     plugin.configure(connection_settings.connection)
     plugin.connect()
 

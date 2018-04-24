@@ -14,7 +14,8 @@ class AbstractSyncPlugin(metaclass=abc.ABCMeta):
     Every abstract method in this class is a plugin hook.
     """
 
-    reporter: utils.AbstractReporter
+    def __init__(self, reporter: utils.AbstractReporter) -> None:
+        self.reporter: utils.AbstractReporter = reporter
 
     @abc.abstractmethod
     def configure(self, info: typing.Dict[str, typing.Any]) -> None:

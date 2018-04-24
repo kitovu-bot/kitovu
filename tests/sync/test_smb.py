@@ -6,6 +6,7 @@ import keyring
 from smb.SMBConnection import SMBConnection
 
 from kitovu.sync.plugin import smb
+from helpers import reporter
 
 
 @pytest.fixture(autouse=True)
@@ -67,7 +68,7 @@ class TestConnect:
 
     @pytest.fixture
     def plugin(self):
-        return smb.SmbPlugin()
+        return smb.SmbPlugin(reporter.TestReporter())
 
     @pytest.fixture
     def info(self):
@@ -142,7 +143,7 @@ class TestWithConnectedPlugin:
 
     @pytest.fixture
     def plugin(self):
-        plugin = smb.SmbPlugin()
+        plugin = smb.SmbPlugin(reporter.TestReporter())
         keyring.set_password('kitovu-smb', 'myusername\nHSR\nsvm-c213.hsr.ch', 'some_password')
         plugin.configure({'username': 'myusername'})
         plugin.connect()
