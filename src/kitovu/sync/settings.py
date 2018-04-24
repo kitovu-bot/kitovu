@@ -31,7 +31,7 @@ class Settings:
     global_ignore: typing.List[str] = attr.ib()
     connections: typing.Dict[str, ConnectionSettings] = attr.ib()
 
-    settings_schema: typing.Dict[str, typing.Any] = {
+    SETTINGS_SCHEMA: typing.Dict[str, typing.Any] = {
         'type': 'object',
         'properties': {
             'root-dir': {'type': 'string'},
@@ -82,7 +82,7 @@ class Settings:
         # FIXME handle OSError and UnicodeDecodeError
         data = yaml.load(stream)
 
-        validator.validate(data, cls.settings_schema)
+        validator.validate(data, cls.SETTINGS_SCHEMA)
 
         root_dir = pathlib.Path(os.path.expanduser(data.pop('root-dir')))
         global_ignore = data.pop('global-ignore', [])
