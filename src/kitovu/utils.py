@@ -33,8 +33,7 @@ class SchemaValidator:
     def validate(self, data: typing.Any, schema: typing.Dict[str, typing.Any]) -> None:
         """Validates the given data with the schema."""
         validator_type = jsonschema.validators.validator_for(schema)
-        for error in validator_type(schema).iter_errors(data):
-            self.errors.append(error)
+        self.errors.extend(validator_type(schema).iter_errors(data))
         if self.abort and not self.valid:
             raise InvalidSettingsError(self)
 

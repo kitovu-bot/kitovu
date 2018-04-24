@@ -238,13 +238,18 @@ class TestConfigError:
             connections:
               - name: mytest-plugin
                 plugin: test
+              - name: other-plugin
+                plugin: smb
             subjects:
               - name: sync-1
                 sources:
                   - connection: mytest-plugin
                     remote-dir: Some/Test/Dir
             """)
-        assert self._get_config_errors(file_name) == ["'some-required-prop' is a required property"]
+        assert self._get_config_errors(file_name) == [
+            "'some-required-prop' is a required property",
+            "'username' is a required property",
+        ]
 
     def test_configuration_with_an_empty_connection(self, mocker, tmpdir: py.path.local):
         file_name = pathlib.Path(tmpdir / 'config.yml')
@@ -253,6 +258,7 @@ class TestConfigError:
             root-dir: ./asdf
             connections:
               - {}
+              - plugin: test
             subjects:
               - name: sync-1
                 sources:
@@ -262,6 +268,7 @@ class TestConfigError:
         assert self._get_config_errors(file_name) == [
             "'name' is a required property",
             "'plugin' is a required property",
+            "'name' is a required property",
         ]
 
     def test_configuration_with_an_empty_subject(self, mocker, tmpdir: py.path.local):
@@ -275,9 +282,11 @@ class TestConfigError:
                 username: myuser
             subjects:
               - {}
+              - name: mytest
             """)
         assert self._get_config_errors(file_name) == [
             "'name' is a required property",
+            "'sources' is a required property",
             "'sources' is a required property",
         ]
 
