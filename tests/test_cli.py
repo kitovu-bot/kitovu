@@ -13,5 +13,5 @@ def test_reporter(capsys, reporter):
     reporter.warn("another test")
 
     captured = capsys.readouterr()
-    assert captured.out == "my test\nanother test\n"
-    assert captured.err == ""
+    assert captured.out == ""
+    assert captured.err == "my test\nanother test\n"

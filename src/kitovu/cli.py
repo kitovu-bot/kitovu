@@ -17,6 +17,7 @@ Why does this file exist, and why not put this in __main__?
 
 import pathlib
 import typing
+import sys
 
 import click
 
@@ -28,7 +29,7 @@ class CliReporter(utils.AbstractReporter):
     """A reporter for printing to the console."""
 
     def warn(self, message: str) -> None:
-        print(message)
+        print(message, file=sys.stderr)
 
 
 @click.group()
