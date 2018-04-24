@@ -25,6 +25,8 @@ from kitovu.sync import syncing
 
 
 class CliReporter(utils.AbstractReporter):
+    """A reporter for printing to the console."""
+
     def warn(self, message: str) -> None:
         print(message)
 
