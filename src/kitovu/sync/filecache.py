@@ -1,6 +1,39 @@
-"""FileCache keeps track of the state of the files, remotely and locally. It exists to determine if the local file
-has been changed between two synchronisation processes and allows for a conflict handling accordingly."""
-# FIXME insert nice, full description of what happens in this document
+"""FileCache keeps track of the state of the files, remotely and locally.
+
+It exists to determine if the local file has been changed between two synchronisation processes
+and allows for a conflict handling accordingly.
+
+8 cases are possible:
+
+Special Cases:
+---------------
+1. remote deleted (triggers exception), local exists: REMOTE
+
+2. remote deleted (triggers exception), local exists AND changed (local_digest and cached_digest differ): BOTH
+case 1 and 2 special, and are dealt with separately, FIXME externally
+
+Normal Cases:
+--------------
+3. new file remote, local none: REMOTE, download file. This is the default case.
+
+4. remote B, local A - remote digest and local digest differ,
+but local digest and cached digest are same: REMOTE, download.
+
+5. remote and local same: NONE
+
+Files changed in-between:
+-------------------------
+6. remote A unchanged, local changed A' - remote digest and cached digest are  the same,
+but local digest and cached digest differ: LOCAL
+
+7. remote B, local changed A' - remote digest and cached digest differ, local digest and cached digest differ: BOTH
+
+8. remote B, local B => remote digest and cached digest same,
+but local digest and cached digest differ: update file cache
+
+Case 8 is basically the same as 6, it simply triggers the user's decision and needs to update the file cache
+
+"""
 
 from enum import Enum
 import json
@@ -58,23 +91,6 @@ class FileCache:
             return Filestate.LOCAL
         elif remote_changed and local_changed:  # case 7
             return Filestate.BOTH
-
-        # new file B is discovered when remote_digest != cached_digest
-
-        # Cases:
-        # 1. remote deleted (triggers exception), local exists => REMOTE*
-        # 2. remote deleted (triggers exception), local exists AND changed (local_digest and cached_digest differ) => BOTH*
-        # case 1 and 2 special, dealt with separately, FIXME externally
-
-        # Normal Cases:
-        # 3. new file remote, local none => REMOTE, download FIXME externally
-        # 4. remote B, local A => remote_digest and local digest differ, but local digest and cached digest same => REMOTE, download
-
-        # 5. remote and local same  => NONE
-        # 6. remote A unchanged, local changed => remote_digest and cached_digest same, but local_digest and cached_digest differ => LOCAL
-        # 7. remote B, local changed => remote_digest and cached_digest differ, local_digest and cached_digest differ => BOTH
-        # 8. remote B, local b => remote_digest and cached_digest same, but local_digest and cached_digest differ => case 6, update Filecache
-        # case 8 is basically the same as 6, it simply triggers the user's decision and needs to update the filecache
 
     def write(self) -> None:
         """"Writes the data-dict to JSON."""
