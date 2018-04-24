@@ -45,6 +45,9 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
         self._connection: SMBConnection = None
         self._info = _ConnectionInfo()
 
+    def name(self):
+        return "smb"
+
     def _password_identifier(self) -> str:
         """Get an unique identifier for the connection in self._info.
 
