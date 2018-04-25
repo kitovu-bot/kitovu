@@ -14,7 +14,7 @@ case 1 and 2 special, and are dealt with separately in syncing.py.
 
 Normal Cases:
 --------------
-3. new file remote, local none: REMOTE, download file. This is the default case.
+3. new file remote, local none: NEW, download file. This is the default case.
 
 4. remote B, local A - remote digest and local digest differ,
 but local digest and cached digest are same: REMOTE, download.
@@ -27,12 +27,6 @@ Files changed in-between:
 but local digest and cached digest differ: LOCAL
 
 7. remote B, local changed A' - remote digest and cached digest differ, local digest and cached digest differ: BOTH
-
-8. remote B, local B => remote digest and cached digest same,
-but local digest and cached digest differ: update file cache
-
-Case 8 is basically the same as 6, it simply triggers the user's decision and needs to update the file cache
-
 """
 
 from enum import Enum
@@ -54,6 +48,7 @@ class Filestate(Enum):
     REMOTE = 2
     BOTH = 3
     NONE = 4
+    NEW = 5
 
 
 # #FIXME refactor with attrs.?
@@ -82,13 +77,13 @@ class FileCache:
     def _compare_digests(self, remote_digest: str, local_digest: str, cached_digest: str) -> Filestate:
         local_changed: bool = local_digest != cached_digest
         remote_changed: bool = remote_digest != cached_digest
-        if not remote_changed and not local_changed:  # case 5
+        if not remote_changed and not local_changed:  # case 5 above
             return Filestate.NONE
-        elif remote_changed and not local_changed:  # case 4
+        elif remote_changed and not local_changed:  # case 4 above
             return Filestate.REMOTE
-        elif not remote_changed and local_changed:  # case 6
+        elif not remote_changed and local_changed:  # case 6 above
             return Filestate.LOCAL
-        elif remote_changed and local_changed:  # case 7
+        elif remote_changed and local_changed:  # case 7 above
             return Filestate.BOTH
 
     def write(self) -> None:
@@ -118,6 +113,9 @@ class FileCache:
         """Check if the file that is currently downloaded (path-argument) has changed.
 
         Change is discovered between local file cache and local file."""
+        if not path.exists():
+            return Filestate.NEW
+
         file: File = self._data[path]
         cached_digest: str = file["digest"]
         if plugin.NAME != file.plugin_name:
