@@ -26,9 +26,9 @@ class TestFile:
 class TestLoadWrite:
 
     def test_write(self, temppath, cache, plugin):
-        cache.modify(pathlib.Path(temppath) / "testfile1.txt", plugin, "digest1")
-        cache.modify(pathlib.Path(temppath) / "testfile2.pdf", plugin, "digest2")
-        cache.modify(pathlib.Path(temppath) / "testfile3.png", plugin, "digest3")
+        cache.modify(temppath / "testfile1.txt", plugin, "digest1")
+        cache.modify(temppath / "testfile2.pdf", plugin, "digest2")
+        cache.modify(temppath / "testfile3.png", plugin, "digest3")
         cache.write()
         with cache._filename.open("r") as f:
             json_data = json.load(f)
@@ -37,26 +37,34 @@ class TestLoadWrite:
                              str(temppath / "testfile3.png"): {"digest": "digest3", "plugin": "dummyplugin"}}
 
     def test_load(self, temppath, cache, plugin):
-        cache.modify(pathlib.Path(temppath) / "testfile1.txt", plugin, "digest1")
-        cache.modify(pathlib.Path(temppath) / "testfile2.pdf", plugin, "digest2")
-        cache.modify(pathlib.Path(temppath) / "testfile3.png", plugin, "digest3")
+        cache.modify(temppath / "testfile4.txt", plugin, "digest4")
+        cache.modify(temppath / "testfile5.pdf", plugin, "digest5")
+        cache.modify(temppath / "testfile6.png", plugin, "digest6")
         cache.write()
         cache.load()
-        assert cache._data == {pathlib.Path(temppath) / "testfile1.txt": filecache.File(cached_digest="digest1",
+        assert cache._data == {temppath / "testfile4.txt": filecache.File(cached_digest="digest4",
                                                                                         plugin_name="dummyplugin"),
-                               pathlib.Path(temppath) / "testfile2.pdf": filecache.File(cached_digest="digest2",
+                               temppath / "testfile5.pdf": filecache.File(cached_digest="digest5",
                                                                                         plugin_name="dummyplugin"),
-                               pathlib.Path(temppath) / "testfile3.png": filecache.File(cached_digest="digest3",
+                               temppath / "testfile6.png": filecache.File(cached_digest="digest6",
                                                                                         plugin_name="dummyplugin")}
 
 
 class TestChange:
 
-    def test_modify(self):
+    def test_modify(self, temppath, plugin, cache):
+        cache.modify(temppath / "testfile1.txt", plugin, "digest1")
+        testfile = filecache.File(cached_digest="digest1", plugin_name="dummyplugin")
+        assert cache._data[temppath / "testfile1.txt"] == testfile
         pass
 
-    def test_discover_changes(self):
+    def test_not_matching_pluginname(self, temppath, plugin, cache):
         pass
+
+    def test_no_local_full_path_exists(self, temppath, plugin, cache):
+        local = temppath / "testfile2.pdf"
+        remote = pathlib.PurePath(temppath) / "testfile2.pdf"
+        assert cache.discover_changes(local, remote, plugin) == filecache.FileState.NEW
 
 
 class TestFileState:
