@@ -19,7 +19,7 @@ def cache(temppath) -> filecache.FileCache:
 class TestFile:
 
     def test_to_dict(self, temppath):
-        file = filecache.File("this_is_a_digest", temppath / 'testfile.txt', "dummyplugin")
+        file = filecache.File("this_is_a_digest", "dummyplugin")
         assert file.to_dict() == {"plugin": "dummyplugin", "digest": "this_is_a_digest"}
 
 
@@ -31,13 +31,23 @@ class TestLoadWrite:
         cache.modify(pathlib.Path(temppath) / "testfile3.png", plugin, "digest3")
         cache.write()
         with cache._filename.open("r") as f:
-            json_data = json.load(temppath / "test_filecache.json")
-        assert json_data == {temppath / "testfile1.txt": {"digest": "digest1", "plugin": "dummyplugin"},
-                             temppath / "testfile2.pdf": {"digest": "digest2", "plugin": "dummyplugin"},
-                             temppath / "testfile3.png": {"digest": "digest3", "plugin": "dummyplugin"}}
+            json_data = json.load(f)
+        assert json_data == {str(temppath / "testfile1.txt"): {"digest": "digest1", "plugin": "dummyplugin"},
+                             str(temppath / "testfile2.pdf"): {"digest": "digest2", "plugin": "dummyplugin"},
+                             str(temppath / "testfile3.png"): {"digest": "digest3", "plugin": "dummyplugin"}}
 
-    def test_load(self, temppath, cache):
-        pass
+    def test_load(self, temppath, cache, plugin):
+        cache.modify(pathlib.Path(temppath) / "testfile1.txt", plugin, "digest1")
+        cache.modify(pathlib.Path(temppath) / "testfile2.pdf", plugin, "digest2")
+        cache.modify(pathlib.Path(temppath) / "testfile3.png", plugin, "digest3")
+        cache.write()
+        cache.load()
+        assert cache._data == {pathlib.Path(temppath) / "testfile1.txt": filecache.File(cached_digest="digest1",
+                                                                                        plugin_name="dummyplugin"),
+                               pathlib.Path(temppath) / "testfile2.pdf": filecache.File(cached_digest="digest2",
+                                                                                        plugin_name="dummyplugin"),
+                               pathlib.Path(temppath) / "testfile3.png": filecache.File(cached_digest="digest3",
+                                                                                        plugin_name="dummyplugin")}
 
 
 class TestChange:
