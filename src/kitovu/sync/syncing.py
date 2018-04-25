@@ -51,38 +51,44 @@ def start(connection_settings: ConnectionSettings) -> None:
     cache.load()
 
     for subject in connection_settings.subjects:
-        remote_path = pathlib.PurePath(subject['remote-dir'])
-        local_path = pathlib.Path(subject['local-dir'])
+        remote_dir = pathlib.PurePath(subject['remote-dir'])  # /Informatik/Fachbereich/EPJ/
+        local_dir = pathlib.Path(subject['local-dir'])  # /home/leonie/HSR/EPJ/
 
-        for item in plugin.list_path(remote_path):
+        for remote_full_path in plugin.list_path(remote_dir):
             # each plugin should now yield all files recursively with list_path
-            print(f'Downloading: {item}')
+            print(f'Downloading: {remote_full_path}')
 
-            remote_digest = plugin.create_remote_digest(item)
+            remote_digest = plugin.create_remote_digest(remote_full_path)
             print(f'Remote digest: {remote_digest}')
 
     # special filecache cases which FIXME here
     # 1. remote deleted (triggers exception), local exists => REMOTE*
     # 2. remote deleted (triggers exception), local exists AND changed (local_digest and cached_digest differ) => BOTH*
-            output = local_path / item.relative_to(remote_path)
+
+            # local_dir: /home/leonie/HSR/EPJ/
+            # remote_full_path: /Informatik/Fachbereich/EPJ/Dokumente/Anleitung.pdf
+            #   with relative_to: Dokumente/Anleitung.pdf
+            # -> local_full_path: /home/leonie/HSR/EPJ/Dokumente/Anleitung.pdf
+            local_full_path: pathlib.Path = local_dir / remote_full_path.relative_to(remote_dir)
 
             # Fixme case 4: remote B, local A
             # => remote_digest and local digest differ, local digest and cached digest same => REMOTE, download
             # When BOTH files changed, we currently override the local file, but this can and should
             # later be handled as a user decision.
-            state_of_file: filecache.FileState = cache.discover_changes(output, plugin)
-            if state_of_file in [filecache.FileState.NO_CHANGES, filecache.FileState.LOCAL_CHANGED]:
+            state_of_file: filecache.FileState = cache.discover_changes(local_full_path, remote_full_path, plugin)
+            if state_of_file in [filecache.FileState.NO_CHANGES,
+                                 filecache.FileState.LOCAL_CHANGED]:
                 pass
             elif state_of_file in [filecache.FileState.REMOTE_CHANGED,
                                    filecache.FileState.NEW,
                                    filecache.FileState.BOTH_CHANGED]:
-                output.parent.mkdir(parents=True, exist_ok=True)
+                local_full_path.parent.mkdir(parents=True, exist_ok=True)
 
-                with output.open('wb') as fileobj:
-                    plugin.retrieve_file(item, fileobj)
+                with local_full_path.open('wb') as fileobj:
+                    plugin.retrieve_file(remote_full_path, fileobj)
 
-                local_digest = plugin.create_local_digest(output)
+                local_digest = plugin.create_local_digest(local_full_path)
                 print(f'Local digest: {local_digest}')
-                cache.modify(output, plugin, local_digest)
+                cache.modify(local_full_path, plugin, local_digest)
     cache.write()
     plugin.disconnect()

@@ -109,20 +109,23 @@ class FileCache:
         file = File(local_digest_at_synctime=local_digest_at_synctime, plugin_name=plugin.NAME)
         self._data[path] = file
 
-    def discover_changes(self, path: pathlib.Path, plugin: syncplugin.AbstractSyncPlugin) -> FileState:
+    def discover_changes(self,
+                         local_full_path: pathlib.Path,
+                         remote_full_path: pathlib.PurePath,
+                         plugin: syncplugin.AbstractSyncPlugin) -> FileState:
         """Check if the file that is currently downloaded (path-argument) has changed.
 
         Change is discovered between local file cache and local file."""
-        if not path.exists():
+        if not local_full_path.exists():
             return FileState.NEW
 
-        file: File = self._data[path]
+        file: File = self._data[local_full_path]
         cached_digest: str = file["digest"]
         if plugin.NAME != file.plugin_name:
-            raise AssertionError(f"The cached plugin name '{file.plugin_name}' of the file {path} "
+            raise AssertionError(f"The cached plugin name '{file.plugin_name}' of the file {local_full_path} "
                                  f"doesn't match the plugin name '{plugin.NAME}'.")
 
-        remote_digest: str = plugin.create_remote_digest(path)
-        local_digest: str = plugin.create_local_digest(path)
+        remote_digest: str = plugin.create_remote_digest(remote_full_path)
+        local_digest: str = plugin.create_local_digest(local_full_path)
         return self._compare_digests(remote_digest, local_digest, cached_digest)
 
