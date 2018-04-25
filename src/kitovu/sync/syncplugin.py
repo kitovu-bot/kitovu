@@ -12,12 +12,7 @@ class AbstractSyncPlugin(metaclass=abc.ABCMeta):
     Every abstract method in this class is a plugin hook.
     """
 
-    # FIXME property "name", how to I make sure it's a string?
-    @property
-    @abc.abstractmethod
-    def name(self) -> str:
-        """The name of the plugin."""
-        raise NotImplementedError
+    NAME: typing.Optional[str] = None
 
     @abc.abstractmethod
     def configure(self, info: typing.Dict[str, typing.Any]) -> None:

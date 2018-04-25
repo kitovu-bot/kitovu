@@ -52,8 +52,8 @@ def start(connection_settings: ConnectionSettings) -> None:
     cache.load()
 
     for subject in connection_settings.subjects:
-        remote_path = subject['remote-dir']
-        local_path = subject['local-dir']
+        remote_path: str = subject['remote-dir']
+        local_path: str = subject['local-dir']
 
         for item in plugin.list_path(remote_path):
             # each plugin should now yield all files recursively with list_path

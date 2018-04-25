@@ -41,12 +41,11 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
 
     """A plugin to sync data via SMB/CIFS (Windows fileshares)."""
 
+    NAME: str = "smb"
+
     def __init__(self) -> None:
         self._connection: SMBConnection = None
         self._info = _ConnectionInfo()
-
-    def name(self):
-        return "smb"
 
     def _password_identifier(self) -> str:
         """Get an unique identifier for the connection in self._info.
