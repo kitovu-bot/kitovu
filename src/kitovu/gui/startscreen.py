@@ -2,7 +2,7 @@ import pathlib
 
 from PyQt5.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton
 from PyQt5.QtGui import QPixmap
-from PyQt5.QtCore import pyqtSignal
+from PyQt5.QtCore import pyqtSignal, Qt
 
 
 class LogoWidget(QLabel):
@@ -10,9 +10,10 @@ class LogoWidget(QLabel):
     def __init__(self, parent=None):
         super().__init__(parent)
         # FIXME how to load this properly?
-        logo_path = pathlib.Path(__file__).parent / 'kitovu.jpg'
-        self._pixmap = QPixmap(str(logo_path))
+        logo_path = pathlib.Path(__file__).parent / 'kitovu.png'
+        self._pixmap = QPixmap(str(logo_path)).scaledToWidth(500)
         self.setPixmap(self._pixmap)
+        self.setAlignment(Qt.AlignCenter)
 
 
 class StartScreen(QWidget):
@@ -22,6 +23,16 @@ class StartScreen(QWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
+        self.setStyleSheet("""
+            QPushButton {
+                padding: 20px;
+            }
+
+            QLabel {
+                margin: 10px;
+            }
+        """)
+
         self._vbox = QVBoxLayout(self)
 
         self._logo = LogoWidget(self)
