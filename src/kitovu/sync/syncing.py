@@ -51,8 +51,8 @@ def start(connection_settings: ConnectionSettings) -> None:
     cache.load()
 
     for subject in connection_settings.subjects:
-        remote_path: str = subject['remote-dir']
-        local_path: str = subject['local-dir']
+        remote_path = pathlib.PurePath(subject['remote-dir'])
+        local_path = pathlib.Path(subject['local-dir'])
 
         for item in plugin.list_path(remote_path):
             # each plugin should now yield all files recursively with list_path
@@ -64,17 +64,19 @@ def start(connection_settings: ConnectionSettings) -> None:
     # special filecache cases which FIXME here
     # 1. remote deleted (triggers exception), local exists => REMOTE*
     # 2. remote deleted (triggers exception), local exists AND changed (local_digest and cached_digest differ) => BOTH*
-            output = pathlib.Path(local_path / item.relative_to(remote_path))
+            output = local_path / item.relative_to(remote_path)
 
             # Fixme case 4: remote B, local A
             # => remote_digest and local digest differ, local digest and cached digest same => REMOTE, download
             # When BOTH files changed, we currently override the local file, but this can and should
             # later be handled as a user decision.
-            state_of_file: filecache.Filestate = cache.discover_changes(output, plugin)
-            if state_of_file in [filecache.Filestate.NONE, filecache.Filestate.LOCAL]:
+            state_of_file: filecache.FileState = cache.discover_changes(output, plugin)
+            if state_of_file in [filecache.FileState.NO_CHANGES, filecache.FileState.LOCAL_CHANGED]:
                 pass
-            elif state_of_file in [filecache.Filestate.REMOTE, filecache.Filestate.NEW, filecache.Filestate.BOTH]:
-                pathlib.Path(output.parent).mkdir(parents=True, exist_ok=True)
+            elif state_of_file in [filecache.FileState.REMOTE_CHANGED,
+                                   filecache.FileState.NEW,
+                                   filecache.FileState.BOTH_CHANGED]:
+                output.parent.mkdir(parents=True, exist_ok=True)
 
                 with output.open('wb') as fileobj:
                     plugin.retrieve_file(item, fileobj)

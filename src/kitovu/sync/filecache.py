@@ -42,12 +42,12 @@ from kitovu import utils
 # The files get downloaded, for each file, the FileCache gets updated for the files that were synchronised.
 
 
-class Filestate(Enum):
+class FileState(Enum):
     """Used to discern in which places files have changed"""
-    LOCAL = 1
-    REMOTE = 2
-    BOTH = 3
-    NONE = 4
+    LOCAL_CHANGED = 1
+    REMOTE_CHANGED = 2
+    BOTH_CHANGED = 3
+    NO_CHANGES = 4
     NEW = 5
 
 
@@ -74,17 +74,17 @@ class FileCache:
         self._filename: pathlib.Path = filename
         self._data: typing.Dict[pathlib.Path, File] = {}
 
-    def _compare_digests(self, remote_digest: str, local_digest: str, cached_digest: str) -> Filestate:
+    def _compare_digests(self, remote_digest: str, local_digest: str, cached_digest: str) -> FileState:
         local_changed: bool = local_digest != cached_digest
         remote_changed: bool = remote_digest != cached_digest
         if not remote_changed and not local_changed:  # case 5 above
-            return Filestate.NONE
+            return FileState.NO_CHANGES
         elif remote_changed and not local_changed:  # case 4 above
-            return Filestate.REMOTE
+            return FileState.REMOTE_CHANGED
         elif not remote_changed and local_changed:  # case 6 above
-            return Filestate.LOCAL
+            return FileState.LOCAL_CHANGED
         elif remote_changed and local_changed:  # case 7 above
-            return Filestate.BOTH
+            return FileState.BOTH_CHANGED
 
     def write(self) -> None:
         """"Writes the data-dict to JSON."""
@@ -109,12 +109,12 @@ class FileCache:
         file = File(local_digest_at_synctime=local_digest_at_synctime, plugin_name=plugin.NAME)
         self._data[path] = file
 
-    def discover_changes(self, path: pathlib.Path, plugin: syncplugin.AbstractSyncPlugin) -> Filestate:
+    def discover_changes(self, path: pathlib.Path, plugin: syncplugin.AbstractSyncPlugin) -> FileState:
         """Check if the file that is currently downloaded (path-argument) has changed.
 
         Change is discovered between local file cache and local file."""
         if not path.exists():
-            return Filestate.NEW
+            return FileState.NEW
 
         file: File = self._data[path]
         cached_digest: str = file["digest"]
