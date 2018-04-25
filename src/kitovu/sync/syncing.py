@@ -6,6 +6,7 @@ import typing
 
 import stevedore
 import stevedore.driver
+import stevedore.exception
 
 from kitovu import utils
 from kitovu.sync import syncplugin
@@ -30,9 +31,6 @@ def _find_plugin(pluginname: str) -> syncplugin.AbstractSyncPlugin:
 
     plugin: syncplugin.AbstractSyncPlugin = manager.driver
     return plugin
-
-def load_plugins() -> typing.Dict[str, syncplugin.AbstractSyncPlugin]: # returns mapping from plugin-name to plugin
-    pass
 
 
 def start_all(config_file: typing.Optional[pathlib.Path]) -> None:
