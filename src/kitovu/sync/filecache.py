@@ -55,7 +55,6 @@ class FileState(Enum):
 class File:
 
     cached_digest: str = attr.ib()  # local digest at synctime
-    relative_path_with_filename: pathlib.Path = attr.ib()
     plugin_name: str = attr.ib()
 
     def to_dict(self) -> typing.Dict[str, str]:
