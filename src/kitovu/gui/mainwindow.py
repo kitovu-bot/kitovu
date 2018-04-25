@@ -1,7 +1,7 @@
 import sys
 import pathlib
 
-from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QLabel, QPushButton, QTextEdit, QProgressBar
+from PyQt5.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QLabel, QPushButton, QTextEdit, QProgressBar, QStackedWidget
 from PyQt5.QtGui import QPixmap
 from PyQt5.QtCore import pyqtSignal, pyqtSlot, QProcess
 
@@ -45,7 +45,7 @@ class ConfScreen(QWidget):
         super().__init__(parent)
 
         self._vbox = QVBoxLayout(self)
-        self._edit = QTextEdit(self)
+        self._edit = QTextEdit()
         self._vbox.addWidget(self._edit)
 
         conf_file = settings.get_config_file_path()
@@ -59,14 +59,14 @@ class SyncScreen(QWidget):
 
         self._vbox = QVBoxLayout(self)
 
-        self._output = QTextEdit(self)
+        self._output = QTextEdit()
         self._output.setReadOnly(True)
         self._vbox.addWidget(self._output)
 
-        self._progress = QProgressBar(self)
+        self._progress = QProgressBar()
         self._vbox.addWidget(self._progress)
 
-        self._process = QProcess(self)
+        self._process = QProcess()
         self._process.readyRead.connect(self.on_process_ready_read)
         self._process.finished.connect(self.on_process_finished)
 
@@ -90,19 +90,31 @@ class SyncScreen(QWidget):
         self._process.start(sys.executable, ['-m', 'kitovu', 'sync'])
 
 
-class MainWindow(QMainWindow):
+class CentralWidget(QStackedWidget):
 
     def __init__(self, parent=None):
         super().__init__(parent)
 
-        self._sync_screen = SyncScreen(self)
-        self._conf_screen = ConfScreen(self)
+        self._sync_screen = SyncScreen()
+        self.addWidget(self._sync_screen)
 
-        self._start_screen = StartScreen(self)
+        self._conf_screen = ConfScreen()
+        self.addWidget(self._conf_screen)
+
+        self._start_screen = StartScreen()
+        self.addWidget(self._start_screen)
         self._start_screen.sync_pressed.connect(
-            lambda: self.setCentralWidget(self._sync_screen))
+            lambda: self.setCurrentWidget(self._sync_screen))
         self._start_screen.conf_pressed.connect(
-            lambda: self.setCentralWidget(self._conf_screen))
+            lambda: self.setCurrentWidget(self._conf_screen))
 
+        self.setCurrentWidget(self._start_screen)
+
+
+class MainWindow(QMainWindow):
+
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        central = CentralWidget()
         self.statusBar().showMessage("Bereit.")
-        self.setCentralWidget(self._start_screen)
+        self.setCentralWidget(central)
