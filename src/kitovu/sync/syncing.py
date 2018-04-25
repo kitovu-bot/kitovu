@@ -47,7 +47,6 @@ def start(connection_settings: ConnectionSettings) -> None:
     plugin.connect()
     cache: filecache.FileCache = filecache.FileCache(
         pathlib.Path(appdirs.user_data_dir('kitovu')) / 'filecache.json')
-    # FIXME add path from settings instead of filecache.json
     cache.load()
 
     for subject in connection_settings.subjects:
@@ -61,20 +60,14 @@ def start(connection_settings: ConnectionSettings) -> None:
             remote_digest = plugin.create_remote_digest(remote_full_path)
             print(f'Remote digest: {remote_digest}')
 
-    # special filecache cases which FIXME here
-    # 1. remote deleted (triggers exception), local exists => REMOTE*
-    # 2. remote deleted (triggers exception), local exists AND changed (local_digest and cached_digest differ) => BOTH*
-
             # local_dir: /home/leonie/HSR/EPJ/
             # remote_full_path: /Informatik/Fachbereich/EPJ/Dokumente/Anleitung.pdf
             #   with relative_to: Dokumente/Anleitung.pdf
             # -> local_full_path: /home/leonie/HSR/EPJ/Dokumente/Anleitung.pdf
             local_full_path: pathlib.Path = local_dir / remote_full_path.relative_to(remote_dir)
 
-            # Fixme case 4: remote B, local A
-            # => remote_digest and local digest differ, local digest and cached digest same => REMOTE, download
             # When BOTH files changed, we currently override the local file, but this can and should
-            # later be handled as a user decision.
+            # later be handled as a user decision. https://jira.keltec.ch/jira/browse/EPJ-78
             state_of_file: filecache.FileState = cache.discover_changes(local_full_path, remote_full_path, plugin)
             if state_of_file in [filecache.FileState.NO_CHANGES,
                                  filecache.FileState.LOCAL_CHANGED]:

@@ -7,59 +7,60 @@ and allows for a conflict handling accordingly.
 
 Special Cases:
 ---------------
-1. remote deleted (triggers exception), local exists: REMOTE
+1. remote deleted (triggers exception), local exists: REMOTE_CHANGED
 
-2. remote deleted (triggers exception), local exists AND changed (local_digest and cached_digest differ): BOTH
+2. remote deleted (triggers exception), local exists AND changed (local_digest and cached_digest differ): BOTH_CHANGED
 case 1 and 2 special, and are dealt with separately in syncing.py.
+
+Cases 1 and 2 are not handled at the moment - see https://jira.keltec.ch/jira/browse/EPJ-77
 
 Normal Cases:
 --------------
 3. new file remote, local none: NEW, download file. This is the default case.
 
 4. remote B, local A - remote digest and local digest differ,
-but local digest and cached digest are same: REMOTE, download.
+but local digest and cached digest are same: REMOTE_CHANGED, download.
 
-5. remote and local same: NONE
+5. remote and local same: NO_CHANGES
 
 Files changed in-between:
 -------------------------
-6. remote A unchanged, local changed A' - remote digest and cached digest are  the same,
-but local digest and cached digest differ: LOCAL
+6. remote A unchanged, local changed A' - remote digest and cached digest are the same,
+but local digest and cached digest differ: LOCAL_CHANGED
 
-7. remote B, local changed A' - remote digest and cached digest differ, local digest and cached digest differ: BOTH
+7. remote B, local changed A' - remote digest and cached digest differ,
+local digest and cached digest differ: BOTH_CHANGED
 """
 
+import attr
 from enum import Enum
 import json
 import pathlib
 import typing
 
 from kitovu.sync import syncplugin
-from kitovu import utils
-
-# sync-process:
-# every time we sync something, the FileCache gets read, upon which kitovu decides what needs to be downloaded.
-# The files get downloaded, for each file, the FileCache gets updated for the files that were synchronised.
 
 
 class FileState(Enum):
-    """Used to discern in which places files have changed"""
-    LOCAL_CHANGED = 1
-    REMOTE_CHANGED = 2
-    BOTH_CHANGED = 3
-    NO_CHANGES = 4
-    NEW = 5
+    """Used to discern in which places files have changed."""
+
+    NEW = 3
+    REMOTE_CHANGED = 4
+    NO_CHANGES = 5
+    LOCAL_CHANGED = 6
+    BOTH_CHANGED = 7
 
 
 # #FIXME refactor with attrs.?
+@attr.s
 class File:
 
     def __init__(self, local_digest_at_synctime: str,
                  relative_path_with_filename: pathlib.Path,
                  plugin_name: str) -> None:
-        self._cached_digest = local_digest_at_synctime
-        self._relative_path_with_filename: pathlib.Path = relative_path_with_filename
-        self.plugin_name = plugin_name
+        self._cached_digest = attr.ib()
+        self._relative_path_with_filename: pathlib.Path = attr.ib()
+        self.plugin_name = attr.ib()
         self._remote_digest = ""
         self._local_digest = ""
 
