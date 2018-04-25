@@ -17,6 +17,8 @@ class Digests:
 
 class DummyPlugin(syncplugin.AbstractSyncPlugin):
 
+    NAME: str = "dummyplugin"
+
     def __init__(self,
                  local_digests: typing.Dict[pathlib.PurePath, str]=None,
                  remote_digests: typing.Dict[pathlib.PurePath, str]=None):
