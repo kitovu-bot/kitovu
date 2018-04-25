@@ -51,22 +51,16 @@ class FileState(Enum):
     BOTH_CHANGED = 7
 
 
-# #FIXME refactor with attrs.?
 @attr.s
 class File:
 
-    def __init__(self, local_digest_at_synctime: str,
-                 relative_path_with_filename: pathlib.Path,
-                 plugin_name: str) -> None:
-        self._cached_digest = attr.ib()
-        self._relative_path_with_filename: pathlib.Path = attr.ib()
-        self.plugin_name = attr.ib()
-        self._remote_digest = ""
-        self._local_digest = ""
+    cached_digest: str = attr.ib()  # local digest at synctime
+    relative_path_with_filename: pathlib.Path = attr.ib()
+    plugin_name: str = attr.ib()
 
     def to_dict(self) -> typing.Dict[str, str]:
         return {"plugin": self.plugin_name,
-                "digest": self._cached_digest}
+                "digest": self.cached_digest}
 
 
 class FileCache:
@@ -104,10 +98,10 @@ class FileCache:
         for key, value in json_data.items():
             digest: str = value["digest"]
             plugin_name: str = value["plugin"]
-            self._data[pathlib.Path(key)] = File(local_digest_at_synctime=digest, plugin_name=plugin_name)
+            self._data[pathlib.Path(key)] = File(cached_digest=digest, plugin_name=plugin_name)
 
     def modify(self, path: pathlib.Path, plugin: syncplugin.AbstractSyncPlugin, local_digest_at_synctime: str):
-        file = File(local_digest_at_synctime=local_digest_at_synctime, plugin_name=plugin.NAME)
+        file = File(cached_digest=local_digest_at_synctime, plugin_name=plugin.NAME)
         self._data[path] = file
 
     def discover_changes(self,
