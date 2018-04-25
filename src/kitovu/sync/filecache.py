@@ -123,4 +123,3 @@ class FileCache:
         remote_digest: str = plugin.create_remote_digest(remote_full_path)
         local_digest: str = plugin.create_local_digest(local_full_path)
         return self._compare_digests(remote_digest, local_digest, cached_digest)
-
