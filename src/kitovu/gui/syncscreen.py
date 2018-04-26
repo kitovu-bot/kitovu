@@ -75,7 +75,8 @@ class SyncScreen(QWidget):
         if exit_status == QProcess.CrashExit:
             self.status_message.emit("Fehler: Kitovu-Prozess ist abgestürzt")
         elif exit_code != 0:
-            self.status_message.emit(f"Fehler: Kitovu-Prozess wurde mit Status {exit_code} beendet.")
+            self.status_message.emit(f"Fehler: Kitovu-Prozess wurde mit Status {exit_code} "
+                                     "beendet.")
         else:
             self.status_message.emit("Synchronisation erfolgreich beendet.")
 

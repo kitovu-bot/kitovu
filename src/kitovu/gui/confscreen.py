@@ -24,9 +24,12 @@ class ConfScreen(QWidget):
         self._edit.setAcceptRichText(False)
 
         self._buttons = QDialogButtonBox()
-        self._cancel_button: QPushButton = self._buttons.addButton("Abbrechen", QDialogButtonBox.DestructiveRole)
-        self._save_button: QPushButton = self._buttons.addButton("Speichern", QDialogButtonBox.ApplyRole)
-        self._back_button: QPushButton = self._buttons.addButton("Speichern und zurück", QDialogButtonBox.AcceptRole)
+        self._cancel_button: QPushButton = self._buttons.addButton(
+            "Abbrechen", QDialogButtonBox.DestructiveRole)
+        self._save_button: QPushButton = self._buttons.addButton(
+            "Speichern", QDialogButtonBox.ApplyRole)
+        self._back_button: QPushButton = self._buttons.addButton(
+            "Speichern und zurück", QDialogButtonBox.AcceptRole)
         self._vbox.addWidget(self._buttons)
 
         self._cancel_button.clicked.connect(self.close_requested)
