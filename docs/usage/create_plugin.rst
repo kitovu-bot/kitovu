@@ -53,7 +53,7 @@ User Output
 Errors
 ~~~~~~
 
-If there occurs an error which should cancel the entire execution of the plugin you can throw a :code:`kitovu.utils.UsageError`.
+If there occurs an error which should cancel the entire execution of the plugin you can throw a :class:`kitovu.utils.UsageError`.
 The command line tool or the user interface will print those messages.
 
 This is used for example if the server rejects a request or is not available.
