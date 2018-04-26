@@ -6,17 +6,17 @@ from PyQt5.QtCore import pyqtSlot, pyqtSignal, QProcess
 
 class ProgressBar(QProgressBar):
 
-    def show_empty(self):
+    def show_empty(self) -> None:
         self.setMinimum(0)
         self.setMaximum(1)
         self.setValue(0)
 
-    def show_full(self):
+    def show_full(self) -> None:
         self.setMinimum(0)
         self.setMaximum(1)
         self.setValue(1)
 
-    def show_pulse(self):
+    def show_pulse(self) -> None:
         self.setMinimum(0)
         self.setMaximum(0)
         self.setValue(0)
@@ -27,7 +27,7 @@ class SyncScreen(QWidget):
     status_message = pyqtSignal(str)
     close_requested = pyqtSignal()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget = None) -> None:
         super().__init__(parent)
 
         self._vbox = QVBoxLayout(self)
@@ -53,19 +53,19 @@ class SyncScreen(QWidget):
         self.status_message.connect(self.on_status_message)
 
     @pyqtSlot()
-    def on_process_started(self):
+    def on_process_started(self) -> None:
         self._cancel_button.setText("Abbrechen")
         self._progress.show_pulse()
         self.status_message.emit("Sychronisation läuft...")
 
     @pyqtSlot()
-    def on_process_ready_read(self):
+    def on_process_ready_read(self) -> None:
         if self._process.canReadLine():
             data: bytes = bytes(self._process.readLine())
             self._output.append(data.decode('utf-8'))
 
     @pyqtSlot(int, QProcess.ExitStatus)
-    def on_process_finished(self, exit_code: int, exit_status: QProcess.ExitStatus):
+    def on_process_finished(self, exit_code: int, exit_status: QProcess.ExitStatus) -> None:
         self._cancel_button.setText("Zurück")
         self._progress.show_full()
 
@@ -80,13 +80,13 @@ class SyncScreen(QWidget):
             self.status_message.emit("Synchronisation erfolgreich beendet.")
 
     @pyqtSlot(str)
-    def on_status_message(self, message):
+    def on_status_message(self, message: str) -> None:
         if self._output.toPlainText():
             self._output.append('\n\n')
         self._output.append(message)
 
     @pyqtSlot()
-    def on_cancel_clicked(self):
+    def on_cancel_clicked(self) -> None:
         if self._process.state() != QProcess.NotRunning:
             if sys.platform.startswith('win'):
                 self._process.kill()
@@ -95,7 +95,7 @@ class SyncScreen(QWidget):
 
         self.close_requested.emit()
 
-    def start_sync(self):
+    def start_sync(self) -> None:
         self._output.setPlainText("")
         self._progress.show_empty()
         self._process.start(sys.executable, ['-m', 'kitovu', 'sync'])

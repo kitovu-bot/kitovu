@@ -7,11 +7,11 @@ from PyQt5.QtCore import pyqtSignal, Qt
 
 class LogoWidget(QLabel):
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget = None) -> None:
         super().__init__(parent)
         # FIXME how to load this properly?
         logo_path = pathlib.Path(__file__).parent / 'kitovu.png'
-        self._pixmap = QPixmap(str(logo_path)).scaledToWidth(500)
+        self._pixmap: QPixmap = QPixmap(str(logo_path)).scaledToWidth(500)
         self.setPixmap(self._pixmap)
         self.setAlignment(Qt.AlignCenter)
 
@@ -21,7 +21,7 @@ class StartScreen(QWidget):
     sync_pressed = pyqtSignal()
     conf_pressed = pyqtSignal()
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget = None) -> None:
         super().__init__(parent)
         self.setStyleSheet("""
             QLabel {

@@ -14,7 +14,8 @@ def run() -> int:
     """)
     main = mainwindow.MainWindow()
     main.show()
-    return app.exec_()
+    status: int = app.exec_()
+    return status
 
 
 if __name__ == '__main__':

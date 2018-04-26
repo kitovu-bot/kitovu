@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow, QStackedWidget
+from PyQt5.QtWidgets import QMainWindow, QStackedWidget, QWidget
 from PyQt5.QtCore import pyqtSignal, pyqtSlot
 
 from kitovu.gui import startscreen, confscreen, syncscreen
@@ -8,7 +8,7 @@ class CentralWidget(QStackedWidget):
 
     status_message = pyqtSignal(str)
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget = None) -> None:
         super().__init__(parent)
 
         self._sync_screen = syncscreen.SyncScreen()
@@ -34,14 +34,14 @@ class CentralWidget(QStackedWidget):
         self.setCurrentWidget(self._start_screen)
 
     @pyqtSlot()
-    def on_sync_pressed(self):
+    def on_sync_pressed(self) -> None:
         self.setCurrentWidget(self._sync_screen)
         self._sync_screen.start_sync()
 
 
 class MainWindow(QMainWindow):
 
-    def __init__(self, parent=None):
+    def __init__(self, parent: QWidget = None) -> None:
         super().__init__(parent)
         central = CentralWidget()
         self.statusBar().showMessage("Bereit.")
