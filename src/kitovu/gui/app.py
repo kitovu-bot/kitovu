@@ -7,6 +7,11 @@ from kitovu.gui import mainwindow
 
 def run() -> int:
     app = QApplication(sys.argv)
+    app.setStyleSheet("""
+        QPushButton {
+            padding: 20px;
+        }
+    """)
     main = mainwindow.MainWindow()
     main.show()
     return app.exec_()
