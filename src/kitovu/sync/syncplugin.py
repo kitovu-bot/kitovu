@@ -49,6 +49,7 @@ class AbstractSyncPlugin(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[bytes]) -> None:
+    def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[bytes],
+                      local_path: pathlib.Path) -> None:
         """Retrieve the given remote file."""
         raise NotImplementedError

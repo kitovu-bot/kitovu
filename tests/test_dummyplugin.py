@@ -66,7 +66,7 @@ def test_if_correct_file_retrieved(plugin, tmpdir: py.path.local):
 
     plugin.connect()
     with sample.open("wb") as f:
-        plugin.retrieve_file(pathlib.PurePath("remote_dir/test/example1.txt"), f)
+        plugin.retrieve_file(pathlib.PurePath("remote_dir/test/example1.txt"), f, sample)
 
     text = sample.read_text('utf-8')
     assert text == str(pathlib.PurePath("remote_dir/test/example1.txt")) + "\n1"
@@ -79,7 +79,7 @@ def test_if_changed_digest_still_retrieves_correct_file(plugin, tmpdir: py.path.
     plugin.remote_digests[pathlib.PurePath("remote_dir/test/example1.txt")] = "42"  # change remote digest
 
     with sample.open("wb") as f:
-        plugin.retrieve_file(pathlib.PurePath("remote_dir/test/example1.txt"), f)
+        plugin.retrieve_file(pathlib.PurePath("remote_dir/test/example1.txt"), f, sample)
 
     text = sample.read_text('utf-8')
     assert text == str(pathlib.PurePath("remote_dir/test/example1.txt")) + "\n42"

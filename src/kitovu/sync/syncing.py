@@ -60,7 +60,7 @@ def start(connection_settings: ConnectionSettings) -> None:
             pathlib.Path(output.parent).mkdir(parents=True, exist_ok=True)
 
             with output.open('wb') as fileobj:
-                plugin.retrieve_file(item, fileobj)
+                plugin.retrieve_file(item, fileobj, output)
 
             local_digest = plugin.create_local_digest(output)
             print(f'Local digest: {local_digest}')
