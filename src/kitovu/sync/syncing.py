@@ -52,8 +52,8 @@ def start(connection_settings: ConnectionSettings) -> None:
             # each plugin should now yield all files recursively with list_path
             print(f'Downloading: {item}')
 
-            digest = plugin.create_remote_digest(item)
-            print(f'Remote digest: {digest}')
+            remote_digest = plugin.create_remote_digest(item)
+            print(f'Remote digest: {remote_digest}')
 
             output = pathlib.Path(local_path / item.relative_to(remote_path))
 
@@ -62,7 +62,9 @@ def start(connection_settings: ConnectionSettings) -> None:
             with output.open('wb') as fileobj:
                 plugin.retrieve_file(item, fileobj)
 
-            digest = plugin.create_local_digest(output)
-            print(f'Local digest: {digest}')
+            local_digest = plugin.create_local_digest(output)
+            print(f'Local digest: {local_digest}')
+
+            assert remote_digest == local_digest
 
     plugin.disconnect()
