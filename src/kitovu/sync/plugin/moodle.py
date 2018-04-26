@@ -67,7 +67,6 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
 
     def create_local_digest(self, path: pathlib.Path) -> str:
         stats = path.stat()
-        print(stats)
         return self._create_digest(stats.st_size, int(stats.st_mtime))
 
     def create_remote_digest(self, path: pathlib.PurePath) -> str:
