@@ -4,14 +4,14 @@ import helpers.reporter
 
 
 def test_reporter_with_defaults():
-    reporter = helpers.reporter.TestReporter()
-    reporter.warn("test 1")
-    reporter.warn("test 2")
+    reporter = helpers.reporter.TestReporter(raise_errors=True)
+    with pytest.raises(Exception) as excinfo:
+        reporter.warn("my test")
+    assert str(excinfo.value) == "my test"
 
-    assert reporter.messages == [
-        "test 1",
-        "test 2",
-    ]
+    with pytest.raises(Exception) as excinfo:
+        reporter.warn("another test")
+    assert str(excinfo.value) == "another test"
 
 
 def test_reporter_without_raising():
