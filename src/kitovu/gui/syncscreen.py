@@ -1,12 +1,13 @@
 import sys
 
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTextEdit, QProgressBar
+from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTextEdit, QProgressBar, QPushButton
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QProcess
 
 
 class SyncScreen(QWidget):
 
     status_message = pyqtSignal(str)
+    close_requested = pyqtSignal()
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -22,6 +23,10 @@ class SyncScreen(QWidget):
         self._progress.setMaximum(0)
         self._vbox.addWidget(self._progress)
 
+        self._cancel_button = QPushButton("Zurück")
+        self._cancel_button.clicked.connect(self.on_cancel_clicked)
+        self._vbox.addWidget(self._cancel_button)
+
         self._process = QProcess()
         self._process.setProcessChannelMode(QProcess.MergedChannels)
         self._process.readyRead.connect(self.on_process_ready_read)
@@ -32,6 +37,7 @@ class SyncScreen(QWidget):
 
     @pyqtSlot()
     def on_process_started(self):
+        self._cancel_button.setText("Abbrechen")
         self._progress.setValue(0)
         self.status_message.emit("Sychronisation läuft...")
 
@@ -43,7 +49,9 @@ class SyncScreen(QWidget):
 
     @pyqtSlot(int, QProcess.ExitStatus)
     def on_process_finished(self, exit_code: int, exit_status: QProcess.ExitStatus):
+        self._cancel_button.setText("Zurück")
         self._progress.setValue(-1)
+
         data: bytes = bytes(self._process.readAll())
         self._output.append(data.decode('utf-8'))
 
@@ -60,5 +68,16 @@ class SyncScreen(QWidget):
             self._output.append('\n\n')
         self._output.append(message)
 
+    @pyqtSlot()
+    def on_cancel_clicked(self):
+        if self._process.state() != QProcess.NotRunning:
+            if sys.platform.startswith('win'):
+                self._process.kill()
+            else:
+                self._process.terminate()
+
+        self.close_requested.emit()
+
     def start_sync(self):
+        self._output.setPlainText("")
         self._process.start(sys.executable, ['-m', 'kitovu', 'sync'])
