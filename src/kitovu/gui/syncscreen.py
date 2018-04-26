@@ -4,6 +4,24 @@ from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTextEdit, QProgressBar, QPush
 from PyQt5.QtCore import pyqtSlot, pyqtSignal, QProcess
 
 
+class ProgressBar(QProgressBar):
+
+    def show_empty(self):
+        self.setMinimum(0)
+        self.setMaximum(1)
+        self.setValue(0)
+
+    def show_full(self):
+        self.setMinimum(0)
+        self.setMaximum(1)
+        self.setValue(1)
+
+    def show_pulse(self):
+        self.setMinimum(0)
+        self.setMaximum(0)
+        self.setValue(0)
+
+
 class SyncScreen(QWidget):
 
     status_message = pyqtSignal(str)
@@ -18,9 +36,8 @@ class SyncScreen(QWidget):
         self._output.setReadOnly(True)
         self._vbox.addWidget(self._output)
 
-        self._progress = QProgressBar()
-        self._progress.setMinimum(0)
-        self._progress.setMaximum(0)
+        self._progress = ProgressBar()
+        self._progress.show_empty()
         self._vbox.addWidget(self._progress)
 
         self._cancel_button = QPushButton("Zurück")
@@ -38,7 +55,7 @@ class SyncScreen(QWidget):
     @pyqtSlot()
     def on_process_started(self):
         self._cancel_button.setText("Abbrechen")
-        self._progress.setValue(0)
+        self._progress.show_pulse()
         self.status_message.emit("Sychronisation läuft...")
 
     @pyqtSlot()
@@ -50,7 +67,7 @@ class SyncScreen(QWidget):
     @pyqtSlot(int, QProcess.ExitStatus)
     def on_process_finished(self, exit_code: int, exit_status: QProcess.ExitStatus):
         self._cancel_button.setText("Zurück")
-        self._progress.setValue(-1)
+        self._progress.show_full()
 
         data: bytes = bytes(self._process.readAll())
         self._output.append(data.decode('utf-8'))
@@ -80,4 +97,5 @@ class SyncScreen(QWidget):
 
     def start_sync(self):
         self._output.setPlainText("")
+        self._progress.show_empty()
         self._process.start(sys.executable, ['-m', 'kitovu', 'sync'])
