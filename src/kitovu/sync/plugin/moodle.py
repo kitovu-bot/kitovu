@@ -5,7 +5,7 @@ import pathlib
 
 import requests
 
-from kitovu import config
+from kitovu import utils
 from kitovu.sync import syncplugin
 
 
@@ -17,7 +17,7 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         self._url: str = None
         self._user_id: int = None
         self._courses: typing.Dict[str, int] = {}
-        self._files: typing.Dict[str, typing.Dict[str, str]] = {}
+        self._files: typing.Dict[pathlib.PurePath, typing.Dict[str, str]] = {}
 
     def _request(self, func, **kwargs) -> typing.Any:
         url = self._url + 'webservice/rest/server.php'
@@ -31,6 +31,7 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         assert req.status_code == 200, req  # FIXME
         data = req.json()
         assert 'exception' not in data, data
+        assert 'error' not in data, data
         return data
 
     def configure(self, info: typing.Dict[str, typing.Any]) -> None:
@@ -38,7 +39,7 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         if not self._url.endswith('/'):
             self._url += '/'
 
-        self._token = config.get_password('moodle', self._url)
+        self._token = utils.get_password('moodle', self._url)
 
     def connect(self) -> None:
         # Get our own user ID
@@ -60,10 +61,10 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         courses = self._request('core_enrol_get_users_courses', userid=self._user_id)
         for course in courses:
             self._courses[course['fullname']] = course['id']
-            self._files[course['fullname']] = {}
         return list(self._courses)
 
-    def _list_files(self, course: str) -> typing.Iterable[str]:
+    def _list_files(self, course_path: pathlib.PurePath) -> typing.Iterable[str]:
+        course = str(course_path)
         if not self._courses:
             self._list_courses()
 
@@ -71,12 +72,15 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         lessons = self._request('core_course_get_contents', courseid=course_id)
 
         for section in lessons:
+            section_path = course_path / section['name']
             for module in section['modules']:
+                module_path = section_path / module['name']
                 for elem in module.get('contents', []):
                     if 'mimetype' not in elem:
                         continue
-                    self._files[course][elem['filename']] = elem['fileurl']
-                    yield elem['filename']
+                    local_path = module_path / elem['filename']
+                    self._files[local_path] = elem['fileurl']
+                    yield local_path
 
     def list_path(self, path: pathlib.PurePath) -> typing.Iterable[pathlib.PurePath]:
         """Get a list of all courses, or files in a course."""
@@ -85,17 +89,17 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
                 yield pathlib.PurePath(course)
         else:
             # FIXME
-            course = str(path)
-            for filename in self._list_files(course):
-                yield path / filename
+            for filename in self._list_files(path):
+                yield filename
 
     def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[bytes]) -> None:
-        assert len(path.parts) == 2, path
-        course = path.parts[0]
-        filename = path.parts[1]
-        fileurl = self._files[course][filename]
+        fileurl = self._files[path]
 
-        req = requests.get(fileurl, data={'token': self._token})
+        req = requests.get(fileurl, {'token': self._token})
         assert req.status_code == 200, req  # FIXME
+        if 'json' in req.headers['content-type']:
+            data = req.json()
+            assert 'exception' not in data, data
+            assert 'error' not in data, data
         for chunk in req:
             fileobj.write(chunk)
