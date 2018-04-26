@@ -15,6 +15,9 @@ Why does this file exist, and why not put this in __main__?
   Also see (1) from http://click.pocoo.org/5/setuptools/#setuptools-integration
 """
 
+import pathlib
+import typing
+
 import click
 
 from kitovu import utils
@@ -27,12 +30,10 @@ def cli() -> None:
 
 
 @cli.command()
-@click.argument('plugin')
-@click.argument('username')
-@click.argument('path')
-def sync(plugin: str, username: str, path: str) -> None:
-    """Synchronize with the given plugin, username and path."""
+@click.option('--config', type=pathlib.Path, help="The configuration file to use")
+def sync(config: typing.Optional[pathlib.Path] = None) -> None:
+    """Synchronize with the given configuration file."""
     try:
-        syncing.start(plugin, username, path)
+        syncing.start_all(config)
     except utils.UsageError as ex:
         raise click.ClickException(str(ex))

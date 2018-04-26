@@ -8,7 +8,7 @@ import pathlib
 import attr
 from smb.SMBConnection import SMBConnection
 
-from kitovu import config
+from kitovu import utils
 from kitovu.sync import syncplugin
 
 
@@ -75,7 +75,7 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
         self._info.share = info.get('share', 'skripte')
         self._info.hostname = info.get('hostname', 'svm-c213.hsr.ch')
 
-        self._info.password = config.get_password('smb', self._password_identifier())
+        self._info.password = utils.get_password('smb', self._password_identifier())
 
         default_port = 445 if self._info.is_direct_tcp else 139
         self._info.port = info.get('port', default_port)
@@ -95,7 +95,7 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
         # FIXME: Handle smb.smb_structs.ProtocolError (wrong password)
         success = self._connection.connect(server_ip, self._info.port)
         if not success:
-            raise OSError("Connection failed")
+            raise OSError(f'Connection failed to {server_ip}:{self._info.port}')
 
     def disconnect(self) -> None:
         self._connection.close()
@@ -123,8 +123,13 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
                                    mtime=attributes.last_write_time)
 
     def list_path(self, path: pathlib.PurePath) -> typing.Iterable[pathlib.PurePath]:
+        # FIXME: detect recursion
         for entry in self._connection.listPath(self._info.share, str(path)):
-            if not entry.isDirectory:
+            if entry.isDirectory:
+                if entry.filename not in [".", ".."]:
+                    yield from self.list_path(pathlib.PurePath(path / entry.filename))
+            else:
+                # only gives back the files in the current folder
                 yield pathlib.PurePath(path / entry.filename)
 
     def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[bytes]) -> None:

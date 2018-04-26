@@ -15,3 +15,6 @@ docstring-min-length=3
 
 [design]
 max-attributes = 10
+
+[typecheck]
+ignored-classes=_CountingAttr

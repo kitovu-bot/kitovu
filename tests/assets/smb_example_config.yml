@@ -1,0 +1,26 @@
+root-dir: ~/Documents/HSR/semester_06
+
+global-ignore:
+  - Thumbs.db
+  - .DS_Store
+
+connections:
+  - name: skripte-server
+    plugin: smb
+    # hostname: svm-c213.hsr.ch
+    # port: 445
+    # share: skripte
+    # domain: HSR
+    username: example_user
+  # ...
+
+subjects:
+  - name: Engineering-Projekt
+    sources:
+      - connection: skripte-server
+        ignore:
+          - SubDir
+          - example.txt
+        remote-dir: Informatik/Fachbereich/Engineering-Projekt/EPJ
+        # local-dir: Engineering-Projekt
+    # file downloaded: conflict-handling todo

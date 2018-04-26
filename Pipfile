@@ -13,6 +13,7 @@ pysmb = "*"
 keyring = "*"
 pyyaml = "*"
 stevedore = "*"
+appdirs = "*"
 
 
 [dev-packages]
