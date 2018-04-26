@@ -67,7 +67,9 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
 
     def create_local_digest(self, path: pathlib.Path) -> str:
         stats = path.stat()
-        return self._create_digest(stats.st_size, int(stats.st_mtime))
+        # unfortunately html files have a size of 0
+        size = 0 if str(path).endswith('.html') else stats.st_size
+        return self._create_digest(size, int(stats.st_mtime))
 
     def create_remote_digest(self, path: pathlib.PurePath) -> str:
         moodle_file = self._files[path]
@@ -94,9 +96,13 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
             for module in section['modules']:
                 module_path = section_path / module['name']
                 for elem in module.get('contents', []):
+                    filename = elem['filename']
                     if 'mimetype' not in elem:
-                        continue
-                    local_path = module_path / elem['filename']
+                        # unfortunately html files have a size of 0
+                        assert elem['filesize'] == 0
+                        if not filename.endswith('.html'):
+                            filename += '.html'
+                    local_path = module_path / filename
                     self._files[local_path] = _MoodleFile(elem['fileurl'],
                                                           elem['filesize'],
                                                           elem['timemodified'])
