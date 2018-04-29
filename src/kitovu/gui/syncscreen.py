@@ -56,7 +56,7 @@ class SyncScreen(QWidget):
     def on_process_started(self) -> None:
         self._cancel_button.setText("Abbrechen")
         self._progress.show_pulse()
-        self.status_message.emit("Sychronisation läuft...")
+        self.status_message.emit("Synchronisation läuft...")
 
     @pyqtSlot()
     def on_process_ready_read(self) -> None:
@@ -73,7 +73,7 @@ class SyncScreen(QWidget):
         self._output.append(data.decode('utf-8'))
 
         if exit_status == QProcess.CrashExit:
-            self.status_message.emit("Fehler: Kitovu-Prozess ist abgestürzt")
+            self.status_message.emit("Fehler: Kitovu-Prozess ist abgestürzt.")
         elif exit_code != 0:
             self.status_message.emit(f"Fehler: Kitovu-Prozess wurde mit Status {exit_code} "
                                      "beendet.")
@@ -83,7 +83,7 @@ class SyncScreen(QWidget):
     @pyqtSlot(str)
     def on_status_message(self, message: str) -> None:
         if self._output.toPlainText():
-            self._output.append('\n\n')
+            self._output.append('\n')
         self._output.append(message)
 
     @pyqtSlot()
