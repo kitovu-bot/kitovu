@@ -1,12 +1,9 @@
 [[source]]
-
 url = "https://pypi.python.org/simple"
 verify_ssl = true
 name = "pypi"
 
-
 [packages]
-
 attrs = "*"
 click = "*"
 pysmb = "*"
@@ -15,10 +12,10 @@ pyyaml = "*"
 stevedore = "*"
 appdirs = "*"
 "pyqt5" = "*"
-
+pytest-qt = "*"
+pytest-xvfb = "*"
 
 [dev-packages]
-
 pytest = "*"
 pytest-bdd = "*"
 pytest-cov = "*"
@@ -29,7 +26,5 @@ pylint = "*"
 mypy = "*"
 pytest-mock = "*"
 
-
 [requires]
-
 python_version = "3.6"
