@@ -98,8 +98,8 @@ def test_crash_exit(screen, patcher, qtbot, cancel):
 
 def test_stderr_output(screen, patcher, qtbot):
     patcher.patch('import sys',
-                  'print("This is stdout")',
-                  'print("This is stderr", file=sys.stderr)')
+                  'print("This is stdout", flush=True)',
+                  'print("This is stderr", file=sys.stderr, flush=True)')
 
     with qtbot.wait_signal(screen.finished):
         screen.start_sync()
