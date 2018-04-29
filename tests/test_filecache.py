@@ -56,30 +56,34 @@ class TestChange:
         cache.modify(temppath / "testfile1.txt", plugin, "digest1")
         testfile = filecache.File(cached_digest="digest1", plugin_name="dummyplugin")
         assert cache._data[temppath / "testfile1.txt"] == testfile
-        pass
 
     def test_not_matching_pluginname(self, temppath, plugin, cache):
-        pass
-
-    def test_no_local_full_path_exists(self, temppath, plugin, cache):
-        local = temppath / "testfile2.pdf"
-        remote = pathlib.PurePath(temppath) / "testfile2.pdf"
-        assert cache.discover_changes(local, remote, plugin) == filecache.FileState.NEW
+        cache.modify(temppath / "testfile2.pdf", plugin, "digest2")
+        testfile = filecache.File(cached_digest="digest2", plugin_name="smb")
+        with pytest.raises(AssertionError):
+            assert cache._data[temppath / "testfile2.pdf"] == testfile
 
 
 class TestFileState:
 
-    def test_file_is_new(self):
+    def test_file_is_new(self, temppath, plugin, cache):
+        local = temppath / "testfile1.txt"
+        remote = pathlib.PurePath(temppath) / "testfile1.txt"
+        assert cache.discover_changes(local, remote, plugin) == filecache.FileState.NEW
+
+    def test_remote_file_changed(self, temppath, plugin, cache):
+        local = pathlib.Path("dir/test/example1.txt")
+        remote = pathlib.PurePath("dir/test/example1.txt")
+
+        cache.modify(temppath / "dir/test/example1.txt", plugin, plugin.remote_digests[pathlib.PurePath("dir/test/example1.txt")])
+        plugin.remote_digests[pathlib.PurePath("dir/test/example1.txt")] = "11"
+        assert cache.discover_changes(local, remote, plugin) == filecache.FileState.REMOTE_CHANGED
+
+    def test_file_not_changed(self, temppath, plugin, cache):
         pass
 
-    def test_remote_file_changed(self):
+    def test_local_file_changed(self, temppath, plugin, cache):
         pass
 
-    def test_file_not_changed(self):
-        pass
-
-    def test_local_file_changed(self):
-        pass
-
-    def test_remote_and_local_file_changed(self):
+    def test_remote_and_local_file_changed(self, temppath, plugin, cache):
         pass
