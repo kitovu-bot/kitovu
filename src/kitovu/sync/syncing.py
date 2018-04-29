@@ -45,9 +45,14 @@ def start(connection_settings: ConnectionSettings) -> None:
     plugin = _find_plugin(connection_settings.plugin_name)
     plugin.configure(connection_settings.connection)
     plugin.connect()
-    cache: filecache.FileCache = filecache.FileCache(
-        pathlib.Path(appdirs.user_data_dir('kitovu')) / 'filecache.json')
-    cache.load()
+
+    filecache_path: pathlib.Path = pathlib.Path(appdirs.user_data_dir('kitovu')) / 'filecache.json'
+
+    if not filecache_path.exists():
+        pass
+    else:
+        cache: filecache.FileCache = filecache.FileCache(filecache_path)
+        cache.load()
 
     for subject in connection_settings.subjects:
         remote_dir = pathlib.PurePath(subject['remote-dir'])  # /Informatik/Fachbereich/EPJ/
