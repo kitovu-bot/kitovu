@@ -24,8 +24,10 @@ class ProgressBar(QProgressBar):
 
 class SyncScreen(QWidget):
 
+    PYTHON_ARGS = ['-m', 'kitovu', 'sync']
     status_message = pyqtSignal(str)
     close_requested = pyqtSignal()
+    finished = pyqtSignal(int, QProcess.ExitStatus)
 
     def __init__(self, parent: QWidget = None) -> None:
         super().__init__(parent)
@@ -80,6 +82,8 @@ class SyncScreen(QWidget):
         else:
             self.status_message.emit("Synchronisation erfolgreich beendet.")
 
+        self.finished.emit(exit_code, exit_status)
+
     @pyqtSlot(str)
     def on_status_message(self, message: str) -> None:
         if self._output.toPlainText():
@@ -89,7 +93,7 @@ class SyncScreen(QWidget):
     @pyqtSlot()
     def on_cancel_clicked(self) -> None:
         if self._process.state() != QProcess.NotRunning:
-            if sys.platform.startswith('win'):
+            if sys.platform.startswith('win'):  # pragma: no cover
                 self._process.kill()
             else:
                 self._process.terminate()
@@ -99,4 +103,4 @@ class SyncScreen(QWidget):
     def start_sync(self) -> None:
         self._output.setPlainText("")
         self._progress.show_empty()
-        self._process.start(sys.executable, ['-m', 'kitovu', 'sync'])
+        self._process.start(sys.executable, self.PYTHON_ARGS)
