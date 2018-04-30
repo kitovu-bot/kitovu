@@ -92,8 +92,12 @@ class FileCache:
 
     def load(self) -> None:
         """This is called first when the synchronisation process is started."""
-        with self._filename.open("r") as f:
-            json_data = json.load(f)
+        try:
+            with self._filename.open("r") as f:
+                json_data = json.load(f)
+        except FileNotFoundError:
+            return
+
         for key, value in json_data.items():
             digest: str = value["digest"]
             plugin_name: str = value["plugin"]
