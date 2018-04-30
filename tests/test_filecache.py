@@ -66,18 +66,45 @@ class TestFileState:
         assert cache.discover_changes(local, remote, plugin) == filecache.FileState.NEW
 
     def test_remote_file_changed(self, temppath, plugin, cache):
-        local = pathlib.Path("dir/test/example1.txt")
-        remote = pathlib.PurePath("dir/test/example1.txt")
+        plugin.connect()
+        local = temppath / "local_dir/test/example4.txt"
+        local.parent.mkdir(parents=True)
+        local.touch()
+        remote = pathlib.PurePath("remote_dir/test/example4.txt")
 
-        cache.modify(temppath / "dir/test/example1.txt", plugin, plugin.remote_digests[pathlib.PurePath("dir/test/example1.txt")])
-        plugin.remote_digests[pathlib.PurePath("dir/test/example1.txt")] = "11"
+        cache.modify(local, plugin, plugin.remote_digests[remote])
+        plugin.remote_digests[remote] = "44"
         assert cache.discover_changes(local, remote, plugin) == filecache.FileState.REMOTE_CHANGED
 
     def test_file_not_changed(self, temppath, plugin, cache):
-        pass
+        plugin.connect()
+        local = temppath / "local_dir/test/example1.txt"
+        local.parent.mkdir(parents=True)
+        local.touch()
+        remote = pathlib.PurePath("remote_dir/test/example1.txt")
+
+        cache.modify(local, plugin, plugin.remote_digests[remote])
+        assert cache.discover_changes(local, remote, plugin) == filecache.FileState.NO_CHANGES
 
     def test_local_file_changed(self, temppath, plugin, cache):
-        pass
+        plugin.connect()
+        local = temppath / "local_dir/test/example2.txt"
+        local.parent.mkdir(parents=True)
+        local.touch()
+
+        remote = pathlib.PurePath("remote_dir/test/example2.txt")
+        cache.modify(local, plugin, plugin.remote_digests[remote])
+        plugin.local_digests[local] = "22"
+        assert cache.discover_changes(local, remote, plugin) == filecache.FileState.LOCAL_CHANGED
 
     def test_remote_and_local_file_changed(self, temppath, plugin, cache):
-        pass
+        plugin.connect()
+        local = temppath / "local_dir/test/example3.txt"
+        local.parent.mkdir(parents=True)
+        local.touch()
+
+        remote = pathlib.PurePath("remote_dir/test/example3.txt")
+        cache.modify(local, plugin, plugin.remote_digests[remote])
+        plugin.local_digests[local] = "33"
+        plugin.remote_digests[remote] = "99"
+        assert cache.discover_changes(local, remote, plugin) == filecache.FileState.BOTH_CHANGED

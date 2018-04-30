@@ -119,7 +119,7 @@ class FileCache:
             return FileState.NEW
 
         file: File = self._data[local_full_path]
-        file.cached_digest: str = file["digest"]
+
         if plugin.NAME != file.plugin_name:
             raise AssertionError(f"The cached plugin name '{file.plugin_name}' of the file {local_full_path} "
                                  f"doesn't match the plugin name '{plugin.NAME}'.")
