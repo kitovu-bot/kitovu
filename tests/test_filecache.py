@@ -76,7 +76,13 @@ class TestFileState:
         remote = pathlib.PurePath(temppath) / "testfile1.txt"
         assert cache.discover_changes(local, remote, plugin) == filecache.FileState.NEW
 
-    def test_remote_file_changed(self, temppath, plugin, cache):
+    @pytest.mark.parametrize('local_changed, remote_changed, expected', [
+        (True, True, filecache.FileState.BOTH_CHANGED),
+        (True, False, filecache.FileState.LOCAL_CHANGED),
+        (False, True, filecache.FileState.REMOTE_CHANGED),
+        (False, False, filecache.FileState.NO_CHANGES),
+    ])
+    def test_files_changed(self, temppath, plugin, cache, local_changed, remote_changed, expected):
         plugin.connect()
         local = temppath / "local_dir/test/example4.txt"
         local.parent.mkdir(parents=True)
@@ -84,38 +90,10 @@ class TestFileState:
         remote = pathlib.PurePath("remote_dir/test/example4.txt")
 
         cache.modify(local, plugin, plugin.remote_digests[remote])
-        plugin.remote_digests[remote] = "44"
-        assert cache.discover_changes(local, remote, plugin) == filecache.FileState.REMOTE_CHANGED
 
-    def test_file_not_changed(self, temppath, plugin, cache):
-        plugin.connect()
-        local = temppath / "local_dir/test/example1.txt"
-        local.parent.mkdir(parents=True)
-        local.touch()
-        remote = pathlib.PurePath("remote_dir/test/example1.txt")
+        if local_changed:
+            plugin.local_digests[local] = "abc"
+        if remote_changed:
+            plugin.remote_digests[remote] = "def"
 
-        cache.modify(local, plugin, plugin.remote_digests[remote])
-        assert cache.discover_changes(local, remote, plugin) == filecache.FileState.NO_CHANGES
-
-    def test_local_file_changed(self, temppath, plugin, cache):
-        plugin.connect()
-        local = temppath / "local_dir/test/example2.txt"
-        local.parent.mkdir(parents=True)
-        local.touch()
-
-        remote = pathlib.PurePath("remote_dir/test/example2.txt")
-        cache.modify(local, plugin, plugin.remote_digests[remote])
-        plugin.local_digests[local] = "22"
-        assert cache.discover_changes(local, remote, plugin) == filecache.FileState.LOCAL_CHANGED
-
-    def test_remote_and_local_file_changed(self, temppath, plugin, cache):
-        plugin.connect()
-        local = temppath / "local_dir/test/example3.txt"
-        local.parent.mkdir(parents=True)
-        local.touch()
-
-        remote = pathlib.PurePath("remote_dir/test/example3.txt")
-        cache.modify(local, plugin, plugin.remote_digests[remote])
-        plugin.local_digests[local] = "33"
-        plugin.remote_digests[remote] = "99"
-        assert cache.discover_changes(local, remote, plugin) == filecache.FileState.BOTH_CHANGED
+        assert cache.discover_changes(local, remote, plugin) == expected
