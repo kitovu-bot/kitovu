@@ -17,6 +17,7 @@ install:
   - '%PYTHON_HOME%\Scripts\virtualenv --version'
   - '%PYTHON_HOME%\Scripts\pip --version'
   - '%PYTHON_HOME%\Scripts\tox --version'
+  - 'set PATH=%PATH%;%PYTHON_HOME%'
 test_script:
   - '%WITH_COMPILER% %PYTHON_HOME%\Scripts\tox'
 
