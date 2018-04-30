@@ -46,7 +46,7 @@ Local file changed
 """
 
 import attr
-from enum import Enum
+import enum
 import json
 import pathlib
 import typing
@@ -54,7 +54,7 @@ import typing
 from kitovu.sync import syncplugin
 
 
-class FileState(Enum):
+class FileState(enum.Enum):
     """Used to discern in which places files have changed."""
 
     NEW = 3

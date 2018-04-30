@@ -9,10 +9,9 @@ import stevedore.driver
 import stevedore.exception
 
 from kitovu import utils
-from kitovu.sync import syncplugin
+from kitovu.sync import syncplugin, filecache
 from kitovu.sync.settings import Settings, ConnectionSettings
 from kitovu.sync.plugin import smb
-from kitovu.sync import filecache
 
 
 def _find_plugin(pluginname: str) -> syncplugin.AbstractSyncPlugin:
