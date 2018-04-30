@@ -17,11 +17,14 @@ class ConfScreen(QWidget):
         self._vbox = QVBoxLayout(self)
         self._edit = QTextEdit()
         self._edit.setStyleSheet("font-family: monospace;")
+        self._edit.setAcceptRichText(False)
         self._vbox.addWidget(self._edit)
 
         self._conf_file: pathlib.Path = settings.get_config_file_path()
-        self._edit.setPlainText(self._conf_file.read_text('utf-8'))
-        self._edit.setAcceptRichText(False)
+        try:
+            self._edit.setPlainText(self._conf_file.read_text('utf-8'))
+        except FileNotFoundError:
+            pass
 
         self._buttons = QDialogButtonBox()
         self._cancel_button: QPushButton = self._buttons.addButton(
