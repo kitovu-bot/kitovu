@@ -87,6 +87,7 @@ class FileCache:
         for key, value in self._data.items():
             json_data[str(key)] = value.to_dict()
 
+        self._filename.parent.mkdir(exist_ok=True)
         with self._filename.open("w") as f:
             json.dump(json_data, f)
 
