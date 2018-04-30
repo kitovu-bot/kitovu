@@ -23,6 +23,7 @@ import click
 
 from kitovu import utils
 from kitovu.sync import syncing
+from kitovu.gui import app as guiapp
 
 
 class CliReporter(utils.AbstractReporter):
@@ -35,6 +36,12 @@ class CliReporter(utils.AbstractReporter):
 @click.group()
 def cli() -> None:
     pass
+
+
+@cli.command()
+def gui() -> None:
+    """Start the kitovu GUI."""
+    sys.exit(guiapp.run())
 
 
 @cli.command()
