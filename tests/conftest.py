@@ -3,6 +3,7 @@ import pathlib
 import pytest
 
 from helpers.in_memory_keyring import InMemoryKeyring
+from tests.helpers import dummyplugin
 
 
 @pytest.fixture(autouse=True)
@@ -16,3 +17,8 @@ def init_keyring():
 @pytest.fixture
 def temppath(tmpdir):
     return pathlib.Path(tmpdir)
+
+
+@pytest.fixture
+def plugin() -> dummyplugin.DummyPlugin:
+    return dummyplugin.DummyPlugin()

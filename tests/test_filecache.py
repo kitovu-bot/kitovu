@@ -2,13 +2,7 @@ import pytest
 import pathlib
 import json
 
-from tests.helpers import dummyplugin
 from kitovu.sync import filecache
-
-
-@pytest.fixture
-def plugin() -> dummyplugin.DummyPlugin:
-    return dummyplugin.DummyPlugin()
 
 
 @pytest.fixture

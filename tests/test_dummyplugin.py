@@ -1,15 +1,7 @@
 import pathlib
 import typing
 
-import pytest
 import py.path
-
-from helpers import dummyplugin
-
-
-@pytest.fixture
-def plugin() -> dummyplugin.DummyPlugin:
-    return dummyplugin.DummyPlugin()
 
 
 def test_connection_active(plugin) -> None:
