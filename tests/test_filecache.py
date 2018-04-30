@@ -3,7 +3,7 @@ import pathlib
 import json
 
 from kitovu.sync import filecache
-
+from kitovu.sync.plugin.smb import SmbPlugin
 
 @pytest.fixture
 def cache(temppath) -> filecache.FileCache:
@@ -43,6 +43,10 @@ class TestLoadWrite:
                                temppath / "testfile6.png": filecache.File(cached_digest="digest6",
                                                                                         plugin_name="dummyplugin")}
 
+    def test_filecache_not_found(self, temppath, cache, plugin):
+        cache.load()
+        assert not cache._data
+
 
 class TestChange:
 
@@ -52,10 +56,16 @@ class TestChange:
         assert cache._data[temppath / "testfile1.txt"] == testfile
 
     def test_not_matching_pluginname(self, temppath, plugin, cache):
-        cache.modify(temppath / "testfile2.pdf", plugin, "digest2")
-        testfile = filecache.File(cached_digest="digest2", plugin_name="smb")
+        local = temppath / "local_dir/test/example1.txt"
+        local.parent.mkdir(parents=True)
+        local.touch()
+        remote = pathlib.PurePath("remote_dir/test/example1.txt")
+
+        cache.modify(local, plugin, plugin.remote_digests[remote])
+
+        wrongplugin = SmbPlugin()
         with pytest.raises(AssertionError):
-            assert cache._data[temppath / "testfile2.pdf"] == testfile
+            cache.discover_changes(local, remote, wrongplugin)
 
 
 class TestFileState:
