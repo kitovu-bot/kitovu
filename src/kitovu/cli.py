@@ -17,11 +17,19 @@ Why does this file exist, and why not put this in __main__?
 
 import pathlib
 import typing
+import sys
 
 import click
 
 from kitovu import utils
 from kitovu.sync import syncing
+
+
+class CliReporter(utils.AbstractReporter):
+    """A reporter for printing to the console."""
+
+    def warn(self, message: str) -> None:
+        print(message, file=sys.stderr)
 
 
 @click.group()
@@ -34,6 +42,6 @@ def cli() -> None:
 def sync(config: typing.Optional[pathlib.Path] = None) -> None:
     """Synchronize with the given configuration file."""
     try:
-        syncing.start_all(config)
+        syncing.start_all(config, CliReporter())
     except utils.UsageError as ex:
         raise click.ClickException(str(ex))

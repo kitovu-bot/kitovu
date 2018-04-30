@@ -43,7 +43,8 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
 
     NAME: str = "smb"
 
-    def __init__(self) -> None:
+    def __init__(self, reporter: utils.AbstractReporter) -> None:
+        super().__init__(reporter)
         self._connection: SMBConnection = None
         self._info = _ConnectionInfo()
 

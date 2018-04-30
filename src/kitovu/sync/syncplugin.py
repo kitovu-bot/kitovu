@@ -4,6 +4,8 @@ import abc
 import pathlib
 import typing
 
+from kitovu import utils
+
 
 class AbstractSyncPlugin(metaclass=abc.ABCMeta):
 
@@ -13,6 +15,9 @@ class AbstractSyncPlugin(metaclass=abc.ABCMeta):
     """
 
     NAME: typing.Optional[str] = None
+
+    def __init__(self, reporter: utils.AbstractReporter) -> None:
+        self.reporter: utils.AbstractReporter = reporter
 
     @abc.abstractmethod
     def configure(self, info: typing.Dict[str, typing.Any]) -> None:

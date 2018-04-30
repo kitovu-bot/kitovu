@@ -7,13 +7,13 @@ import stevedore
 from kitovu import utils
 from kitovu.sync import syncing
 from kitovu.sync.plugin import smb
-from helpers import dummyplugin
+from helpers import dummyplugin, reporter
 
 
 class TestFindPlugin:
 
     def test_find_plugin_builtin(self):
-        plugin = syncing._find_plugin('smb')
+        plugin = syncing._find_plugin('smb', reporter.TestReporter())
         assert isinstance(plugin, smb.SmbPlugin)
 
     def test_find_plugin_missing_external(self, mocker):
@@ -21,7 +21,7 @@ class TestFindPlugin:
                      side_effect=stevedore.exception.NoMatches)
 
         with pytest.raises(utils.NoPluginError, match='The plugin doesnotexist was not found'):
-            syncing._find_plugin('doesnotexist')
+            syncing._find_plugin('doesnotexist', reporter.TestReporter())
 
     def test_find_plugin_external(self, mocker):
         fake_plugin_obj = object()
@@ -30,7 +30,7 @@ class TestFindPlugin:
                            invoke_on_load=True)
         instance.driver = fake_plugin_obj
 
-        plugin = syncing._find_plugin('test')
+        plugin = syncing._find_plugin('test', reporter.TestReporter())
         assert plugin is fake_plugin_obj
 
 
@@ -76,7 +76,7 @@ class TestSyncAll:
                   - connection: another-plugin
                     remote-dir: Another/Test/Dir2
             """)
-        syncing.start_all(file_name)
+        syncing.start_all(file_name, reporter.TestReporter())
 
         assert sorted(pathlib.Path(tmpdir).glob("syncs/**/*")) == [
             pathlib.Path(f'{tmpdir}/syncs/sync-1'),

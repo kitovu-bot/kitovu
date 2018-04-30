@@ -4,6 +4,7 @@ import json
 
 from kitovu.sync import filecache
 from kitovu.sync.plugin.smb import SmbPlugin
+from helpers import reporter
 
 
 @pytest.fixture
@@ -64,7 +65,7 @@ class TestChange:
 
         cache.modify(local, plugin, plugin.remote_digests[remote])
 
-        wrongplugin = SmbPlugin()
+        wrongplugin = SmbPlugin(reporter.TestReporter())
         with pytest.raises(AssertionError):
             cache.discover_changes(local, remote, wrongplugin)
 
