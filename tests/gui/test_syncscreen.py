@@ -42,8 +42,6 @@ def test_success(screen, patcher, qtbot):
         'Hello World',
         '',
         '',
-        '',
-        '',
         'Synchronisation erfolgreich beendet.'
     ])
     assert screen._output.toPlainText() == expected_text
@@ -62,8 +60,6 @@ def test_nonzero_exit(screen, patcher, qtbot):
     expected_text = '\n'.join([
         'Synchronisation läuft...',
         'Hello World',
-        '',
-        '',
         '',
         '',
         'Fehler: Kitovu-Prozess wurde mit Status 1 beendet.'
@@ -89,8 +85,6 @@ def test_crash_exit(screen, patcher, qtbot, cancel):
     expected_text = '\n'.join([
         'Synchronisation läuft...',
         '',
-        '',
-        '',
         'Fehler: Kitovu-Prozess ist abgestürzt.'
     ])
     assert screen._output.toPlainText() == expected_text
@@ -109,8 +103,6 @@ def test_stderr_output(screen, patcher, qtbot):
         'This is stdout',
         '',
         'This is stderr',
-        '',
-        '',
         '',
         'Synchronisation erfolgreich beendet.'
     ])

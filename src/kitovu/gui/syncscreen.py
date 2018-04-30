@@ -86,8 +86,6 @@ class SyncScreen(QWidget):
 
     @pyqtSlot(str)
     def on_status_message(self, message: str) -> None:
-        if self._output.toPlainText():
-            self._output.append('\n')
         self._output.append(message)
 
     @pyqtSlot()
