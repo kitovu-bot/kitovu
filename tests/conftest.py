@@ -20,5 +20,5 @@ def temppath(tmpdir):
 
 
 @pytest.fixture
-def plugin() -> dummyplugin.DummyPlugin:
-    return dummyplugin.DummyPlugin()
+def plugin(temppath) -> dummyplugin.DummyPlugin:
+    return dummyplugin.DummyPlugin(temppath)
