@@ -3,7 +3,7 @@ import pathlib
 import pytest
 
 from helpers.in_memory_keyring import InMemoryKeyring
-from tests.helpers import dummyplugin
+from helpers import dummyplugin
 
 
 @pytest.fixture(autouse=True)
