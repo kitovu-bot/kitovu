@@ -5,6 +5,7 @@ import json
 from kitovu.sync import filecache
 from kitovu.sync.plugin.smb import SmbPlugin
 
+
 @pytest.fixture
 def cache(temppath) -> filecache.FileCache:
     return filecache.FileCache(temppath / "test_filecache.json")
@@ -37,11 +38,11 @@ class TestLoadWrite:
         cache.write()
         cache.load()
         assert cache._data == {temppath / "testfile4.txt": filecache.File(cached_digest="digest4",
-                                                                                        plugin_name="dummyplugin"),
+                                                                          plugin_name="dummyplugin"),
                                temppath / "testfile5.pdf": filecache.File(cached_digest="digest5",
-                                                                                        plugin_name="dummyplugin"),
+                                                                          plugin_name="dummyplugin"),
                                temppath / "testfile6.png": filecache.File(cached_digest="digest6",
-                                                                                        plugin_name="dummyplugin")}
+                                                                          plugin_name="dummyplugin")}
 
     def test_filecache_not_found(self, temppath, cache, plugin):
         cache.load()
