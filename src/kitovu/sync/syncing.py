@@ -24,7 +24,7 @@ def _find_plugin(pluginname: str,
     try:
         manager = stevedore.driver.DriverManager(namespace='kitovu.sync.plugin',
                                                  name=pluginname, invoke_on_load=True,
-                                                 invoke_args=(reporter))
+                                                 invoke_args=(reporter,))
     except stevedore.exception.NoMatches:
         raise utils.NoPluginError(f"The plugin {pluginname} was not found")
 
