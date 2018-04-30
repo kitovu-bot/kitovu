@@ -3,33 +3,46 @@
 It exists to determine if the local file has been changed between two synchronisation processes
 and allows for a conflict handling accordingly.
 
-8 cases are possible:
+There are various cases to consider how files can have changed:
 
-Special Cases:
----------------
-1. remote deleted (triggers exception), local exists: REMOTE_CHANGED
+Remote file deleted
+-------------------
 
-2. remote deleted (triggers exception), local exists AND changed (local_digest and cached_digest differ): BOTH_CHANGED
-case 1 and 2 special, and are dealt with separately in syncing.py.
+1. remote file was deleted (triggers exception)
+   local file exists (but is unchanged):
+-> REMOTE_CHANGED
 
-Cases 1 and 2 are not handled at the moment - see https://jira.keltec.ch/jira/browse/EPJ-77
+2. remote file deleted was (triggers exception)
+   local file exists AND has changed (local_digest and cached_digest differ):
+-> BOTH_CHANGED
 
-Normal Cases:
---------------
-3. new file remote, local none: NEW, download file. This is the default case.
+Those two cases are not handled at the moment - see https://jira.keltec.ch/jira/browse/EPJ-77
 
-4. remote B, local A - remote digest and local digest differ,
-but local digest and cached digest are same: REMOTE_CHANGED, download.
+Normal cases
+------------
 
-5. remote and local same: NO_CHANGES
+3. new remote file
+   does not exist locally:
+-> NEW (file gets downloaded)
 
-Files changed in-between:
--------------------------
-6. remote A unchanged, local changed A' - remote digest and cached digest are the same,
-but local digest and cached digest differ: LOCAL_CHANGED
+4. remote file has contents B (remote digest and local digest differ)
+   local file has contents A (local digest and cached digest are the same)
+-> REMOTE_CHANGED (file gets downloaded)
 
-7. remote B, local changed A' - remote digest and cached digest differ,
-local digest and cached digest differ: BOTH_CHANGED
+5. remote file has contents A
+   remote file has contents A (same content)
+-> NO_CHANGES (do nothing)
+
+Local file changed
+------------------
+
+6. remote file has contents A (unchanged, remote and cached digest are the same)
+   local file has contents A' (changed, local and cached digest differ)
+-> LOCAL_CHANGED (do nothing)
+
+7. remote file has contents B (remote changed, remote and cached digest differ)
+   local file has contents  A' (local changed, local and cached digest differ)
+-> BOTH_CHANGED (conflict!)
 """
 
 import attr
