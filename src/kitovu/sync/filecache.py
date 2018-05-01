@@ -95,6 +95,9 @@ class FileCache:
             return FileState.LOCAL_CHANGED
         elif remote_changed and local_changed:  # case 7 above
             return FileState.BOTH_CHANGED
+        else:
+            raise AssertionError(f"Failed to compare digests! remote: {remote_digest}, "
+                                 f"local: {local_digest}, cached {cached_digest}")
 
     def write(self) -> None:
         """"Writes the data-dict to JSON."""
