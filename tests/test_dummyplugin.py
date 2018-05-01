@@ -1,15 +1,7 @@
 import pathlib
 import typing
 
-import pytest
 import py.path
-
-from helpers import dummyplugin
-
-
-@pytest.fixture
-def plugin() -> dummyplugin.DummyPlugin:
-    return dummyplugin.DummyPlugin()
 
 
 def test_connection_active(plugin) -> None:
@@ -23,16 +15,16 @@ def test_connection_inactive(plugin) -> None:
     assert not plugin.is_connected
 
 
-def test_local_digest(plugin):
+def test_local_digest(plugin, temppath):
     plugin.connect()
-    local_digest = plugin.create_local_digest(pathlib.PurePath("local_dir/test/example1.txt"))
+    local_digest = plugin.create_local_digest(temppath / "local_dir/test/example1.txt")
     assert local_digest == "1"
 
 
-def test_local_digest_changed(plugin):
+def test_local_digest_changed(plugin, temppath):
     plugin.connect()
-    plugin.local_digests[pathlib.PurePath("local_dir/test/example1.txt")] = "42"
-    local_digest = plugin.create_local_digest(pathlib.PurePath("local_dir/test/example1.txt"))
+    plugin.local_digests[temppath / "local_dir/test/example1.txt"] = "42"
+    local_digest = plugin.create_local_digest(temppath / "local_dir/test/example1.txt")
     assert local_digest == "42"
 
 

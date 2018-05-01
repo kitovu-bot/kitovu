@@ -43,7 +43,10 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
 
     """A plugin to sync data via SMB/CIFS (Windows fileshares)."""
 
-    def __init__(self) -> None:
+    NAME: str = "smb"
+
+    def __init__(self, reporter: utils.AbstractReporter) -> None:
+        super().__init__(reporter)
         self._connection: SMBConnection = None
         self._info = _ConnectionInfo()
         self._attributes: typing.Dict[pathlib.PurePath, SharedFile] = {}
@@ -143,3 +146,25 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
         fileobj.flush()
         attributes = self._attributes[path]
         os.utime(local_path, (local_path.stat().st_atime, attributes.last_write_time))
+
+    def connection_schema(self) -> utils.JsonSchemaType:
+        return {
+            'type': 'object',
+            'properties': {
+                'hostname': {'type': 'string'},
+                'port': {'type': 'number'},
+                'share': {'type': 'string'},
+                'domain': {'type': 'string'},
+                'username': {'type': 'string'},
+                'sign_options': {
+                    'type': 'string',
+                    'enum': ['never', 'when_supported', 'when_required'],
+                },
+                'use_ntlm_v2': {'type': 'boolean'},
+                'is_direct_tcp': {'type': 'boolean'},
+            },
+            'required': [
+                'username',
+            ],
+            'additionalProperties': False,
+        }

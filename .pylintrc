@@ -1,10 +1,14 @@
+[master]
+extension-pkg-whitelist=PyQt5
+
 [messages control]
 enable=all
 disable=
     fixme,
     global-statement,
     too-few-public-methods,
-    no-self-use
+    no-self-use,
+    missing-docstring
 
 [reports]
 format=colorized
@@ -12,9 +16,12 @@ format=colorized
 [basic]
 const-rgx=[a-z_]*|[A-Z_]*
 docstring-min-length=3
+good-names=f,i,ex
 
 [design]
 max-attributes = 10
 
 [typecheck]
-ignored-classes=_CountingAttr
+# _CountingAttr: Needed for attrs
+# pathlib.PurePath: Detected when we actually have a pathlib.Path
+ignored-classes=_CountingAttr,pathlib.PurePath

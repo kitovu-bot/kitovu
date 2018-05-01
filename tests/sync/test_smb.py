@@ -1,11 +1,15 @@
 import pathlib
 
 import pytest
+import py.path
 import attr
 import keyring
 from smb.SMBConnection import SMBConnection
 
+from kitovu.sync import syncing
+from kitovu import utils
 from kitovu.sync.plugin import smb
+from helpers import reporter
 
 
 @pytest.fixture(autouse=True)
@@ -67,7 +71,7 @@ class TestConnect:
 
     @pytest.fixture
     def plugin(self):
-        return smb.SmbPlugin()
+        return smb.SmbPlugin(reporter.TestReporter())
 
     @pytest.fixture
     def info(self):
@@ -142,7 +146,7 @@ class TestWithConnectedPlugin:
 
     @pytest.fixture
     def plugin(self):
-        plugin = smb.SmbPlugin()
+        plugin = smb.SmbPlugin(reporter.TestReporter())
         keyring.set_password('kitovu-smb', 'myusername\nHSR\nsvm-c213.hsr.ch', 'some_password')
         plugin.configure({'username': 'myusername'})
         plugin.connect()
@@ -165,3 +169,74 @@ class TestWithConnectedPlugin:
             pathlib.PurePath('/some/test/dir/sub/sub_file'),
             pathlib.PurePath('/some/test/dir/last_file'),
         ]
+
+
+class TestValidations:
+
+    def test_configuration_with_the_minimum_required_fields(self, mocker, tmpdir: py.path.local):
+        config_yml = tmpdir / 'config.yml'
+        config_yml.write_text("""
+        root-dir: ./asdf
+        connections:
+          - name: mytest-plugin
+            plugin: smb
+            username: myuser
+        subjects:
+          - name: test-subject
+            sources:
+              - connection: mytest-plugin
+                remote-dir: /test/dir
+        """, encoding='utf-8')
+
+        syncing.validate_config(config_yml, reporter.TestReporter())
+
+    def test_configuration_with_the_all_available_fields(self, mocker, tmpdir: py.path.local):
+        config_yml = tmpdir / 'config.yml'
+        config_yml.write_text("""
+        root-dir: ./asdf
+        connections:
+          - name: mytest-plugin
+            plugin: smb
+            hostname: example.com
+            port: 1234
+            share: my-share
+            domain: my-domain
+            username: myuser
+            sign_options: never
+            use_ntlm_v2: true
+            is_direct_tcp: false
+        subjects:
+          - name: test-subject
+            sources:
+              - connection: mytest-plugin
+                remote-dir: /test/dir
+        """, encoding='utf-8')
+
+        syncing.validate_config(config_yml, reporter.TestReporter())
+
+    def test_configuration_with_unexpected_fields(self, mocker, tmpdir: py.path.local):
+        config_yml = tmpdir / 'config.yml'
+        config_yml.write_text("""
+        root-dir: ./asdf
+        connections:
+          - name: mytest-plugin
+            plugin: smb
+            host: example.com
+            sign_options: some-other-value
+        subjects:
+          - name: test-subject
+            sources:
+              - connection: mytest-plugin
+                remote-dir: /test/dir
+        """, encoding='utf-8')
+
+        assert self._get_config_errors(config_yml) == [
+            "'some-other-value' is not one of ['never', 'when_supported', 'when_required']",
+            "'username' is a required property",
+            "Additional properties are not allowed ('host' was unexpected)",
+        ]
+
+    def _get_config_errors(self, config_yml):
+        with pytest.raises(utils.InvalidSettingsError) as excinfo:
+            syncing.validate_config(config_yml, reporter.TestReporter())
+        return [error.message for error in excinfo.value.errors]

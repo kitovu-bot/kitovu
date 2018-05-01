@@ -4,6 +4,8 @@ import abc
 import pathlib
 import typing
 
+from kitovu import utils
+
 
 class AbstractSyncPlugin(metaclass=abc.ABCMeta):
 
@@ -12,12 +14,14 @@ class AbstractSyncPlugin(metaclass=abc.ABCMeta):
     Every abstract method in this class is a plugin hook.
     """
 
+    NAME: typing.Optional[str] = None
+
+    def __init__(self, reporter: utils.AbstractReporter) -> None:
+        self.reporter: utils.AbstractReporter = reporter
+
     @abc.abstractmethod
     def configure(self, info: typing.Dict[str, typing.Any]) -> None:
-        """Read a configuration section intended for this plugin.
-
-        If a KeyError occurs, it's interpreted as missing setting in the config.
-        """
+        """Read a configuration section intended for this plugin."""
         raise NotImplementedError
 
     @abc.abstractmethod
@@ -52,4 +56,9 @@ class AbstractSyncPlugin(metaclass=abc.ABCMeta):
     def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[bytes],
                       local_path: pathlib.Path) -> None:
         """Retrieve the given remote file."""
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def connection_schema(self) -> utils.JsonSchemaType:
+        """Returns a jsonschema to check for required properties passed to the configure method."""
         raise NotImplementedError

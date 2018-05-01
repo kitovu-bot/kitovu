@@ -6,6 +6,8 @@ import typing
 import attr
 
 from kitovu.sync import syncplugin
+from kitovu import utils
+from helpers import reporter
 
 
 @attr.s
@@ -17,15 +19,21 @@ class Digests:
 
 class DummyPlugin(syncplugin.AbstractSyncPlugin):
 
+    NAME: str = "dummyplugin"
+
     def __init__(self,
-                 local_digests: typing.Dict[pathlib.PurePath, str]=None,
-                 remote_digests: typing.Dict[pathlib.PurePath, str]=None):
-        super().__init__()
+                 temppath: pathlib.Path,
+                 reporter: utils.AbstractReporter = reporter.TestReporter(),
+                 local_digests: typing.Dict[pathlib.Path, str] = None,
+                 remote_digests: typing.Dict[pathlib.PurePath, str] = None,
+                 connection_schema=None):
+        super().__init__(reporter)
+        self._temppath = temppath
         self.local_digests = local_digests if local_digests else {
-            pathlib.PurePath("local_dir/test/example1.txt"): "1",
-            pathlib.PurePath("local_dir/test/example2.txt"): "2",
-            pathlib.PurePath("local_dir/test/example3.txt"): "3",
-            pathlib.PurePath("local_dir/test/example4.txt"): "4",
+            temppath / "local_dir/test/example1.txt": "1",
+            temppath / "local_dir/test/example2.txt": "2",
+            temppath / "local_dir/test/example3.txt": "3",
+            temppath / "local_dir/test/example4.txt": "4",
         }
         self.remote_digests = remote_digests if remote_digests else {
             pathlib.PurePath("remote_dir/test/example1.txt"): "1",
@@ -34,6 +42,7 @@ class DummyPlugin(syncplugin.AbstractSyncPlugin):
             pathlib.PurePath("remote_dir/test/example4.txt"): "4",
         }
         self.is_connected: bool = False
+        self._connection_schema = connection_schema if connection_schema else {}
 
     def configure(self, info: typing.Dict[str, typing.Any]) -> None:
         pass
@@ -66,3 +75,6 @@ class DummyPlugin(syncplugin.AbstractSyncPlugin):
         remote_digest = self.remote_digests[path]
         fileobj.write(f"{path}\n{remote_digest}".encode("utf-8"))
         self.local_digests[local_file] = remote_digest
+
+    def connection_schema(self) -> utils.JsonSchemaType:
+        return self._connection_schema
