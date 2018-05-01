@@ -34,8 +34,7 @@ You need to create a `setup.py` file like this::
      # other setup parameters
  )
 
-Your need to set :code:`entry_points`.
-There you can list all plugins you implement in this package.
+By setting :code:`entry_points` you can list all plugins you implement in this package.
 
 `my-example`
   This is the name of the plugin used in the kitovu configuration.
