@@ -45,11 +45,12 @@ Local file changed
 -> BOTH_CHANGED (conflict!)
 """
 
-import attr
 import enum
 import json
 import pathlib
 import typing
+
+import attr
 
 from kitovu.sync import syncplugin
 

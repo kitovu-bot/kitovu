@@ -1,9 +1,9 @@
 """Logic related to actually syncing files."""
 
-import appdirs
 import pathlib
 import typing
 
+import appdirs
 import stevedore
 import stevedore.driver
 import stevedore.exception
