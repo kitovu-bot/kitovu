@@ -137,3 +137,25 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
 
     def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[bytes]) -> None:
         self._connection.retrieveFile(self._info.share, str(path), fileobj)
+
+    def connection_schema(self) -> utils.JsonSchemaType:
+        return {
+            'type': 'object',
+            'properties': {
+                'hostname': {'type': 'string'},
+                'port': {'type': 'number'},
+                'share': {'type': 'string'},
+                'domain': {'type': 'string'},
+                'username': {'type': 'string'},
+                'sign_options': {
+                    'type': 'string',
+                    'enum': ['never', 'when_supported', 'when_required'],
+                },
+                'use_ntlm_v2': {'type': 'boolean'},
+                'is_direct_tcp': {'type': 'boolean'},
+            },
+            'required': [
+                'username',
+            ],
+            'additionalProperties': False,
+        }

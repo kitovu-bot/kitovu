@@ -9,28 +9,37 @@ import stevedore.driver
 import stevedore.exception
 
 from kitovu import utils
-from kitovu.sync import syncplugin, filecache
+from kitovu.sync import filecache
+from kitovu.sync.syncplugin import AbstractSyncPlugin
 from kitovu.sync.settings import Settings, ConnectionSettings
 from kitovu.sync.plugin import smb
 
 
-def _find_plugin(pluginname: str,
-                 reporter: utils.AbstractReporter) -> syncplugin.AbstractSyncPlugin:
-    """Find an appropriate sync plugin with the given settings."""
+def _load_plugin(plugin_settings: ConnectionSettings,
+                 reporter: utils.AbstractReporter,
+                 validator: typing.Optional[utils.SchemaValidator] = None) -> AbstractSyncPlugin:
+    """Find and load an appropriate sync plugin with the given settings."""
+    if validator is None:
+        validator = utils.SchemaValidator()
+
     builtin_plugins = {
         'smb': smb.SmbPlugin(reporter),
     }
-    if pluginname in builtin_plugins:
-        return builtin_plugins[pluginname]
+    plugin_name = plugin_settings.plugin_name
+    if plugin_name in builtin_plugins:
+        plugin = builtin_plugins[plugin_name]
+    else:
+        try:
+            manager = stevedore.driver.DriverManager(namespace='kitovu.sync.plugin',
+                                                     name=plugin_name, invoke_on_load=True,
+                                                     invoke_args=(reporter,))
+        except stevedore.exception.NoMatches:
+            raise utils.NoPluginError(f"The plugin {plugin_name} was not found")
 
-    try:
-        manager = stevedore.driver.DriverManager(namespace='kitovu.sync.plugin',
-                                                 name=pluginname, invoke_on_load=True,
-                                                 invoke_args=(reporter,))
-    except stevedore.exception.NoMatches:
-        raise utils.NoPluginError(f"The plugin {pluginname} was not found")
+        plugin = manager.driver
 
-    plugin: syncplugin.AbstractSyncPlugin = manager.driver
+    validator.validate(plugin_settings.connection, plugin.connection_schema())
+
     return plugin
 
 
@@ -43,7 +52,7 @@ def start_all(config_file: typing.Optional[pathlib.Path], reporter: utils.Abstra
 
 def start(connection_settings: ConnectionSettings, reporter: utils.AbstractReporter) -> None:
     """Sync files with the given plugin and username."""
-    plugin = _find_plugin(connection_settings.plugin_name, reporter)
+    plugin = _load_plugin(connection_settings, reporter)
     plugin.configure(connection_settings.connection)
     plugin.connect()
 
@@ -88,3 +97,17 @@ def start(connection_settings: ConnectionSettings, reporter: utils.AbstractRepor
                 cache.modify(local_full_path, plugin, local_digest)
     cache.write()
     plugin.disconnect()
+
+
+def validate_config(config_file: typing.Optional[pathlib.Path],
+                    reporter: utils.AbstractReporter) -> None:
+    """Validates the given configuration file.
+
+    Raises an UsageError if the configuration is not valid.
+    """
+    settings = Settings.from_yaml_file(config_file)
+    validator = utils.SchemaValidator(abort=False)
+    for _connection_key, connection_settings in sorted(settings.connections.items()):
+        _load_plugin(connection_settings, reporter, validator)
+    if not validator.is_valid:
+        validator.raise_error()

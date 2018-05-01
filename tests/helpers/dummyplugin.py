@@ -25,7 +25,8 @@ class DummyPlugin(syncplugin.AbstractSyncPlugin):
                  temppath: pathlib.Path,
                  reporter: utils.AbstractReporter = reporter.TestReporter(),
                  local_digests: typing.Dict[pathlib.Path, str] = None,
-                 remote_digests: typing.Dict[pathlib.PurePath, str] = None):
+                 remote_digests: typing.Dict[pathlib.PurePath, str] = None,
+                 connection_schema=None):
         super().__init__(reporter)
         self._temppath = temppath
         self.local_digests = local_digests if local_digests else {
@@ -41,6 +42,7 @@ class DummyPlugin(syncplugin.AbstractSyncPlugin):
             pathlib.PurePath("remote_dir/test/example4.txt"): "4",
         }
         self.is_connected: bool = False
+        self._connection_schema = connection_schema if connection_schema else {}
 
     def configure(self, info: typing.Dict[str, typing.Any]) -> None:
         pass
@@ -71,3 +73,6 @@ class DummyPlugin(syncplugin.AbstractSyncPlugin):
         assert self.is_connected
         remote_digest = self.remote_digests[path]
         fileobj.write(f"{path}\n{remote_digest}".encode("utf-8"))
+
+    def connection_schema(self) -> utils.JsonSchemaType:
+        return self._connection_schema
