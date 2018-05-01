@@ -15,10 +15,10 @@ from kitovu.sync.settings import Settings, ConnectionSettings
 from kitovu.sync.plugin import smb
 
 
-def _find_plugin(plugin_settings: ConnectionSettings,
+def _load_plugin(plugin_settings: ConnectionSettings,
                  reporter: utils.AbstractReporter,
                  validator: typing.Optional[utils.SchemaValidator] = None) -> AbstractSyncPlugin:
-    """Find an appropriate sync plugin with the given settings."""
+    """Find and load an appropriate sync plugin with the given settings."""
     if validator is None:
         validator = utils.SchemaValidator()
 
@@ -52,7 +52,7 @@ def start_all(config_file: typing.Optional[pathlib.Path], reporter: utils.Abstra
 
 def start(connection_settings: ConnectionSettings, reporter: utils.AbstractReporter) -> None:
     """Sync files with the given plugin and username."""
-    plugin = _find_plugin(connection_settings, reporter)
+    plugin = _load_plugin(connection_settings, reporter)
     plugin.configure(connection_settings.connection)
     plugin.connect()
 
@@ -107,6 +107,6 @@ def validate_config(config_file: typing.Optional[pathlib.Path],
     settings = Settings.from_yaml_file(config_file)
     validator = utils.SchemaValidator(abort=False)
     for _connection_key, connection_settings in sorted(settings.connections.items()):
-        _find_plugin(connection_settings, reporter, validator)
+        _load_plugin(connection_settings, reporter, validator)
     if not validator.is_valid:
         validator.raise_error()

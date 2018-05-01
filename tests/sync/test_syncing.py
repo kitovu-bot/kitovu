@@ -26,25 +26,25 @@ def dummy_plugin(temppath):
 
 class TestFindPlugin:
 
-    def test_find_plugin_builtin(self):
-        plugin = syncing._find_plugin(self._get_settings('smb', connection={'username': 'test'}), reporter.TestReporter())
+    def test_load_plugin_builtin(self):
+        plugin = syncing._load_plugin(self._get_settings('smb', connection={'username': 'test'}), reporter.TestReporter())
         assert isinstance(plugin, smb.SmbPlugin)
 
-    def test_find_plugin_missing_external(self, mocker):
+    def test_load_plugin_missing_external(self, mocker):
         mocker.patch('stevedore.driver.DriverManager', autospec=True,
                      side_effect=stevedore.exception.NoMatches)
 
         with pytest.raises(utils.NoPluginError, match='The plugin doesnotexist was not found'):
-            syncing._find_plugin(self._get_settings('doesnotexist'), reporter.TestReporter())
+            syncing._load_plugin(self._get_settings('doesnotexist'), reporter.TestReporter())
 
-    def test_find_plugin_external(self, mocker, dummy_plugin):
+    def test_load_plugin_external(self, mocker, dummy_plugin):
         manager = mocker.patch('stevedore.driver.DriverManager', autospec=True)
         instance = manager(namespace='kitovu.sync.plugin', name='test',
                            invoke_on_load=True)
         instance.driver = dummy_plugin
 
         settings = self._get_settings('test', connection={'some-required-prop': 'test'})
-        plugin = syncing._find_plugin(settings, reporter.TestReporter())
+        plugin = syncing._load_plugin(settings, reporter.TestReporter())
         assert plugin is dummy_plugin
 
     def _get_settings(self, plugin_name, connection={}, subjects=[]):
