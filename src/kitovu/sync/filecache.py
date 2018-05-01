@@ -128,6 +128,7 @@ class FileCache:
                path: pathlib.Path,
                plugin: syncplugin.AbstractSyncPlugin,
                local_digest_at_synctime: str) -> None:
+        assert plugin.NAME is not None
         file = File(cached_digest=local_digest_at_synctime, plugin_name=plugin.NAME)
         self._data[path] = file
 
