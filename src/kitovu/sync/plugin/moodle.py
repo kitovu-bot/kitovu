@@ -25,7 +25,8 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
 
     """A plugin which talks to Moodle using its Web Services."""
 
-    def __init__(self) -> None:
+    def __init__(self, reporter: utils.AbstractReporter) -> None:
+        super().__init__(reporter)
         self._url: str = ''
         self._user_id: int = -1
         self._token: str = ''
