@@ -3,23 +3,27 @@
 import pathlib
 import typing
 
+import appdirs
 import stevedore
 import stevedore.driver
+import stevedore.exception
 
 from kitovu import utils
+from kitovu.sync import filecache
 from kitovu.sync.syncplugin import AbstractSyncPlugin
 from kitovu.sync.settings import Settings, ConnectionSettings
 from kitovu.sync.plugin import smb
 
 
 def _find_plugin(plugin_settings: ConnectionSettings,
+                 reporter: utils.AbstractReporter,
                  validator: typing.Optional[utils.SchemaValidator] = None) -> AbstractSyncPlugin:
     """Find an appropriate sync plugin with the given settings."""
     if validator is None:
         validator = utils.SchemaValidator()
 
     builtin_plugins = {
-        'smb': smb.SmbPlugin(),
+        'smb': smb.SmbPlugin(reporter),
     }
     plugin_name = plugin_settings.plugin_name
     if plugin_name in builtin_plugins:
@@ -27,7 +31,8 @@ def _find_plugin(plugin_settings: ConnectionSettings,
     else:
         try:
             manager = stevedore.driver.DriverManager(namespace='kitovu.sync.plugin',
-                                                     name=plugin_name, invoke_on_load=True)
+                                                     name=plugin_name, invoke_on_load=True,
+                                                     invoke_args=(reporter,))
         except stevedore.exception.NoMatches:
             raise utils.NoPluginError(f"The plugin {plugin_name} was not found")
 
@@ -38,40 +43,59 @@ def _find_plugin(plugin_settings: ConnectionSettings,
     return plugin
 
 
-def start_all(config_file: typing.Optional[pathlib.Path]) -> None:
+def start_all(config_file: typing.Optional[pathlib.Path], reporter: utils.AbstractReporter) -> None:
     """Sync all files with the given configuration file."""
     settings = Settings.from_yaml_file(config_file)
     for _plugin_key, connection_settings in sorted(settings.connections.items()):
-        start(connection_settings)
+        start(connection_settings, reporter)
 
 
-def start(connection_settings: ConnectionSettings) -> None:
+def start(connection_settings: ConnectionSettings, reporter: utils.AbstractReporter) -> None:
     """Sync files with the given plugin and username."""
-    plugin = _find_plugin(connection_settings)
+    plugin = _find_plugin(connection_settings, reporter)
     plugin.configure(connection_settings.connection)
     plugin.connect()
 
+    filecache_path: pathlib.Path = pathlib.Path(appdirs.user_data_dir('kitovu')) / 'filecache.json'
+    cache: filecache.FileCache = filecache.FileCache(filecache_path)
+    cache.load()
+
     for subject in connection_settings.subjects:
-        remote_path = subject['remote-dir']
-        local_path = subject['local-dir']
+        remote_dir = pathlib.PurePath(subject['remote-dir'])  # /Informatik/Fachbereich/EPJ/
+        local_dir = pathlib.Path(subject['local-dir'])  # /home/leonie/HSR/EPJ/
 
-        for item in plugin.list_path(remote_path):
+        for remote_full_path in plugin.list_path(remote_dir):
             # each plugin should now yield all files recursively with list_path
-            print(f'Downloading: {item}')
+            print(f'Downloading: {remote_full_path}')
 
-            digest = plugin.create_remote_digest(item)
-            print(f'Remote digest: {digest}')
+            remote_digest = plugin.create_remote_digest(remote_full_path)
+            print(f'Remote digest: {remote_digest}')
 
-            output = pathlib.Path(local_path / item.relative_to(remote_path))
+            # local_dir: /home/leonie/HSR/EPJ/
+            # remote_full_path: /Informatik/Fachbereich/EPJ/Dokumente/Anleitung.pdf
+            #   with relative_to: Dokumente/Anleitung.pdf
+            # -> local_full_path: /home/leonie/HSR/EPJ/Dokumente/Anleitung.pdf
+            local_full_path: pathlib.Path = local_dir / remote_full_path.relative_to(remote_dir)
 
-            pathlib.Path(output.parent).mkdir(parents=True, exist_ok=True)
+            # When both files changed, we currently override the local file, but this can and should
+            # later be handled as a user decision. https://jira.keltec.ch/jira/browse/EPJ-78
+            state_of_file: filecache.FileState = cache.discover_changes(
+                local_full_path=local_full_path, remote_full_path=remote_full_path, plugin=plugin)
+            if state_of_file in [filecache.FileState.NO_CHANGES,
+                                 filecache.FileState.LOCAL_CHANGED]:
+                pass
+            elif state_of_file in [filecache.FileState.REMOTE_CHANGED,
+                                   filecache.FileState.NEW,
+                                   filecache.FileState.BOTH_CHANGED]:
+                local_full_path.parent.mkdir(parents=True, exist_ok=True)
 
-            with output.open('wb') as fileobj:
-                plugin.retrieve_file(item, fileobj)
+                with local_full_path.open('wb') as fileobj:
+                    plugin.retrieve_file(remote_full_path, fileobj)
 
-            digest = plugin.create_local_digest(output)
-            print(f'Local digest: {digest}')
-
+                local_digest = plugin.create_local_digest(local_full_path)
+                print(f'Local digest: {local_digest}')
+                cache.modify(local_full_path, plugin, local_digest)
+    cache.write()
     plugin.disconnect()
 
 

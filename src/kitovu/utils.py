@@ -2,6 +2,7 @@
 
 import typing
 import getpass
+import abc
 
 import keyring
 import jsonschema
@@ -73,3 +74,33 @@ class InvalidSettingsError(UsageError):
     def __init__(self, validator: SchemaValidator) -> None:
         self.errors: typing.List[str] = validator.errors
         super().__init__(validator.error_message)
+
+
+class MissingSettingKeysError(InvalidSettingsError):
+
+    """Thrown when the settings have missing required keys."""
+
+    def __init__(self, missing_keys: typing.List[str]) -> None:
+        self.missing_keys = missing_keys
+
+        keys = ', '.join(self.missing_keys)
+        super().__init__(f'Missing keys: {keys}')
+
+
+class UnknownSettingKeysError(InvalidSettingsError):
+
+    """Thrown when the settings have unknown keys."""
+
+    def __init__(self, unknown_keys: typing.List[str]) -> None:
+        self.unknown_keys = unknown_keys
+
+        keys = ', '.join(self.unknown_keys)
+        super().__init__(f'Unknown keys: {keys}')
+
+
+class AbstractReporter(metaclass=abc.ABCMeta):
+    """A class that handles the reporting of warnings to the UI or CLI."""
+    @abc.abstractmethod
+    def warn(self, message: str) -> None:
+        """Print the warning according to the current interface."""
+        raise NotImplementedError

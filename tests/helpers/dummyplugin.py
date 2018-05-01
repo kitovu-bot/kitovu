@@ -6,6 +6,8 @@ import typing
 import attr
 
 from kitovu.sync import syncplugin
+from kitovu import utils
+from helpers import reporter
 
 
 @attr.s
@@ -17,16 +19,21 @@ class Digests:
 
 class DummyPlugin(syncplugin.AbstractSyncPlugin):
 
+    NAME: str = "dummyplugin"
+
     def __init__(self,
-                 local_digests: typing.Dict[pathlib.PurePath, str]=None,
-                 remote_digests: typing.Dict[pathlib.PurePath, str]=None,
+                 temppath: pathlib.Path,
+                 reporter: utils.AbstractReporter = reporter.TestReporter(),
+                 local_digests: typing.Dict[pathlib.Path, str] = None,
+                 remote_digests: typing.Dict[pathlib.PurePath, str] = None,
                  connection_schema=None):
-        super().__init__()
+        super().__init__(reporter)
+        self._temppath = temppath
         self.local_digests = local_digests if local_digests else {
-            pathlib.PurePath("local_dir/test/example1.txt"): "1",
-            pathlib.PurePath("local_dir/test/example2.txt"): "2",
-            pathlib.PurePath("local_dir/test/example3.txt"): "3",
-            pathlib.PurePath("local_dir/test/example4.txt"): "4",
+            temppath / "local_dir/test/example1.txt": "1",
+            temppath / "local_dir/test/example2.txt": "2",
+            temppath / "local_dir/test/example3.txt": "3",
+            temppath / "local_dir/test/example4.txt": "4",
         }
         self.remote_digests = remote_digests if remote_digests else {
             pathlib.PurePath("remote_dir/test/example1.txt"): "1",

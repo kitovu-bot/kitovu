@@ -17,11 +17,20 @@ Why does this file exist, and why not put this in __main__?
 
 import pathlib
 import typing
+import sys
 
 import click
 
 from kitovu import utils
 from kitovu.sync import syncing
+from kitovu.gui import app as guiapp
+
+
+class CliReporter(utils.AbstractReporter):
+    """A reporter for printing to the console."""
+
+    def warn(self, message: str) -> None:
+        print(message, file=sys.stderr)
 
 
 @click.group()
@@ -30,11 +39,17 @@ def cli() -> None:
 
 
 @cli.command()
+def gui() -> None:
+    """Start the kitovu GUI."""
+    sys.exit(guiapp.run())
+
+
+@cli.command()
 @click.option('--config', type=pathlib.Path, help="The configuration file to use")
 def sync(config: typing.Optional[pathlib.Path] = None) -> None:
     """Synchronize with the given configuration file."""
     try:
-        syncing.start_all(config)
+        syncing.start_all(config, CliReporter())
     except utils.UsageError as ex:
         raise click.ClickException(str(ex))
 

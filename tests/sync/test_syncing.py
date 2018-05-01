@@ -8,7 +8,7 @@ from kitovu import utils
 from kitovu.sync import syncing
 from kitovu.sync.plugin import smb
 from kitovu.sync.settings import ConnectionSettings
-from helpers import dummyplugin
+from helpers import dummyplugin, reporter
 
 
 @pytest.fixture
@@ -27,7 +27,7 @@ def dummy_plugin():
 class TestFindPlugin:
 
     def test_find_plugin_builtin(self):
-        plugin = syncing._find_plugin(self._get_settings('smb', connection={'username': 'test'}))
+        plugin = syncing._find_plugin(self._get_settings('smb', connection={'username': 'test'}), reporter.TestReporter())
         assert isinstance(plugin, smb.SmbPlugin)
 
     def test_find_plugin_missing_external(self, mocker):
@@ -35,7 +35,7 @@ class TestFindPlugin:
                      side_effect=stevedore.exception.NoMatches)
 
         with pytest.raises(utils.NoPluginError, match='The plugin doesnotexist was not found'):
-            syncing._find_plugin(self._get_settings('doesnotexist'))
+            syncing._find_plugin(self._get_settings('doesnotexist'), reporter.TestReporter())
 
     def test_find_plugin_external(self, mocker, dummy_plugin):
         manager = mocker.patch('stevedore.driver.DriverManager', autospec=True)
@@ -43,7 +43,7 @@ class TestFindPlugin:
                            invoke_on_load=True)
         instance.driver = dummy_plugin
 
-        settings = self._get_settings('test', connection={'some-required-prop': 'test'})
+        settings = self._get_settings('test', connection={'some-required-prop': 'test'}, reporter.TestReporter())
         plugin = syncing._find_plugin(settings)
         assert plugin is dummy_plugin
 
@@ -58,11 +58,11 @@ class TestFindPlugin:
 class TestSyncAll:
 
     @pytest.fixture(autouse=True)
-    def include_dummy_plugin(self, mocker):
+    def include_dummy_plugin(self, mocker, temppath):
         manager = mocker.patch('stevedore.driver.DriverManager', autospec=True)
         instance = manager(namespace='kitovu.sync.plugin', name='dummy',
                            invoke_on_load=True)
-        instance.driver = dummyplugin.DummyPlugin(remote_digests={
+        instance.driver = dummyplugin.DummyPlugin(temppath, remote_digests={
             pathlib.PurePath('Some/Test/Dir1/group1-file1.txt'): '11',
             pathlib.PurePath('Some/Test/Dir1/group1-file2.txt'): '12',
             pathlib.PurePath('Some/Test/Dir1/group1-file3.txt'): '13',
@@ -97,7 +97,7 @@ class TestSyncAll:
               - connection: another-plugin
                 remote-dir: Another/Test/Dir2
         """, encoding='utf-8')
-        syncing.start_all(config_yml)
+        syncing.start_all(file_name, reporter.TestReporter())
 
         assert sorted(pathlib.Path(tmpdir).glob("syncs/**/*")) == [
             pathlib.Path(f'{tmpdir}/syncs/sync-1'),
