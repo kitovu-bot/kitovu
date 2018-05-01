@@ -4,7 +4,8 @@ disable=
     fixme,
     global-statement,
     too-few-public-methods,
-    no-self-use
+    no-self-use,
+    missing-docstring
 
 [reports]
 format=colorized
