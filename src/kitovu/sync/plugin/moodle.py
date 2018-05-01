@@ -2,7 +2,6 @@
 
 import typing
 import pathlib
-import os
 
 import requests
 
@@ -119,8 +118,9 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
             for filename in self._list_files(path):
                 yield filename
 
-    def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[bytes],
-                      local_path: pathlib.Path) -> None:
+    def retrieve_file(self,
+                      path: pathlib.PurePath,
+                      fileobj: typing.IO[bytes]) -> typing.Optional[int]:
         moodle_file = self._files[path]
         fileurl = moodle_file.url
 
@@ -133,8 +133,7 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         for chunk in req:
             fileobj.write(chunk)
 
-        fileobj.flush()
-        os.utime(local_path, (local_path.stat().st_atime, moodle_file.changed_at))
+        return moodle_file.changed_at
 
     def connection_schema(self) -> utils.JsonSchemaType:
         return {

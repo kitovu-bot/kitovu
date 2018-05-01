@@ -4,7 +4,6 @@ import enum
 import socket
 import typing
 import pathlib
-import os
 
 import attr
 from smb.SMBConnection import SMBConnection
@@ -139,13 +138,12 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
                 # only gives back the files in the current folder
                 yield pathlib.PurePath(path / entry.filename)
 
-    def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[bytes],
-                      local_path: pathlib.Path) -> None:
+    def retrieve_file(self,
+                      path: pathlib.PurePath,
+                      fileobj: typing.IO[bytes]) -> typing.Optional[int]:
         self._connection.retrieveFile(self._info.share, str(path), fileobj)
-
-        fileobj.flush()
-        attributes = self._attributes[path]
-        os.utime(local_path, (local_path.stat().st_atime, attributes.last_write_time))
+        mtime: int = self._attributes[path].last_write_time
+        return mtime
 
     def connection_schema(self) -> utils.JsonSchemaType:
         return {

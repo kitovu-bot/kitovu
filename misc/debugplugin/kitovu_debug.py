@@ -28,6 +28,8 @@ class DebugPlugin(syncplugin.AbstractSyncPlugin):
         print(f"Listing {path}")
         return [pathlib.PurePath('/examplefile')]
 
-    def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[bytes]) -> None:
+    def retrieve_file(self,
+                      path: pathlib.PurePath,
+                      fileobj: typing.IO[bytes]) -> typing.Optional[int]:
         print(f"Retrieving {path} to {fileobj}")
         fileobj.write(b'examplecontents')

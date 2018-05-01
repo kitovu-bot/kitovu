@@ -1,5 +1,6 @@
 """Logic related to actually syncing files."""
 
+import os
 import pathlib
 import typing
 
@@ -91,7 +92,10 @@ def start(connection_settings: ConnectionSettings, reporter: utils.AbstractRepor
                 local_full_path.parent.mkdir(parents=True, exist_ok=True)
 
                 with local_full_path.open('wb') as fileobj:
-                    plugin.retrieve_file(remote_full_path, fileobj, local_full_path)
+                    mtime: typing.Optional[int] = plugin.retrieve_file(remote_full_path, fileobj)
+
+                if mtime is not None:
+                    os.utime(local_full_path, (local_full_path.stat().st_atime, mtime))
 
                 local_digest = plugin.create_local_digest(local_full_path)
                 print(f'Local digest: {local_digest}')
