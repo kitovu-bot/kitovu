@@ -103,7 +103,8 @@ def validate_config(config_file: typing.Optional[pathlib.Path],
                     reporter: utils.AbstractReporter) -> None:
     """Validates the given configuration file.
 
-    Raises an UsageError if the configuration is not valid."""
+    Raises an UsageError if the configuration is not valid.
+    """
     settings = Settings.from_yaml_file(config_file)
     validator = utils.SchemaValidator(abort=False)
     for _connection_key, connection_settings in sorted(settings.connections.items()):

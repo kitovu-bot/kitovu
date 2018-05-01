@@ -138,7 +138,8 @@ class FileCache:
                          plugin: syncplugin.AbstractSyncPlugin) -> FileState:
         """Check if the file that is currently downloaded (path-argument) has changed.
 
-        Change is discovered between local file cache and local file."""
+        Change is discovered between local file cache and local file.
+        """
         if not local_full_path.exists():
             return FileState.NEW
 
