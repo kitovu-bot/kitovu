@@ -36,11 +36,11 @@ class TestFindPlugin:
 
 class TestSyncAll:
     @pytest.fixture(autouse=True)
-    def include_dummy_plugin(self, mocker):
+    def include_dummy_plugin(self, mocker, temppath):
         manager = mocker.patch('stevedore.driver.DriverManager', autospec=True)
         instance = manager(namespace='kitovu.sync.plugin', name='dummy',
                            invoke_on_load=True)
-        instance.driver = dummyplugin.DummyPlugin(remote_digests={
+        instance.driver = dummyplugin.DummyPlugin(temppath, remote_digests={
             pathlib.PurePath('Some/Test/Dir1/group1-file1.txt'): '11',
             pathlib.PurePath('Some/Test/Dir1/group1-file2.txt'): '12',
             pathlib.PurePath('Some/Test/Dir1/group1-file3.txt'): '13',

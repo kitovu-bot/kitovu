@@ -41,6 +41,8 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
 
     """A plugin to sync data via SMB/CIFS (Windows fileshares)."""
 
+    NAME: str = "smb"
+
     def __init__(self, reporter: utils.AbstractReporter) -> None:
         super().__init__(reporter)
         self._connection: SMBConnection = None
