@@ -102,7 +102,7 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
                     filename: str = elem['filename']
                     if 'mimetype' not in elem:
                         # unfortunately html files have a size of 0
-                        assert elem['filesize'] == 0
+                        assert elem['filesize'] == 0, elem
                         if not filename.endswith('.html'):
                             filename += '.html'
                     local_path: pathlib.PurePath = module_path / filename
