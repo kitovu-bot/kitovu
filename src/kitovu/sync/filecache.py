@@ -78,7 +78,7 @@ class File:
 
 class FileCache:
 
-    def __init__(self, filename: pathlib.Path):
+    def __init__(self, filename: pathlib.Path) -> None:
         self._filename: pathlib.Path = filename
         self._data: typing.Dict[pathlib.Path, File] = {}
 
@@ -127,7 +127,7 @@ class FileCache:
     def modify(self,
                path: pathlib.Path,
                plugin: syncplugin.AbstractSyncPlugin,
-               local_digest_at_synctime: str):
+               local_digest_at_synctime: str) -> None:
         file = File(cached_digest=local_digest_at_synctime, plugin_name=plugin.NAME)
         self._data[path] = file
 
