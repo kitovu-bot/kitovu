@@ -134,3 +134,15 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
 
         fileobj.flush()
         os.utime(local_path, (local_path.stat().st_atime, moodle_file.changed_at))
+
+    def connection_schema(self) -> utils.JsonSchemaType:
+        return {
+            'type': 'object',
+            'properties': {
+                'url': {'type': 'string'},
+            },
+            'required': [
+                'url',
+            ],
+            'additionalProperties': False,
+        }
