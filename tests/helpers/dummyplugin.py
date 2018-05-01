@@ -74,5 +74,5 @@ class DummyPlugin(syncplugin.AbstractSyncPlugin):
         remote_digest = self.remote_digests[path]
         fileobj.write(f"{path}\n{remote_digest}".encode("utf-8"))
 
-    def connection_schema(self) -> typing.Dict[str, typing.Any]:
+    def connection_schema(self) -> utils.JsonSchemaType:
         return self._connection_schema

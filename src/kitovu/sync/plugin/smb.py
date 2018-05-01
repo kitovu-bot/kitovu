@@ -138,7 +138,7 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
     def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[bytes]) -> None:
         self._connection.retrieveFile(self._info.share, str(path), fileobj)
 
-    def connection_schema(self) -> typing.Dict[str, typing.Any]:
+    def connection_schema(self) -> utils.JsonSchemaType:
         return {
             'type': 'object',
             'properties': {

@@ -24,6 +24,9 @@ def get_password(plugin: str, identifier: str) -> str:
     return password
 
 
+JsonSchemaType = typing.Dict[str, typing.Any]
+
+
 class SchemaValidator:
     """A validator for creating and merging errors in schema definitions."""
 
@@ -31,7 +34,7 @@ class SchemaValidator:
         self.errors: typing.List[jsonschema.exceptions.ValidationError] = []
         self.abort: bool = abort
 
-    def validate(self, data: typing.Any, schema: typing.Dict[str, typing.Any]) -> None:
+    def validate(self, data: typing.Any, schema: JsonSchemaType) -> None:
         """Validates the given data with the schema."""
         validator_type = jsonschema.validators.validator_for(schema)
         self.errors.extend(validator_type(schema).iter_errors(data))

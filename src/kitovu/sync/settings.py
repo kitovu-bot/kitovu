@@ -31,7 +31,7 @@ class Settings:
     global_ignore: typing.List[str] = attr.ib()
     connections: typing.Dict[str, ConnectionSettings] = attr.ib()
 
-    SETTINGS_SCHEMA: typing.Dict[str, typing.Any] = {
+    SETTINGS_SCHEMA: utils.JsonSchemaType = {
         'type': 'object',
         'properties': {
             'root-dir': {'type': 'string'},
@@ -115,7 +115,7 @@ class Settings:
                 connection=raw_connection,
             )
 
-        subject_schema: typing.Dict[str, typing.Any] = {
+        subject_schema: utils.JsonSchemaType = {
             'type': 'array',
             'items': {
                 'type': 'object',
