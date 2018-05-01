@@ -32,13 +32,13 @@ class SchemaValidator:
 
     def __init__(self, abort: bool = True) -> None:
         self.errors: typing.List[jsonschema.exceptions.ValidationError] = []
-        self.abort: bool = abort
+        self._abort: bool = abort
 
     def validate(self, data: typing.Any, schema: JsonSchemaType) -> None:
         """Validates the given data with the schema."""
         validator_type = jsonschema.validators.validator_for(schema)
         self.errors.extend(validator_type(schema).iter_errors(data))
-        if self.abort and not self.is_valid:
+        if self._abort and not self.is_valid:
             self.raise_error()
 
     def raise_error(self) -> None:
