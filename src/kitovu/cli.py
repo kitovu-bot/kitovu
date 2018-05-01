@@ -59,6 +59,6 @@ def sync(config: typing.Optional[pathlib.Path] = None) -> None:
 def validate(config: typing.Optional[pathlib.Path] = None) -> None:
     """Validates the specified configuration file."""
     try:
-        syncing.validate_config(config)
+        syncing.validate_config(config, CliReporter())
     except utils.UsageError as ex:
         raise click.ClickException(str(ex))

@@ -12,8 +12,8 @@ from helpers import dummyplugin, reporter
 
 
 @pytest.fixture
-def dummy_plugin():
-    return dummyplugin.DummyPlugin(connection_schema={
+def dummy_plugin(temppath):
+    return dummyplugin.DummyPlugin(temppath=temppath, connection_schema={
         'type': 'object',
         'properties': {
             'some-required-prop': {'type': 'string'},
@@ -43,8 +43,8 @@ class TestFindPlugin:
                            invoke_on_load=True)
         instance.driver = dummy_plugin
 
-        settings = self._get_settings('test', connection={'some-required-prop': 'test'}, reporter.TestReporter())
-        plugin = syncing._find_plugin(settings)
+        settings = self._get_settings('test', connection={'some-required-prop': 'test'})
+        plugin = syncing._find_plugin(settings, reporter.TestReporter())
         assert plugin is dummy_plugin
 
     def _get_settings(self, plugin_name, connection={}, subjects=[]):
@@ -97,7 +97,7 @@ class TestSyncAll:
               - connection: another-plugin
                 remote-dir: Another/Test/Dir2
         """, encoding='utf-8')
-        syncing.start_all(file_name, reporter.TestReporter())
+        syncing.start_all(config_yml, reporter.TestReporter())
 
         assert sorted(pathlib.Path(tmpdir).glob("syncs/**/*")) == [
             pathlib.Path(f'{tmpdir}/syncs/sync-1'),
@@ -142,13 +142,13 @@ class TestConfigError:
                 remote-dir: Another/Test/Dir2
         """, encoding='utf-8')
 
-        syncing.validate_config(config_yml)
+        syncing.validate_config(config_yml, reporter.TestReporter())
 
     def test_configuration_without_a_file(self, tmpdir: py.path.local):
         config_yml = tmpdir / 'config.yml'
 
         with pytest.raises(utils.UsageError) as excinfo:
-            syncing.validate_config(pathlib.Path(config_yml))
+            syncing.validate_config(pathlib.Path(config_yml), reporter.TestReporter())
         assert str(excinfo.value) == f'Could not find the file {config_yml}'
 
     def test_configuration_with_an_empty_file(self, tmpdir: py.path.local):
@@ -263,5 +263,5 @@ class TestConfigError:
 
     def _get_config_errors(self, config_yml):
         with pytest.raises(utils.InvalidSettingsError) as excinfo:
-            syncing.validate_config(config_yml)
+            syncing.validate_config(config_yml, reporter.TestReporter())
         return [error.message for error in excinfo.value.errors]

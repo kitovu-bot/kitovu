@@ -188,7 +188,7 @@ class TestValidations:
                 remote-dir: /test/dir
         """, encoding='utf-8')
 
-        syncing.validate_config(config_yml)
+        syncing.validate_config(config_yml, reporter.TestReporter())
 
     def test_configuration_with_the_all_available_fields(self, mocker, tmpdir: py.path.local):
         config_yml = tmpdir / 'config.yml'
@@ -212,7 +212,7 @@ class TestValidations:
                 remote-dir: /test/dir
         """, encoding='utf-8')
 
-        syncing.validate_config(config_yml)
+        syncing.validate_config(config_yml, reporter.TestReporter())
 
     def test_configuration_with_unexpected_fields(self, mocker, tmpdir: py.path.local):
         config_yml = tmpdir / 'config.yml'
@@ -238,5 +238,5 @@ class TestValidations:
 
     def _get_config_errors(self, config_yml):
         with pytest.raises(utils.InvalidSettingsError) as excinfo:
-            syncing.validate_config(config_yml)
+            syncing.validate_config(config_yml, reporter.TestReporter())
         return [error.message for error in excinfo.value.errors]

@@ -99,13 +99,14 @@ def start(connection_settings: ConnectionSettings, reporter: utils.AbstractRepor
     plugin.disconnect()
 
 
-def validate_config(config_file: typing.Optional[pathlib.Path]) -> None:
+def validate_config(config_file: typing.Optional[pathlib.Path],
+                    reporter: utils.AbstractReporter) -> None:
     """Validates the given configuration file.
 
     Raises an UsageError if the configuration is not valid."""
     settings = Settings.from_yaml_file(config_file)
     validator = utils.SchemaValidator(abort=False)
     for _connection_key, connection_settings in sorted(settings.connections.items()):
-        _find_plugin(connection_settings, validator)
+        _find_plugin(connection_settings, reporter, validator)
     if not validator.is_valid:
         validator.raise_error()
