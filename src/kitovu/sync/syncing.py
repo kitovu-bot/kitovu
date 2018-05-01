@@ -100,7 +100,7 @@ def start(connection_settings: ConnectionSettings, reporter: utils.AbstractRepor
                 local_digest = plugin.create_local_digest(local_full_path)
                 print(f'Local digest: {local_digest}')
 
-                assert remote_digest == local_digest
+                assert remote_digest == local_digest, local_full_path
                 cache.modify(local_full_path, plugin, local_digest)
     cache.write()
     plugin.disconnect()
