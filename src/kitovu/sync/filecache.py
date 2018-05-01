@@ -81,7 +81,10 @@ class FileCache:
         self._filename: pathlib.Path = filename
         self._data: typing.Dict[pathlib.Path, File] = {}
 
-    def _compare_digests(self, remote_digest: str, local_digest: str, cached_digest: str) -> FileState:
+    def _compare_digests(self,
+                         remote_digest: str,
+                         local_digest: str,
+                         cached_digest: str) -> FileState:
         local_changed: bool = local_digest != cached_digest
         remote_changed: bool = remote_digest != cached_digest
         if not remote_changed and not local_changed:  # case 5 above
@@ -117,7 +120,10 @@ class FileCache:
             plugin_name: str = value["plugin"]
             self._data[pathlib.Path(key)] = File(cached_digest=digest, plugin_name=plugin_name)
 
-    def modify(self, path: pathlib.Path, plugin: syncplugin.AbstractSyncPlugin, local_digest_at_synctime: str):
+    def modify(self,
+               path: pathlib.Path,
+               plugin: syncplugin.AbstractSyncPlugin,
+               local_digest_at_synctime: str):
         file = File(cached_digest=local_digest_at_synctime, plugin_name=plugin.NAME)
         self._data[path] = file
 
@@ -134,8 +140,9 @@ class FileCache:
         file: File = self._data[local_full_path]
 
         if plugin.NAME != file.plugin_name:
-            raise AssertionError(f"The cached plugin name '{file.plugin_name}' of the file {local_full_path} "
-                                 f"doesn't match the plugin name '{plugin.NAME}'.")
+            raise AssertionError(f"The cached plugin name '{file.plugin_name}' of the file "
+                                 f"{local_full_path} doesn't match the plugin name "
+                                 f"'{plugin.NAME}'.")
 
         remote_digest: str = plugin.create_remote_digest(remote_full_path)
         local_digest: str = plugin.create_local_digest(local_full_path)

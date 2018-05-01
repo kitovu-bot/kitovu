@@ -70,7 +70,8 @@ def start(connection_settings: ConnectionSettings, reporter: utils.AbstractRepor
 
             # When both files changed, we currently override the local file, but this can and should
             # later be handled as a user decision. https://jira.keltec.ch/jira/browse/EPJ-78
-            state_of_file: filecache.FileState = cache.discover_changes(local_full_path, remote_full_path, plugin)
+            state_of_file: filecache.FileState = cache.discover_changes(
+                local_full_path, remote_full_path, plugin)
             if state_of_file in [filecache.FileState.NO_CHANGES,
                                  filecache.FileState.LOCAL_CHANGED]:
                 pass
