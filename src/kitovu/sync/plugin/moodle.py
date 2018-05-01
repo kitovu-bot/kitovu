@@ -1,5 +1,6 @@
 """Plugin to talk to Moodle instances."""
 
+import os
 import typing
 import pathlib
 
@@ -35,21 +36,22 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
 
     def _request(self, func: str, **kwargs: str) -> typing.Any:
         url = self._url + 'webservice/rest/server.php'
-        data = {
+        req_data: typing.Dict[str, str] = {
             'wstoken': self._token,
             'moodlewsrestformat': 'json',
             'wsfunction': func,
         }
-        data.update(**kwargs)
-        req = requests.get(url, data)
+        req_data.update(**kwargs)
+
+        req: requests.Response = requests.get(url, req_data)
         assert req.status_code == 200, req  # FIXME
-        data = req.json()
+        data: JsonType = req.json()
         assert 'exception' not in data, data
         assert 'error' not in data, data
         return data
 
     def configure(self, info: JsonType) -> None:
-        self._url = info.get('url', 'https://moodle.hsr.ch/')
+        self._url: str = info.get('url', 'https://moodle.hsr.ch/')
         if not self._url.endswith('/'):
             self._url += '/'
 
@@ -67,13 +69,13 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         return f'{size}-{changed_at}'
 
     def create_local_digest(self, path: pathlib.Path) -> str:
-        stats = path.stat()
+        stats: os.stat_result = path.stat()
         # unfortunately html files have a size of 0
-        size = 0 if path.suffix == '.html' else stats.st_size
+        size: int = 0 if path.suffix == '.html' else stats.st_size
         return self._create_digest(size, int(stats.st_mtime))
 
     def create_remote_digest(self, path: pathlib.PurePath) -> str:
-        moodle_file = self._files[path]
+        moodle_file: _MoodleFile = self._files[path]
         return self._create_digest(moodle_file.size, moodle_file.changed_at)
 
     def _list_courses(self) -> typing.Iterable[str]:
@@ -88,22 +90,22 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         if not self._courses:
             self._list_courses()
 
-        course_id = self._courses[course]
+        course_id: int = self._courses[course]
         lessons: typing.List[JsonType] = self._request('core_course_get_contents',
                                                        courseid=str(course_id))
 
         for section in lessons:
-            section_path = course_path / section['name']
+            section_path: pathlib.PurePath = course_path / section['name']
             for module in section['modules']:
-                module_path = section_path / module['name']
+                module_path: pathlib.PurePath = section_path / module['name']
                 for elem in module.get('contents', []):
-                    filename = elem['filename']
+                    filename: str = elem['filename']
                     if 'mimetype' not in elem:
                         # unfortunately html files have a size of 0
                         assert elem['filesize'] == 0
                         if not filename.endswith('.html'):
                             filename += '.html'
-                    local_path = module_path / filename
+                    local_path: pathlib.PurePath = module_path / filename
                     self._files[local_path] = _MoodleFile(elem['fileurl'],
                                                           elem['filesize'],
                                                           elem['timemodified'])
@@ -122,13 +124,13 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
     def retrieve_file(self,
                       path: pathlib.PurePath,
                       fileobj: typing.IO[bytes]) -> typing.Optional[int]:
-        moodle_file = self._files[path]
-        fileurl = moodle_file.url
+        moodle_file: _MoodleFile = self._files[path]
+        fileurl: str = moodle_file.url
 
-        req = requests.get(fileurl, {'token': self._token})
+        req: requests.Response = requests.get(fileurl, {'token': self._token})
         assert req.status_code == 200, req  # FIXME
         if 'json' in req.headers['content-type']:
-            data = req.json()
+            data: JsonType = req.json()
             assert 'exception' not in data, data
             assert 'error' not in data, data
         for chunk in req:
