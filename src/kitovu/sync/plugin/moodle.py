@@ -3,6 +3,7 @@
 import typing
 import pathlib
 
+import attr
 import requests
 
 from kitovu import utils
@@ -12,12 +13,12 @@ from kitovu.sync import syncplugin
 JsonType = typing.Dict[str, typing.Any]
 
 
+@attr.s
 class _MoodleFile:
 
-    def __init__(self, url: str, size: int, changed_at: int) -> None:
-        self.url: str = url
-        self.size: int = size
-        self.changed_at: int = changed_at
+    url: str = attr.ib()
+    size: int = attr.ib()
+    changed_at: int = attr.ib()
 
 
 class MoodlePlugin(syncplugin.AbstractSyncPlugin):
