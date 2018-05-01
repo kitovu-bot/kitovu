@@ -125,9 +125,8 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
                       path: pathlib.PurePath,
                       fileobj: typing.IO[bytes]) -> typing.Optional[int]:
         moodle_file: _MoodleFile = self._files[path]
-        fileurl: str = moodle_file.url
 
-        req: requests.Response = requests.get(fileurl, {'token': self._token})
+        req: requests.Response = requests.get(moodle_file.url, {'token': self._token})
         assert req.status_code == 200, req  # FIXME
         if 'json' in req.headers['content-type']:
             data: JsonType = req.json()
