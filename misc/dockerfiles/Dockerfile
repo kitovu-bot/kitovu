@@ -7,6 +7,8 @@ RUN apk --no-cache add alpine-sdk libffi-dev openssl-dev
 ENV PIPENV_VERSION 10.1.0
 RUN pip install pipenv==$PIPENV_VERSION
 
+RUN pip install tox
+
 ARG UID
 ARG GID
 
