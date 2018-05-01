@@ -75,8 +75,8 @@ class InvalidSettingsError(UsageError):
     """Thrown when the settings file is invalid."""
 
     def __init__(self, validator: SchemaValidator) -> None:
-        self.errors: typing.List[str] = validator.errors
         super().__init__(validator.error_message)
+        self.errors: typing.List[str] = validator.errors
 
 
 class AbstractReporter(metaclass=abc.ABCMeta):
