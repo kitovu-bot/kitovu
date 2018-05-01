@@ -76,7 +76,7 @@ class TestSyncAll:
 
     def test_complex_sync_all(self, tmpdir: py.path.local):
         config_yml = tmpdir / 'config.yml'
-        config_yml.write_text(f"""
+        config_yml.write_text("""
         root-dir: {tmpdir}/syncs
         connections:
           - name: mytest-plugin
