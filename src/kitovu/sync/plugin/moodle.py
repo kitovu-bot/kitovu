@@ -69,7 +69,7 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
     def create_local_digest(self, path: pathlib.Path) -> str:
         stats = path.stat()
         # unfortunately html files have a size of 0
-        size = 0 if str(path).endswith('.html') else stats.st_size
+        size = 0 if path.suffix == '.html' else stats.st_size
         return self._create_digest(size, int(stats.st_mtime))
 
     def create_remote_digest(self, path: pathlib.PurePath) -> str:
