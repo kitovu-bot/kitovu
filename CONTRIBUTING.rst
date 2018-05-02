@@ -16,3 +16,11 @@ Code contributions
 
 Since kitovu is currently developed as an university project, we're unable to
 accept any outside code contributions. This will change around July 2018.
+
+Documenation
+============
+
+If you want to generate the entire documentation of the project you can create it with::
+
+ sphinx-apidoc --separate --no-toc --force -o docs/reference/complete src
+ TOXENV=docs tox
