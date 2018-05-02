@@ -105,11 +105,11 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
                         assert elem['filesize'] == 0, elem
                         if not filename.endswith('.html'):
                             filename += '.html'
-                    local_path: pathlib.PurePath = module_path / filename
-                    self._files[local_path] = _MoodleFile(elem['fileurl'],
-                                                          elem['filesize'],
-                                                          elem['timemodified'])
-                    yield local_path
+                    full_path: pathlib.PurePath = module_path / filename
+                    self._files[full_path] = _MoodleFile(elem['fileurl'],
+                                                         elem['filesize'],
+                                                         elem['timemodified'])
+                    yield full_path
 
     def list_path(self, path: pathlib.PurePath) -> typing.Iterable[pathlib.PurePath]:
         """Get a list of all courses, or files in a course."""
