@@ -1,5 +1,6 @@
 """Logic related to actually syncing files."""
 
+import os
 import pathlib
 import typing
 
@@ -12,7 +13,7 @@ from kitovu import utils
 from kitovu.sync import filecache
 from kitovu.sync.syncplugin import AbstractSyncPlugin
 from kitovu.sync.settings import Settings, ConnectionSettings
-from kitovu.sync.plugin import smb
+from kitovu.sync.plugin import smb, moodle
 
 
 def _load_plugin(plugin_settings: ConnectionSettings,
@@ -24,6 +25,7 @@ def _load_plugin(plugin_settings: ConnectionSettings,
 
     builtin_plugins = {
         'smb': smb.SmbPlugin(reporter),
+        'moodle': moodle.MoodlePlugin(reporter),
     }
     plugin_name = plugin_settings.plugin_name
     if plugin_name in builtin_plugins:
@@ -90,10 +92,15 @@ def start(connection_settings: ConnectionSettings, reporter: utils.AbstractRepor
                 local_full_path.parent.mkdir(parents=True, exist_ok=True)
 
                 with local_full_path.open('wb') as fileobj:
-                    plugin.retrieve_file(remote_full_path, fileobj)
+                    mtime: typing.Optional[int] = plugin.retrieve_file(remote_full_path, fileobj)
+
+                if mtime is not None:
+                    os.utime(local_full_path, (local_full_path.stat().st_atime, mtime))
 
                 local_digest = plugin.create_local_digest(local_full_path)
                 print(f'Local digest: {local_digest}')
+
+                assert remote_digest == local_digest, local_full_path
                 cache.modify(local_full_path, plugin, local_digest)
     cache.write()
     plugin.disconnect()

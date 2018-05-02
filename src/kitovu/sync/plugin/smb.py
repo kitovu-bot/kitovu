@@ -7,6 +7,7 @@ import pathlib
 
 import attr
 from smb.SMBConnection import SMBConnection
+from smb.base import SharedFile
 
 from kitovu import utils
 from kitovu.sync import syncplugin
@@ -47,6 +48,7 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
         super().__init__(reporter)
         self._connection: SMBConnection = None
         self._info = _ConnectionInfo()
+        self._attributes: typing.Dict[pathlib.PurePath, SharedFile] = {}
 
     def _password_identifier(self) -> str:
         """Get an unique identifier for the connection in self._info.
@@ -122,6 +124,7 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
 
     def create_remote_digest(self, path: pathlib.PurePath) -> str:
         attributes = self._connection.getAttributes(self._info.share, str(path))
+        self._attributes[path] = attributes
         return self._create_digest(size=attributes.file_size,
                                    mtime=attributes.last_write_time)
 
@@ -135,8 +138,12 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
                 # only gives back the files in the current folder
                 yield pathlib.PurePath(path / entry.filename)
 
-    def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[bytes]) -> None:
+    def retrieve_file(self,
+                      path: pathlib.PurePath,
+                      fileobj: typing.IO[bytes]) -> typing.Optional[int]:
         self._connection.retrieveFile(self._info.share, str(path), fileobj)
+        mtime: int = self._attributes[path].last_write_time
+        return mtime
 
     def connection_schema(self) -> utils.JsonSchemaType:
         return {

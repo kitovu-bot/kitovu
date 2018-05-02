@@ -53,8 +53,16 @@ class AbstractSyncPlugin(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[bytes]) -> None:
-        """Retrieve the given remote file."""
+    def retrieve_file(self,
+                      path: pathlib.PurePath,
+                      fileobj: typing.IO[bytes]) -> typing.Optional[int]:
+        """Retrieve the given remote file.
+
+        For plugins which are able to find out the original mtime (last modified
+        time) of a file, this function should return that value after downloading the file.
+
+        If it's impossible for the plugin to find out, it can return None instead.
+        """
         raise NotImplementedError
 
     @abc.abstractmethod

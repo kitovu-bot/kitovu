@@ -69,10 +69,13 @@ class DummyPlugin(syncplugin.AbstractSyncPlugin):
             if str(filename).startswith(str(path)):
                 yield filename
 
-    def retrieve_file(self, path: pathlib.PurePath, fileobj: typing.IO[bytes]) -> None:
+    def retrieve_file(self,
+                      path: pathlib.PurePath,
+                      fileobj: typing.IO[bytes]) -> typing.Optional[int]:
         assert self.is_connected
         remote_digest = self.remote_digests[path]
         fileobj.write(f"{path}\n{remote_digest}".encode("utf-8"))
+        self.local_digests[pathlib.Path(fileobj.name)] = remote_digest
 
     def connection_schema(self) -> utils.JsonSchemaType:
         return self._connection_schema
