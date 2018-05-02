@@ -85,7 +85,8 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
             self._courses[course['fullname']] = int(course['id'])
         return list(self._courses)
 
-    def _list_files(self, course_path: pathlib.PurePath) -> typing.Iterable[pathlib.PurePath]:
+    def _list_files_in_course(self,
+                              course_path: pathlib.PurePath) -> typing.Iterable[pathlib.PurePath]:
         course = str(course_path)
         if not self._courses:
             self._list_courses()
@@ -118,7 +119,7 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
                 yield pathlib.PurePath(course)
         else:
             # FIXME
-            for filename in self._list_files(path):
+            for filename in self._list_files_in_course(path):
                 yield filename
 
     def retrieve_file(self,
