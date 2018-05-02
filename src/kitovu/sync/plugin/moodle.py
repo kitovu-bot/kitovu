@@ -120,7 +120,6 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
             for course in self._list_courses():
                 yield pathlib.PurePath(course)
         else:
-            # FIXME
             for filename in self._list_files_in_course(path):
                 yield filename
 
