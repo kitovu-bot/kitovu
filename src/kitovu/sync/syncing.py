@@ -68,7 +68,7 @@ def start(connection_settings: ConnectionSettings, reporter: utils.AbstractRepor
 
         for remote_full_path in plugin.list_path(remote_dir):
             # each plugin should now yield all files recursively with list_path
-            print(f'Downloading: {remote_full_path}')
+            print(f'Checking: {remote_full_path}')
 
             remote_digest = plugin.create_remote_digest(remote_full_path)
             print(f'Remote digest: {remote_digest}')
@@ -85,10 +85,11 @@ def start(connection_settings: ConnectionSettings, reporter: utils.AbstractRepor
                 local_full_path=local_full_path, remote_full_path=remote_full_path, plugin=plugin)
             if state_of_file in [filecache.FileState.NO_CHANGES,
                                  filecache.FileState.LOCAL_CHANGED]:
-                pass
+                print("No remote changes.")
             elif state_of_file in [filecache.FileState.REMOTE_CHANGED,
                                    filecache.FileState.NEW,
                                    filecache.FileState.BOTH_CHANGED]:
+                print("Downloading...")
                 local_full_path.parent.mkdir(parents=True, exist_ok=True)
 
                 with local_full_path.open('wb') as fileobj:
