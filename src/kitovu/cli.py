@@ -22,6 +22,7 @@ import platform
 from distutils import spawn
 import subprocess
 import os
+import webbrowser
 
 import click
 
@@ -66,6 +67,13 @@ def validate(config: typing.Optional[pathlib.Path] = None) -> None:
         syncing.validate_config(config, CliReporter())
     except utils.UsageError as ex:
         raise click.ClickException(str(ex))
+
+
+@cli.command()
+def docs() -> None:
+    """Open the documentation in the browser."""
+    # FIXME: make version aware
+    webbrowser.open_new_tab('https://kitovu.readthedocs.io/en/latest')
 
 
 AVAILABLE_EDITORS = [

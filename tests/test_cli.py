@@ -11,6 +11,11 @@ def reporter():
     return cli.CliReporter()
 
 
+@pytest.fixture
+def runner():
+    return CliRunner()
+
+
 def test_reporter(capsys, reporter):
     reporter.warn("my test")
     reporter.warn("another test")
@@ -20,11 +25,16 @@ def test_reporter(capsys, reporter):
     assert captured.err == "my test\nanother test\n"
 
 
-class TestEdit:
+def test_docs(runner, monkeypatch):
+    calls = []
+    monkeypatch.setattr('webbrowser.open', lambda *args: calls.append(args))
 
-    @pytest.fixture
-    def runner(self):
-        return CliRunner()
+    runner.invoke(cli.docs)
+
+    assert calls == [('https://kitovu.readthedocs.io/en/latest', 2)]
+
+
+class TestEdit:
 
     @pytest.fixture(autouse=True)
     def clear_env(self, monkeypatch):
