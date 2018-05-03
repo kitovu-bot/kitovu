@@ -18,7 +18,6 @@ Why does this file exist, and why not put this in __main__?
 import pathlib
 import typing
 import sys
-import platform
 from distutils import spawn
 import subprocess
 import os
@@ -76,7 +75,7 @@ def docs() -> None:
     webbrowser.open_new_tab('https://kitovu.readthedocs.io/en/latest')
 
 
-AVAILABLE_EDITORS = [
+DEFAULT_EDITORS = [
     'vim',
     'emacs',
     'nano',
@@ -87,7 +86,8 @@ AVAILABLE_EDITORS = [
 
 @cli.command()
 @click.option('--config', type=pathlib.Path, help="The configuration file to edit")
-@click.option('--editor', type=str, help=f"The command of the editor to use. Default: $EDITOR or the first existing out of {', '.join(AVAILABLE_EDITORS)}")
+@click.option('--editor', type=str, help=f"The command of the editor to use. \
+              Default: $EDITOR or the first existing out of {', '.join(DEFAULT_EDITORS)}")
 def edit(config: typing.Optional[pathlib.Path] = None, editor: typing.Optional[str] = None) -> None:
     """Edit the specified configuration file."""
     if editor is None and 'EDITOR' in os.environ:
@@ -108,8 +108,8 @@ def _get_editor_path(editor: typing.Optional[str]) -> typing.Optional[str]:
     if editor is not None:
         return spawn.find_executable(editor)
 
-    for e in AVAILABLE_EDITORS:
-        path = spawn.find_executable(e)
+    for default_editor in DEFAULT_EDITORS:
+        path = spawn.find_executable(default_editor)
         if path is not None:
             return path
 
