@@ -24,6 +24,27 @@ def get_password(plugin: str, identifier: str) -> str:
     return password
 
 
+def sanitize_filename(name: str, replacement: typing.Optional[str]='_'):
+    """Replace invalid filename characters.
+
+    Note: This should be used for the basename, as it also removes the path
+    separator.
+
+    Args:
+        name: The filename.
+        replacement: The replacement character (or None).
+    """
+    if replacement is None:
+        replacement = ''
+    # Bad characters taken from Windows, there are even fewer on Linux
+    # See also
+    # https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words
+    bad_chars = '\\/:*?"<>|'
+    for bad_char in bad_chars:
+        name = name.replace(bad_char, replacement)
+    return name
+
+
 JsonSchemaType = typing.Dict[str, typing.Any]
 
 
