@@ -98,9 +98,9 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
                                                        courseid=str(course_id))
 
         for section in lessons:
-            section_path: pathlib.PurePath = course_path / utils.sanitize_filename(section['name'])
+            section_path: pathlib.PurePath = course_path / section['name']
             for module in section['modules']:
-                module_path: pathlib.PurePath = section_path / utils.sanitize_filename(module['name'])
+                module_path: pathlib.PurePath = section_path / module['name']
                 for elem in module.get('contents', []):
                     filename: str = elem['filename']
                     if 'mimetype' not in elem:
@@ -108,7 +108,7 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
                         assert elem['filesize'] == 0, elem
                         if not filename.endswith('.html'):
                             filename += '.html'
-                    full_path: pathlib.PurePath = module_path / utils.sanitize_filename(filename)
+                    full_path: pathlib.PurePath = module_path / filename
                     self._files[full_path] = _MoodleFile(elem['fileurl'],
                                                          elem['filesize'],
                                                          elem['timemodified'])

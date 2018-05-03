@@ -133,10 +133,10 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
         for entry in self._connection.listPath(self._info.share, str(path)):
             if entry.isDirectory:
                 if entry.filename not in [".", ".."]:
-                    yield from self.list_path(pathlib.PurePath(path / utils.sanitize_filename(entry.filename)))
+                    yield from self.list_path(pathlib.PurePath(path / entry.filename))
             else:
                 # only gives back the files in the current folder
-                yield pathlib.PurePath(path / utils.sanitize_filename(entry.filename))
+                yield pathlib.PurePath(path / entry.filename)
 
     def retrieve_file(self,
                       path: pathlib.PurePath,
