@@ -1,4 +1,5 @@
 import pathlib
+import requests
 
 import pytest
 
@@ -12,18 +13,20 @@ def moodleplug(self) -> moodle.MoodlePlugin:
     return moodle.MoodlePlugin
 
 
+@pytest.fixture
+def connection(responses):
+    responses.add(responses.GET, "'https://moodle.hsr.ch/'")
+
 
 @pytest.fixture
 def credentials(self):
     """Creates connection for test purposes, so as if we required the config."""
-    return{
-
-    }
+    pass
 
 
 class TestConnect:
 
-    def test_connect_with_default_options(self):
+    def test_connect_with_default_options(self, responses):
         pass
 
     def test_connect_with_custom_options(self):
