@@ -1,12 +1,24 @@
 import pathlib
 
 import pytest
-import pytest-responses
-import responses
 
 from kitovu.sync import syncing
 from kitovu import utils
 from kitovu.sync.plugin import moodle
+
+
+@pytest.fixture
+def moodleplug(self) -> moodle.MoodlePlugin:
+    return moodle.MoodlePlugin
+
+
+
+@pytest.fixture
+def credentials(self):
+    """Creates connection for test purposes, so as if we required the config."""
+    return{
+
+    }
 
 
 class TestConnect:
@@ -27,6 +39,9 @@ class TestValidations:
         pass
 
     def test_config_with_minimum_required_fields(self):
+        pass
+
+    def test_config_with_max_required_fields(self):
         pass
 
     def test_config_with_unexpected_fields(self):

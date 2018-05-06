@@ -1,0 +1,2279 @@
+[
+    {
+        "hiddenbynumsections": 0, 
+        "id": 1433, 
+        "modules": [
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "vorlesungsinfo.pdf", 
+                        "filepath": "/", 
+                        "filesize": 31682, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/11668/mod_resource/content/7/vorlesungsinfo.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 1, 
+                        "timecreated": 1410768280, 
+                        "timemodified": 1504623134, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 7194, 
+                "indent": 0, 
+                "instance": 2399, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/core/1519906000/f/pdf-24", 
+                "modname": "resource", 
+                "modplural": "Dateien", 
+                "name": "Vorlesungsinfo", 
+                "url": "https://moodle.hsr.ch/mod/resource/view.php?id=7194", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "aufgabensammlung.pdf", 
+                        "filepath": "/", 
+                        "filesize": 3119153, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/5169/mod_folder/content/49/aufgabensammlung.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1369641150, 
+                        "timemodified": 1517664264, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "skript.pdf", 
+                        "filepath": "/", 
+                        "filesize": 2188137, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/5169/mod_folder/content/49/skript.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1387209002, 
+                        "timemodified": 1516113403, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 3004, 
+                "indent": 0, 
+                "instance": 161, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/folder/1519906000/icon", 
+                "modname": "folder", 
+                "modplural": "Verzeichnisse", 
+                "name": "Kursunterlagen", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "skript-00-intro.pdf", 
+                        "filepath": "/", 
+                        "filesize": 110826, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/21479/mod_folder/content/9/skript-00-intro.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1445352515, 
+                        "timemodified": 1504708457, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "skript-01-chapter1.pdf", 
+                        "filepath": "/", 
+                        "filesize": 128670, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/21479/mod_folder/content/9/skript-01-chapter1.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1445352523, 
+                        "timemodified": 1504708465, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "skript-02-chapter2.pdf", 
+                        "filepath": "/", 
+                        "filesize": 1124252, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/21479/mod_folder/content/9/skript-02-chapter2.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1445352530, 
+                        "timemodified": 1504708473, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "skript-03-chapter3.pdf", 
+                        "filepath": "/", 
+                        "filesize": 336722, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/21479/mod_folder/content/9/skript-03-chapter3.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1445352536, 
+                        "timemodified": 1504708481, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "skript-04-chapter4.pdf", 
+                        "filepath": "/", 
+                        "filesize": 258428, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/21479/mod_folder/content/9/skript-04-chapter4.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1445352541, 
+                        "timemodified": 1504708489, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "skript-05-chapter5.pdf", 
+                        "filepath": "/", 
+                        "filesize": 483275, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/21479/mod_folder/content/9/skript-05-chapter5.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1445352548, 
+                        "timemodified": 1504708497, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "skript-06-chapter6.pdf", 
+                        "filepath": "/", 
+                        "filesize": 131992, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/21479/mod_folder/content/9/skript-06-chapter6.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1445352560, 
+                        "timemodified": 1504708505, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "skript-07-chapter7.pdf", 
+                        "filepath": "/", 
+                        "filesize": 132723, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/21479/mod_folder/content/9/skript-07-chapter7.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1445352570, 
+                        "timemodified": 1504708514, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "skript-10-tabellen.pdf", 
+                        "filepath": "/", 
+                        "filesize": 80074, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/21479/mod_folder/content/9/skript-10-tabellen.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1445352577, 
+                        "timemodified": 1504708539, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "skript-09-verteilungen.pdf", 
+                        "filepath": "/", 
+                        "filesize": 315506, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/21479/mod_folder/content/9/skript-09-verteilungen.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1445352583, 
+                        "timemodified": 1504708531, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "skript-11-index.pdf", 
+                        "filepath": "/", 
+                        "filesize": 79483, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/21479/mod_folder/content/9/skript-11-index.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1445352591, 
+                        "timemodified": 1504708547, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "skript-08-chapter8.pdf", 
+                        "filepath": "/", 
+                        "filesize": 210481, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/21479/mod_folder/content/9/skript-08-chapter8.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1449159532, 
+                        "timemodified": 1504708523, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 14000, 
+                "indent": 0, 
+                "instance": 1741, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/folder/1519906000/icon", 
+                "modname": "folder", 
+                "modplural": "Verzeichnisse", 
+                "name": "Skriptteile", 
+                "url": "https://moodle.hsr.ch/mod/folder/view.php?id=14000", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "description": "<div class=\"no-overflow\"><p>Stellen Sie hier Ihre Fragen zu Vorlesung, Übungen oder der Prüfungsvorbereitung</p></div>", 
+                "id": 13252, 
+                "indent": 0, 
+                "instance": 706, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/forum/1519906000/icon", 
+                "modname": "forum", 
+                "modplural": "Foren", 
+                "name": "Fragen und Antworten", 
+                "url": "https://moodle.hsr.ch/mod/forum/view.php?id=13252", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "checklist.pdf", 
+                        "filepath": "/", 
+                        "filesize": 39048, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/11466/mod_resource/content/2/checklist.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 1, 
+                        "timecreated": 1410518158, 
+                        "timemodified": 1418029713, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 7050, 
+                "indent": 0, 
+                "instance": 2338, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/core/1519906000/f/pdf-24", 
+                "modname": "resource", 
+                "modplural": "Dateien", 
+                "name": "Checkliste", 
+                "url": "https://moodle.hsr.ch/mod/resource/view.php?id=7050", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "pruefungsinfo.pdf", 
+                        "filepath": "/", 
+                        "filesize": 27858, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/6678/mod_resource/content/9/pruefungsinfo.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 1, 
+                        "timecreated": 1387436936, 
+                        "timemodified": 1512633122, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 3792, 
+                "indent": 0, 
+                "instance": 1006, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/core/1519906000/f/pdf-24", 
+                "modname": "resource", 
+                "modplural": "Dateien", 
+                "name": "Prüfungsinfo", 
+                "url": "https://moodle.hsr.ch/mod/resource/view.php?id=3792", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": null, 
+                        "filename": "Github Repository von Skript und Aufgabensammlung", 
+                        "filepath": null, 
+                        "filesize": 0, 
+                        "fileurl": "https://github.com/AndreasFMueller/WrStat", 
+                        "license": null, 
+                        "sortorder": null, 
+                        "timecreated": null, 
+                        "timemodified": 1369640537, 
+                        "type": "url", 
+                        "userid": null
+                    }
+                ], 
+                "id": 3003, 
+                "indent": 0, 
+                "instance": 537, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/url/1519906000/icon", 
+                "modname": "url", 
+                "modplural": "Links/URLs", 
+                "name": "Github Repository von Skript und Aufgabensammlung", 
+                "url": "https://moodle.hsr.ch/mod/url/view.php?id=3003", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "id": 2981, 
+                "indent": 0, 
+                "instance": 147, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/forum/1519906000/icon", 
+                "modname": "forum", 
+                "modplural": "Foren", 
+                "name": "Nachrichtenforum", 
+                "url": "https://moodle.hsr.ch/mod/forum/view.php?id=2981", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "loesung.pdf", 
+                        "filepath": "/", 
+                        "filesize": 88382, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/45476/mod_resource/content/7/loesung.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 1, 
+                        "timecreated": 1473170753, 
+                        "timemodified": 1517664203, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 22565, 
+                "indent": 0, 
+                "instance": 10688, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/core/1519906000/f/pdf-24", 
+                "modname": "resource", 
+                "modplural": "Dateien", 
+                "name": "Musterlösung zur Prüfung HS17", 
+                "url": "https://moodle.hsr.ch/mod/resource/view.php?id=22565", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }
+        ], 
+        "name": "Wahrscheinlichkeitsrechnung und Statistik", 
+        "section": 0, 
+        "summary": "<p>Diese Vorlesung vermittelt die Grundlagen der Wahrscheinlichkeitsrechnung und der Statistik.</p><p>Als Arbeitsunterlagen stehen ein Skript und eine Aufgabensammlung zur Verfügung. Jede Woche wird eine Serie von Übungsaufgaben hier im Moodle publiziert. Auf der Skriptablage werden keine Unterrichtsunterlagen bereitgestellt.</p>", 
+        "summaryformat": 1, 
+        "uservisible": true, 
+        "visible": 1
+    }, 
+    {
+        "hiddenbynumsections": 0, 
+        "id": 4656, 
+        "modules": [
+            {
+                "contents": [
+                    {
+                        "author": null, 
+                        "filename": "Hypothesenbildung und Falsifizierung", 
+                        "filepath": null, 
+                        "filesize": 0, 
+                        "fileurl": "https://www.youtube.com/watch?v=MH1XotarAXU", 
+                        "license": null, 
+                        "sortorder": null, 
+                        "timecreated": null, 
+                        "timemodified": 1442331416, 
+                        "type": "url", 
+                        "userid": null
+                    }
+                ], 
+                "description": "<div class=\"no-overflow\"><p>Das verlinkte Youtube-Video erklärt, warum die Erde eine Scheibe sei, und beschreibt einige Experimente, mit denen dies bewiesen wurde (unter anderem auch das in der Vorlesung besprochene Experiment von Rowbotham). Überlegen Sie sich, welche impliziten Annahmen in die Experimente aufgenommen wurden, und klären sie, ob die Experimente wirklich eine Falsifizierung ermöglichen. Beachten Sie auch die oft falsche Verwendung der Begriffe Theorie, Hypothese und Beweis.</p></div>", 
+                "id": 13460, 
+                "indent": 0, 
+                "instance": 968, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/url/1519906000/icon", 
+                "modname": "url", 
+                "modplural": "Links/URLs", 
+                "name": "Hypothesenbildung und Falsifizierung", 
+                "url": "https://moodle.hsr.ch/mod/url/view.php?id=13460", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }
+        ], 
+        "name": "Einführung", 
+        "section": 1, 
+        "summary": "<p>Die Wahrscheinlichkeitsrechung und Statistik steht an der Nahtstelle zwischen Mathematik und Naturwissenschaft. Sie erlaubt uns objektive Entscheidungen über die Realität zu fällen, doch hat dies Konsequenzen dafür, welcher Art die Aussagen der Naturwissenschaften überhaupt sein können. Insbesondere stellen sich folgende Fragen:</p><ul><li>Was ist Naturwissenschaft?</li><li>Unterschied Mathematik-Naturwissenschaft?</li><li>Was bedeuten \"Wahrheit\" oder \"Beweis\" in den Naturwissenschaften?<br></li><li>Was ist eine naturwissenschaftliche Theorie?</li></ul>Man kann sich zum Beispiel die Frage stellen, ob die Erde eine Scheibe ist. Youtuber in erstaunlicher Zahl beantworten diese Frage mit JA, und geben in epischen Videos Argumente dafür. Das meiste davon zeigt vor allem einen erschreckenden Mangel an elementaren Geometriekenntnissen. Aber wie \"beweist\" man denn wissenschaftlich, dass die Erde (ungefähr) eine Kugel ist, und welche Rolle spielt die Wahrscheinlichkeitsrechnung dabei?<br>", 
+        "summaryformat": 1, 
+        "uservisible": true, 
+        "visible": 1
+    }, 
+    {
+        "hiddenbynumsections": 0, 
+        "id": 1434, 
+        "modules": [
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "l.pdf", 
+                        "filepath": "/", 
+                        "filesize": 48622, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/5628/mod_folder/content/11/l.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1378752066, 
+                        "timemodified": 1505972385, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "u.pdf", 
+                        "filepath": "/", 
+                        "filesize": 29371, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/5628/mod_folder/content/11/u.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1378752075, 
+                        "timemodified": 1504623362, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 3259, 
+                "indent": 0, 
+                "instance": 223, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/folder/1519906000/icon", 
+                "modname": "folder", 
+                "modplural": "Verzeichnisse", 
+                "name": "Übung 1", 
+                "url": "https://moodle.hsr.ch/mod/folder/view.php?id=3259", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": null, 
+                        "filename": "Auf wieviele Arten kann man ein Kartenspiel mischen?", 
+                        "filepath": null, 
+                        "filesize": 0, 
+                        "fileurl": "http://ed.ted.com/lessons/how-many-ways-can-you-arrange-a-deck-of-cards-yannay-khaikin", 
+                        "license": null, 
+                        "sortorder": null, 
+                        "timecreated": null, 
+                        "timemodified": 1398586735, 
+                        "type": "url", 
+                        "userid": null
+                    }
+                ], 
+                "description": "<div class=\"no-overflow\"><p>Ein TED-Ed Video zur Berechnung der Anzahl der Permutationen</p></div>", 
+                "id": 5161, 
+                "indent": 0, 
+                "instance": 660, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/url/1519906000/icon", 
+                "modname": "url", 
+                "modplural": "Links/URLs", 
+                "name": "Auf wieviele Arten kann man ein Kartenspiel mischen?", 
+                "url": "https://moodle.hsr.ch/mod/url/view.php?id=5161", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": null, 
+                        "filename": "Rock Paper Scissors Lizard Spock", 
+                        "filepath": null, 
+                        "filesize": 0, 
+                        "fileurl": "http://www.youtube.com/watch?v=iapcKVn7DdY", 
+                        "license": null, 
+                        "sortorder": null, 
+                        "timecreated": null, 
+                        "timemodified": 1379577536, 
+                        "type": "url", 
+                        "userid": null
+                    }
+                ], 
+                "description": "<div class=\"no-overflow\"><p>In der Vorlesung wird das Spiel \"Rock Paper Scissors Lizard Spock\" analysiert.</p></div>", 
+                "id": 3340, 
+                "indent": 0, 
+                "instance": 550, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/url/1519906000/icon", 
+                "modname": "url", 
+                "modplural": "Links/URLs", 
+                "name": "Rock Paper Scissors Lizard Spock", 
+                "url": "https://moodle.hsr.ch/mod/url/view.php?id=3340", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }
+        ], 
+        "name": "Woche 1: Kombinatorik", 
+        "section": 2, 
+        "summary": "<p>Kombinatorik bedeutet Zählen von diskreten Strukturen. Wenn man die Wahrscheinlichkeit für das Eintreten eines Ereignisses abschätzen will, muss man wissen, wieviele alternativen Möglichkeiten es gibt.</p>", 
+        "summaryformat": 1, 
+        "uservisible": true, 
+        "visible": 1
+    }, 
+    {
+        "hiddenbynumsections": 0, 
+        "id": 1435, 
+        "modules": [
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "u.pdf", 
+                        "filepath": "/", 
+                        "filesize": 40265, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/5807/mod_folder/content/12/u.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1379921581, 
+                        "timemodified": 1506405398, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "l.pdf", 
+                        "filepath": "/", 
+                        "filesize": 56392, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/5807/mod_folder/content/12/l.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1379921589, 
+                        "timemodified": 1506668528, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 3327, 
+                "indent": 0, 
+                "instance": 244, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/folder/1519906000/icon", 
+                "modname": "folder", 
+                "modplural": "Verzeichnisse", 
+                "name": "Übung 2", 
+                "url": "https://moodle.hsr.ch/mod/folder/view.php?id=3327", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": null, 
+                        "filename": "Gewinnwahrscheinlichkeiten im Schweizer Zahlenlotto", 
+                        "filepath": null, 
+                        "filesize": 0, 
+                        "fileurl": "http://www.swisslos.ch/swisslotto/statistiken/numberfrequencynext.do", 
+                        "license": null, 
+                        "sortorder": null, 
+                        "timecreated": null, 
+                        "timemodified": 1380269944, 
+                        "type": "url", 
+                        "userid": null
+                    }
+                ], 
+                "description": "<div class=\"no-overflow\"><p>Die Website des Schweizer Zahlenlottos dokumentiert die relativen Häufigkeiten von der einzelnen Zahlen. Insbesondere fällt auf, dass die häufigste Glückszahl 6 doppelt so häufig ist (18 mal) wie die seltenste 5 (9 mal). Zufällig heisst nicht gleichmässig, aber kann eine solch grosse Abweichung zufällig sein? Die Antwort wird im Kapitel 8 mit einem Hypothesentest gegeben.</p></div>", 
+                "id": 3413, 
+                "indent": 0, 
+                "instance": 555, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/url/1519906000/icon", 
+                "modname": "url", 
+                "modplural": "Links/URLs", 
+                "name": "Gewinnwahrscheinlichkeiten im Schweizer Zahlenlotto", 
+                "url": "https://moodle.hsr.ch/mod/url/view.php?id=3413", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": null, 
+                        "filename": "Seltene Dinge passierend dauernd", 
+                        "filepath": null, 
+                        "filesize": 0, 
+                        "fileurl": "http://www.youtube.com/watch?v=ET1-_PeExMs", 
+                        "license": null, 
+                        "sortorder": null, 
+                        "timecreated": null, 
+                        "timemodified": 1380269797, 
+                        "type": "url", 
+                        "userid": null
+                    }
+                ], 
+                "description": "<div class=\"no-overflow\"><p>Wenn man genügend Experimente macht, passieren auch seltene Dinge dauernd. Wenn etwas nur mit einer Wahrscheinlichkeit von 1 : 64'000'000 geschieht, kann man trotzdem bei 1'000'000'000 Experimenten mit 16maligem Eintreten des Ereignisses rechnen. Dies erklärt Tim Minchin im verlinkten Video bei 1:48</p></div>", 
+                "id": 3414, 
+                "indent": 0, 
+                "instance": 556, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/url/1519906000/icon", 
+                "modname": "url", 
+                "modplural": "Links/URLs", 
+                "name": "Seltene Dinge passierend dauernd", 
+                "url": "https://moodle.hsr.ch/mod/url/view.php?id=3414", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }
+        ], 
+        "name": "Woche 2: Ereignisse und Wahrscheinlichkeit", 
+        "section": 3, 
+        "summary": "<p><b>Achtung: Vorlesungs-Lektion Freitag 29. 9. 2017, 10:10-10:55 sowie die Übungsstunde 11:05-11:50 fallen aus.</b></p><p><br></p><p>Was sind Ereignisse? Wie \"rechnet\" man mit Ereignissen? Wahrscheinlichkeit von Ereignissen und Rechenregeln für die Wahrscheinlichkeit.</p>", 
+        "summaryformat": 1, 
+        "uservisible": true, 
+        "visible": 1
+    }, 
+    {
+        "hiddenbynumsections": 0, 
+        "id": 1436, 
+        "modules": [
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "l.pdf", 
+                        "filepath": "/", 
+                        "filesize": 63777, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/5808/mod_folder/content/16/l.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1380522606, 
+                        "timemodified": 1506954389, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "u.pdf", 
+                        "filepath": "/", 
+                        "filesize": 44377, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/5808/mod_folder/content/16/u.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1380522615, 
+                        "timemodified": 1506954397, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 3328, 
+                "indent": 0, 
+                "instance": 245, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/folder/1519906000/icon", 
+                "modname": "folder", 
+                "modplural": "Verzeichnisse", 
+                "name": "Übung 3", 
+                "url": "https://moodle.hsr.ch/mod/folder/view.php?id=3328", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": null, 
+                        "filename": "Leben die Redshirts in Star Trek gefährlich?", 
+                        "filepath": null, 
+                        "filesize": 0, 
+                        "fileurl": "http://www.youtube.com/watch?v=GRp92HXDlgY", 
+                        "license": null, 
+                        "sortorder": null, 
+                        "timecreated": null, 
+                        "timemodified": 1379609517, 
+                        "type": "url", 
+                        "userid": null
+                    }
+                ], 
+                "id": 3352, 
+                "indent": 0, 
+                "instance": 551, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/url/1519906000/icon", 
+                "modname": "url", 
+                "modplural": "Links/URLs", 
+                "name": "Leben die Redshirts in Star Trek gefährlich?", 
+                "url": "https://moodle.hsr.ch/mod/url/view.php?id=3352", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": null, 
+                        "filename": "Surprise! Star Trek gold shirts more deadly than red shirts", 
+                        "filepath": null, 
+                        "filesize": 0, 
+                        "fileurl": "http://news.cnet.com/8301-17938_105-57570548-1/surprise-star-trek-gold-shirts-more-deadly-than-red-shirts/", 
+                        "license": null, 
+                        "sortorder": null, 
+                        "timecreated": null, 
+                        "timemodified": 1379609552, 
+                        "type": "url", 
+                        "userid": null
+                    }
+                ], 
+                "id": 3353, 
+                "indent": 0, 
+                "instance": 552, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/url/1519906000/icon", 
+                "modname": "url", 
+                "modplural": "Links/URLs", 
+                "name": "Surprise! 'Star Trek' gold shirts more deadly than red shirts", 
+                "url": "https://moodle.hsr.ch/mod/url/view.php?id=3353", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": null, 
+                        "filename": "Veritasium The Baysian Trap", 
+                        "filepath": null, 
+                        "filesize": 0, 
+                        "fileurl": "https://www.youtube.com/watch?v=R13BD8qKeTg", 
+                        "license": null, 
+                        "sortorder": null, 
+                        "timecreated": null, 
+                        "timemodified": 1491424408, 
+                        "type": "url", 
+                        "userid": null
+                    }
+                ], 
+                "id": 32339, 
+                "indent": 0, 
+                "instance": 1619, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/url/1519906000/icon", 
+                "modname": "url", 
+                "modplural": "Links/URLs", 
+                "name": "Veritasium: The Baysian Trap", 
+                "url": "https://moodle.hsr.ch/mod/url/view.php?id=32339", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "goats.cpp", 
+                        "filepath": "/", 
+                        "filesize": 1170, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/6130/mod_resource/content/2/goats.cpp?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "text/plain", 
+                        "sortorder": 1, 
+                        "timecreated": 1380795569, 
+                        "timemodified": 1380795580, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "description": "<div class=\"no-overflow\"><p>Student Elias Geisseler hat ein Simulations-Programm für das Monty Hall Problem beigsteuert.</p></div>", 
+                "id": 3466, 
+                "indent": 0, 
+                "instance": 868, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/core/1519906000/f/sourcecode-24", 
+                "modname": "resource", 
+                "modplural": "Dateien", 
+                "name": "Monty Hall Simulation", 
+                "url": "https://moodle.hsr.ch/mod/resource/view.php?id=3466", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": null, 
+                        "filename": "Monty Hall Problem the James May way", 
+                        "filepath": null, 
+                        "filesize": 0, 
+                        "fileurl": "http://www.youtube.com/watch?v=tvODuUMLLgM", 
+                        "license": null, 
+                        "sortorder": null, 
+                        "timecreated": null, 
+                        "timemodified": 1382004428, 
+                        "type": "url", 
+                        "userid": null
+                    }
+                ], 
+                "description": "<div class=\"no-overflow\"><p>James May (of Top Gear fame) hat in einer Folge von Man Lab das Monty Hall Spiel mit geschüttelten Bierbüchsen gespielt. Die Erklärung am Schluss ist zwar nicht ganz richtig, aber es ist sicher noch etwas lustiger als die Version aus Numb3rs...</p></div>", 
+                "id": 3529, 
+                "indent": 0, 
+                "instance": 562, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/url/1519906000/icon", 
+                "modname": "url", 
+                "modplural": "Links/URLs", 
+                "name": "Monty Hall Problem the James May way", 
+                "url": "https://moodle.hsr.ch/mod/url/view.php?id=3529", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "google-handout.pdf", 
+                        "filepath": "/", 
+                        "filesize": 120529, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/76128/mod_resource/content/1/google-handout.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 1, 
+                        "timecreated": 1507803837, 
+                        "timemodified": 1507803842, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 42333, 
+                "indent": 0, 
+                "instance": 20303, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/core/1519906000/f/pdf-24", 
+                "modname": "resource", 
+                "modplural": "Dateien", 
+                "name": "Google Matrix", 
+                "url": "https://moodle.hsr.ch/mod/resource/view.php?id=42333", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }
+        ], 
+        "name": "Woche 3: Bedingte Wahrscheinlichkeit", 
+        "section": 4, 
+        "summary": "<p>Wer einen AIDS-Test macht, möchte Wissen, ob er an HIV erkrankt ist. Er erwartet, dass ein positives Testresultat mit hoher Wahrscheinlichkeit bedeutet, dass er krank ist. Der Hersteller des Tests hat aber eine andere Frage: ausgehend davon, ob ein Patient HIV hatte oder nicht, hat er überprüft, ob der Test HIV diagnostiziert hat oder nicht. Er kann also nur sagen, dass wer krank ist, mit einer gewissen Wahrscheinlichkeit einen positiven Test haben wird. Ein ähnliches Problem trifft man bei der Beurteilung von DNA-Beweisen vor Gericht. Das Gericht möchte gerne aus der DNA-Übereinstimmung auf die Täterschaft schliessen, über den Test weiss man aber vor allem, mit welcher Wahrscheinlichkeit der Test eine DNA-Übereinstimmung bei zwei Proben von der selben Person anzeigt. Gesucht ist also die Möglichkeit, die Richtung des Schlusses umzukehren.</p>\r\n<p>Wahrscheinlichkeit in einer Teilmenge von Versuchsausgängen. Satz von Bayes. Satz von der totalen Wahrscheinlichkeit.</p>", 
+        "summaryformat": 1, 
+        "uservisible": true, 
+        "visible": 1
+    }, 
+    {
+        "hiddenbynumsections": 0, 
+        "id": 1437, 
+        "modules": [
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "l.pdf", 
+                        "filepath": "/", 
+                        "filesize": 133331, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/6030/mod_folder/content/17/l.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1380881073, 
+                        "timemodified": 1507556610, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "u.pdf", 
+                        "filepath": "/", 
+                        "filesize": 91348, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/6030/mod_folder/content/17/u.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1380881082, 
+                        "timemodified": 1507556619, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 3420, 
+                "indent": 0, 
+                "instance": 259, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/folder/1519906000/icon", 
+                "modname": "folder", 
+                "modplural": "Verzeichnisse", 
+                "name": "Übung 4", 
+                "url": "https://moodle.hsr.ch/mod/folder/view.php?id=3420", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "erwartung-handout.pdf", 
+                        "filepath": "/", 
+                        "filesize": 325440, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/76127/mod_resource/content/3/erwartung-handout.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 1, 
+                        "timecreated": 1507803733, 
+                        "timemodified": 1507804427, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 42332, 
+                "indent": 0, 
+                "instance": 20302, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/core/1519906000/f/pdf-24", 
+                "modname": "resource", 
+                "modplural": "Dateien", 
+                "name": "Erwartungswert und Varianz", 
+                "url": "https://moodle.hsr.ch/mod/resource/view.php?id=42332", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }
+        ], 
+        "name": "Woche 4: Zufallsvariable und Erwartungswert, Varianz", 
+        "section": 5, 
+        "summary": "<p>In vielen Zufallsexperimenten interessieren nicht nur die Ereignisse und deren Eintretenswahrscheinlichkeit, sondern auch mit dem Eintreten oder Nichteintreten verbundenen Zahlen wie Gewinne oder Verluste, Schäden oder andere Zahlenwerte. Sie heissen Zufallsvariable.</p>\r\n<p>Die einzelnen Werte einer Zufallsvariable sind meist nicht interessant. Eine Versicherung interessiert sich zum Beispiel für den zu erwartenden Schaden, damit sie kostendeckende Prämien erheben kann. Oder für die Wahrscheinlichkeit eines besonders hohen Schadens, für den ihre Rückstellungen nicht ausreichen würden.</p>\r\n<p>Neben dem erwarteten Wert interessiert bei einer Zufallsvariable vor allem auch, in welchem Ausmass sie um diesen erwarteten Wert schwanken kann. Die Varianz gibt eine Antwort. Sie berechnet die mittlere quadratische Abweichung vom Erwartungswert. Sie hat den Vorteil, leicht berechenbar zu sein. Die Standardabweichung ist die Wurzel aus der Varianz, sie kann geometrische anschaulich interpretiert werden.</p><p>Ausserdem interessieren folgende Fragen:</p><ul style=\"margin-bottom: 0px; color: rgb(51, 51, 102); line-height: normal; background-color: rgb(217, 237, 247);\"><li>Wie wahrscheinlich ist eine grosse Abweichung vom Erwartungswert?</li><li>Wie gross können Abweichungen \"normalerweise\" werden?</li><li>Wie genau gibt der Mittelwert vieler Messungen den Erwartungswert wieder?</li></ul>", 
+        "summaryformat": 1, 
+        "uservisible": true, 
+        "visible": 1
+    }, 
+    {
+        "hiddenbynumsections": 0, 
+        "id": 1438, 
+        "modules": [
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "u.pdf", 
+                        "filepath": "/", 
+                        "filesize": 46414, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/6150/mod_folder/content/16/u.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1381130443, 
+                        "timemodified": 1508165109, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "l.pdf", 
+                        "filepath": "/", 
+                        "filesize": 106753, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/6150/mod_folder/content/16/l.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1381130451, 
+                        "timemodified": 1508165101, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 3471, 
+                "indent": 0, 
+                "instance": 262, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/folder/1519906000/icon", 
+                "modname": "folder", 
+                "modplural": "Verzeichnisse", 
+                "name": "Übung 5", 
+                "url": "https://moodle.hsr.ch/mod/folder/view.php?id=3471", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": null, 
+                        "filename": "Berechnen Pensionskassen die Lebenserwartung falsch?", 
+                        "filepath": null, 
+                        "filesize": 0, 
+                        "fileurl": "http://www.nzz.ch/finanzen/uebersicht/boersen_und_maerkte/viele-kassen-rechnen-falsch-1.18168934", 
+                        "license": null, 
+                        "sortorder": null, 
+                        "timecreated": null, 
+                        "timemodified": 1382000582, 
+                        "type": "url", 
+                        "userid": null
+                    }
+                ], 
+                "description": "<div class=\"no-overflow\"><p>Pensionskassen versprechen dem Versicherten eine Rente nach Ende seiner Berufstätigkeit. Die gesamte Auszahlung hängt von der Lebenserwartung ab. Natürlich muss der Versicherte durch Einzahlungen während seiner Berufstätigkeit die Versicherung finanzieren. Die erwartete Auszahlung darf also nicht grösser sein als die Einzahlung, für die Berechnung der Rente ist daher eine korrekte Bestimmung der Lebenserwartung entscheidend. Der verlinkte Artikel wirft hierzu Fragen auf.</p></div>", 
+                "id": 3528, 
+                "indent": 0, 
+                "instance": 561, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/url/1519906000/icon", 
+                "modname": "url", 
+                "modplural": "Links/URLs", 
+                "name": "Berechnen Pensionskassen die Lebenserwartung falsch?", 
+                "url": "https://moodle.hsr.ch/mod/url/view.php?id=3528", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "tschebyscheff-handout.pdf", 
+                        "filepath": "/", 
+                        "filesize": 71570, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/76304/mod_resource/content/1/tschebyscheff-handout.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 1, 
+                        "timecreated": 1508409533, 
+                        "timemodified": 1508409535, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 42507, 
+                "indent": 0, 
+                "instance": 20445, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/core/1519906000/f/pdf-24", 
+                "modname": "resource", 
+                "modplural": "Dateien", 
+                "name": "Anwendung Tschebyscheff", 
+                "url": "https://moodle.hsr.ch/mod/resource/view.php?id=42507", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "regression-handout.pdf", 
+                        "filepath": "/", 
+                        "filesize": 177588, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/76303/mod_resource/content/1/regression-handout.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 1, 
+                        "timecreated": 1508409502, 
+                        "timemodified": 1508409505, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 42506, 
+                "indent": 0, 
+                "instance": 20444, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/core/1519906000/f/pdf-24", 
+                "modname": "resource", 
+                "modplural": "Dateien", 
+                "name": "Lineare Regression", 
+                "url": "https://moodle.hsr.ch/mod/resource/view.php?id=42506", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }
+        ], 
+        "name": "Woche 5: Anwendungen der Varianz", 
+        "section": 6, 
+        "summary": "Die Lineare Regression findet eine lineare Beziehung zwischen Zufallsvariablen, indem die Varianz des Fehlers minimiert wird.", 
+        "summaryformat": 1, 
+        "uservisible": true, 
+        "visible": 1
+    }, 
+    {
+        "hiddenbynumsections": 0, 
+        "id": 1439, 
+        "modules": [
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "l.pdf", 
+                        "filepath": "/", 
+                        "filesize": 143260, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/6207/mod_folder/content/12/l.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1382102041, 
+                        "timemodified": 1508769652, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "u.pdf", 
+                        "filepath": "/", 
+                        "filesize": 65316, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/6207/mod_folder/content/12/u.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1382102061, 
+                        "timemodified": 1508769660, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 3504, 
+                "indent": 0, 
+                "instance": 264, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/folder/1519906000/icon", 
+                "modname": "folder", 
+                "modplural": "Verzeichnisse", 
+                "name": "Übung 6", 
+                "url": "https://moodle.hsr.ch/mod/folder/view.php?id=3504", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "verteilung-handout.pdf", 
+                        "filepath": "/", 
+                        "filesize": 131381, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/76463/mod_resource/content/1/verteilung-handout.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 1, 
+                        "timecreated": 1509014328, 
+                        "timemodified": 1509014331, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 42664, 
+                "indent": 0, 
+                "instance": 20579, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/core/1519906000/f/pdf-24", 
+                "modname": "resource", 
+                "modplural": "Dateien", 
+                "name": "Verteilungsfunktion und Wahrscheinlichkeitsdichte", 
+                "url": "https://moodle.hsr.ch/mod/resource/view.php?id=42664", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }
+        ], 
+        "name": "Woche 6: Verteilungsfunktion", 
+        "section": 7, 
+        "summary": "<p>Zufallsvariablen enthalten alle Information über einen Wahrscheinlichkeitsprozess, aber in vielen Fällen ist dies zu viel. Die Verteilungsfunktion reduziert die Informationsmenge auf das absolute Minimum, das man zur Berechnung beliebiger Wahrscheinlichkeiten braucht. Mit Hilfe der Verteilungsfunktion können Zufallsvariablen einfach kategorisiert werden.</p>", 
+        "summaryformat": 1, 
+        "uservisible": true, 
+        "visible": 1
+    }, 
+    {
+        "hiddenbynumsections": 0, 
+        "id": 1440, 
+        "modules": [
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "u.pdf", 
+                        "filepath": "/", 
+                        "filesize": 26647, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/6208/mod_folder/content/12/u.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1382352129, 
+                        "timemodified": 1509375622, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "l.pdf", 
+                        "filepath": "/", 
+                        "filesize": 62853, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/6208/mod_folder/content/12/l.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1382975445, 
+                        "timemodified": 1509375613, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 3505, 
+                "indent": 0, 
+                "instance": 265, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/folder/1519906000/icon", 
+                "modname": "folder", 
+                "modplural": "Verzeichnisse", 
+                "name": "Übung 7", 
+                "url": "https://moodle.hsr.ch/mod/folder/view.php?id=3505", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "exponential-handout.pdf", 
+                        "filepath": "/", 
+                        "filesize": 84208, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/76775/mod_resource/content/3/exponential-handout.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 1, 
+                        "timecreated": 1510212331, 
+                        "timemodified": 1510212798, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 42971, 
+                "indent": 0, 
+                "instance": 20826, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/core/1519906000/f/pdf-24", 
+                "modname": "resource", 
+                "modplural": "Dateien", 
+                "name": "Exponentialfunktion - Präsentation", 
+                "url": "https://moodle.hsr.ch/mod/resource/view.php?id=42971", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "id": 3508, 
+                "indent": 0, 
+                "instance": 15, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/lesson/1519906000/icon", 
+                "modname": "lesson", 
+                "modplural": "Lektionen", 
+                "name": "Einführung in R", 
+                "url": "https://moodle.hsr.ch/mod/lesson/view.php?id=3508", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }
+        ], 
+        "name": "Woche 7: Wahrscheinlichkeitsverteilungen", 
+        "section": 8, 
+        "summary": "<p>Aus der Rechenregel für die Verteilungsfunktion einer Summe von Zufallsvariablen ergeben sich neue Verteilungsfunktionen, die später zur Illustration des zentralen Grenzwertsatzes gebraucht werden.</p><p>Exponentialverteilung</p>", 
+        "summaryformat": 1, 
+        "uservisible": true, 
+        "visible": 1
+    }, 
+    {
+        "hiddenbynumsections": 0, 
+        "id": 1464, 
+        "modules": [
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "l.pdf", 
+                        "filepath": "/", 
+                        "filesize": 68657, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/6311/mod_folder/content/13/l.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1383573471, 
+                        "timemodified": 1509979867, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "u.pdf", 
+                        "filepath": "/", 
+                        "filesize": 45855, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/6311/mod_folder/content/13/u.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1383573480, 
+                        "timemodified": 1509979880, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 3560, 
+                "indent": 0, 
+                "instance": 277, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/folder/1519906000/icon", 
+                "modname": "folder", 
+                "modplural": "Verzeichnisse", 
+                "name": "Übung 8", 
+                "url": "https://moodle.hsr.ch/mod/folder/view.php?id=3560", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "normalverteilung-handout.pdf", 
+                        "filepath": "/", 
+                        "filesize": 155666, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/76774/mod_resource/content/1/normalverteilung-handout.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 1, 
+                        "timecreated": 1510212218, 
+                        "timemodified": 1510212232, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 42970, 
+                "indent": 0, 
+                "instance": 20825, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/core/1519906000/f/pdf-24", 
+                "modname": "resource", 
+                "modplural": "Dateien", 
+                "name": "Normalverteilung - Präsentation", 
+                "url": "https://moodle.hsr.ch/mod/resource/view.php?id=42970", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": null, 
+                        "filename": "Widerstandswerte sind normalverteilt", 
+                        "filepath": null, 
+                        "filesize": 0, 
+                        "fileurl": "https://www.youtube.com/watch?v=1WAhTdWErrU", 
+                        "license": null, 
+                        "sortorder": null, 
+                        "timecreated": null, 
+                        "timemodified": 1417954054, 
+                        "type": "url", 
+                        "userid": null
+                    }
+                ], 
+                "description": "<div class=\"no-overflow\"><p>Dave Jones hat in seinem EEVblog 400 1kOhm Widerstände auf 10mOhm genau nachgemessen und untersucht, ob die Widerstandswerte normalverteilt sind.</p></div>", 
+                "id": 8178, 
+                "indent": 0, 
+                "instance": 795, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/url/1519906000/icon", 
+                "modname": "url", 
+                "modplural": "Links/URLs", 
+                "name": "Widerstandswerte sind normalverteilt", 
+                "url": "https://moodle.hsr.ch/mod/url/view.php?id=8178", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }
+        ], 
+        "name": "Woche 8: Normalverteilung", 
+        "section": 9, 
+        "summary": "<ul><li>Anwendungsbereich der Normalverteilung<br></li><li>Standardisierung<br></li><li>Bestimmung von Werten der Normalverteilung mit Hilfe der Tabelle<br></li></ul>", 
+        "summaryformat": 1, 
+        "uservisible": true, 
+        "visible": 1
+    }, 
+    {
+        "hiddenbynumsections": 0, 
+        "id": 1465, 
+        "modules": [
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "l.pdf", 
+                        "filepath": "/", 
+                        "filesize": 542544, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/6312/mod_folder/content/11/l.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1383841880, 
+                        "timemodified": 1510586189, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "u.pdf", 
+                        "filepath": "/", 
+                        "filesize": 510946, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/6312/mod_folder/content/11/u.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1383841888, 
+                        "timemodified": 1510586198, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 3561, 
+                "indent": 0, 
+                "instance": 278, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/folder/1519906000/icon", 
+                "modname": "folder", 
+                "modplural": "Verzeichnisse", 
+                "name": "Übung 9", 
+                "url": "https://moodle.hsr.ch/mod/folder/view.php?id=3561", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "binomial-handout.pdf", 
+                        "filepath": "/", 
+                        "filesize": 96207, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/76924/mod_resource/content/1/binomial-handout.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 1, 
+                        "timecreated": 1510820829, 
+                        "timemodified": 1510820832, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 43120, 
+                "indent": 0, 
+                "instance": 20953, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/core/1519906000/f/pdf-24", 
+                "modname": "resource", 
+                "modplural": "Dateien", 
+                "name": "Binomialverteilung + Approximation", 
+                "url": "https://moodle.hsr.ch/mod/resource/view.php?id=43120", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }
+        ], 
+        "name": "Woche 9: Binomialverteilung und Approximation", 
+        "section": 10, 
+        "summary": "<ul>\r\n<li>Definition der Binomialverteilung</li><li>Poissonverteilung als Approximation für p klein</li><li>Normalverteilung als Approximation der Binomialverteilung</li>\r\n</ul>", 
+        "summaryformat": 1, 
+        "uservisible": true, 
+        "visible": 1
+    }, 
+    {
+        "hiddenbynumsections": 0, 
+        "id": 1466, 
+        "modules": [
+            {
+                "contents": [
+                    {
+                        "author": null, 
+                        "filename": "Zipfs Law by Vsauce", 
+                        "filepath": null, 
+                        "filesize": 0, 
+                        "fileurl": "https://www.youtube.com/watch?v=fCn8zs912OE", 
+                        "license": null, 
+                        "sortorder": null, 
+                        "timecreated": null, 
+                        "timemodified": 1444294875, 
+                        "type": "url", 
+                        "userid": null
+                    }
+                ], 
+                "id": 14011, 
+                "indent": 0, 
+                "instance": 984, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/url/1519906000/icon", 
+                "modname": "url", 
+                "modplural": "Links/URLs", 
+                "name": "Zipf's Law by Vsauce", 
+                "url": "https://moodle.hsr.ch/mod/url/view.php?id=14011", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "l.pdf", 
+                        "filepath": "/", 
+                        "filesize": 64238, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/6313/mod_folder/content/14/l.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1384759488, 
+                        "timemodified": 1511418483, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "u.pdf", 
+                        "filepath": "/", 
+                        "filesize": 43622, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/6313/mod_folder/content/14/u.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1384759497, 
+                        "timemodified": 1511418490, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "data.csv", 
+                        "filepath": "/", 
+                        "filesize": 2317, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/6313/mod_folder/content/14/data.csv?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "text/csv", 
+                        "sortorder": 0, 
+                        "timecreated": 1511440756, 
+                        "timemodified": 1511440759, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "description": "", 
+                "id": 3562, 
+                "indent": 0, 
+                "instance": 279, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/folder/1519906000/icon", 
+                "modname": "folder", 
+                "modplural": "Verzeichnisse", 
+                "name": "Übung 10", 
+                "url": "https://moodle.hsr.ch/mod/folder/view.php?id=3562", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": null, 
+                        "filename": "Sean Gourley The mathematics of war", 
+                        "filepath": null, 
+                        "filesize": 0, 
+                        "fileurl": "http://www.ted.com/talks/sean_gourley_on_the_mathematics_of_war.html", 
+                        "license": null, 
+                        "sortorder": null, 
+                        "timecreated": null, 
+                        "timemodified": 1416213796, 
+                        "type": "url", 
+                        "userid": null
+                    }
+                ], 
+                "description": "<div class=\"no-overflow\"><p>Sean Gourley hat verschiedene Konflikte analysiert und dabei ein Potenzgesetz gefunden. Dieselbe Verteilung konnte er mit Simulationen der Gruppendynamik rekonstruieren. Er leitet daraus ein interessante Interpretation des Exponenten der Potenzverteilung ab.</p></div>", 
+                "id": 3680, 
+                "indent": 0, 
+                "instance": 569, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/url/1519906000/icon", 
+                "modname": "url", 
+                "modplural": "Links/URLs", 
+                "name": "Sean Gourley: The mathematics of war", 
+                "url": "https://moodle.hsr.ch/mod/url/view.php?id=3680", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": null, 
+                        "filename": "Potenzgesetze in empirischen Daten", 
+                        "filepath": null, 
+                        "filesize": 0, 
+                        "fileurl": "http://arxiv.org/abs/0706.1062", 
+                        "license": null, 
+                        "sortorder": null, 
+                        "timecreated": null, 
+                        "timemodified": 1385021057, 
+                        "type": "url", 
+                        "userid": null
+                    }
+                ], 
+                "description": "<div class=\"no-overflow\"><p>Dieses Paper gibt viele Beispiele für Potenzgesetze in empirischen Daten.</p></div>", 
+                "id": 3681, 
+                "indent": 0, 
+                "instance": 570, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/url/1519906000/icon", 
+                "modname": "url", 
+                "modplural": "Links/URLs", 
+                "name": "Potenzgesetze in empirischen Daten", 
+                "url": "https://moodle.hsr.ch/mod/url/view.php?id=3681", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": null, 
+                        "filename": "The mathematics of history", 
+                        "filepath": null, 
+                        "filesize": 0, 
+                        "fileurl": "https://www.ted.com/talks/jean_baptiste_michel_the_mathematics_of_history", 
+                        "license": null, 
+                        "sortorder": null, 
+                        "timecreated": null, 
+                        "timemodified": 1415485336, 
+                        "type": "url", 
+                        "userid": null
+                    }
+                ], 
+                "description": "<div class=\"no-overflow\"><p>Anwendungen der Mathematik in den Geschichtswissenschaften, zum Beispiel Potenzgesetze.</p></div>", 
+                "id": 8274, 
+                "indent": 0, 
+                "instance": 798, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/url/1519906000/icon", 
+                "modname": "url", 
+                "modplural": "Links/URLs", 
+                "name": "The mathematics of history", 
+                "url": "https://moodle.hsr.ch/mod/url/view.php?id=8274", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "potenzverteilung-handout.pdf", 
+                        "filepath": "/", 
+                        "filesize": 133977, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/77112/mod_resource/content/2/potenzverteilung-handout.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 1, 
+                        "timecreated": 1511422883, 
+                        "timemodified": 1511422886, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 43305, 
+                "indent": 0, 
+                "instance": 21085, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/core/1519906000/f/pdf-24", 
+                "modname": "resource", 
+                "modplural": "Dateien", 
+                "name": "Potenzgesetze (Hanout)", 
+                "url": "https://moodle.hsr.ch/mod/resource/view.php?id=43305", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "schaetzen-handout.pdf", 
+                        "filepath": "/", 
+                        "filesize": 101169, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/77149/mod_resource/content/1/schaetzen-handout.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 1, 
+                        "timecreated": 1511511078, 
+                        "timemodified": 1511511088, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 43342, 
+                "indent": 0, 
+                "instance": 21112, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/core/1519906000/f/pdf-24", 
+                "modname": "resource", 
+                "modplural": "Dateien", 
+                "name": "Schätzen (Handout)", 
+                "url": "https://moodle.hsr.ch/mod/resource/view.php?id=43342", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }
+        ], 
+        "name": "Woche 10: Potenzverteilung", 
+        "section": 11, 
+        "summary": "", 
+        "summaryformat": 1, 
+        "uservisible": true, 
+        "visible": 1
+    }, 
+    {
+        "hiddenbynumsections": 0, 
+        "id": 1467, 
+        "modules": [
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "l.pdf", 
+                        "filepath": "/", 
+                        "filesize": 59096, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/6314/mod_folder/content/12/l.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1385130170, 
+                        "timemodified": 1511799699, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "u.pdf", 
+                        "filepath": "/", 
+                        "filesize": 41278, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/6314/mod_folder/content/12/u.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1385130178, 
+                        "timemodified": 1511799706, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 3563, 
+                "indent": 0, 
+                "instance": 280, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/folder/1519906000/icon", 
+                "modname": "folder", 
+                "modplural": "Verzeichnisse", 
+                "name": "Übung 11", 
+                "url": "https://moodle.hsr.ch/mod/folder/view.php?id=3563", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": null, 
+                        "filename": "Estimation and Control", 
+                        "filepath": null, 
+                        "filesize": 0, 
+                        "fileurl": "http://www.youtube.com/watch?v=w2itwFJCgFQ", 
+                        "license": null, 
+                        "sortorder": null, 
+                        "timecreated": null, 
+                        "timemodified": 1385130347, 
+                        "type": "url", 
+                        "userid": null
+                    }
+                ], 
+                "description": "<div class=\"no-overflow\"><p>Schätzen (Estimation) ist die Grundlage jeder Robotik. In diesem Video sieht man die perfekt ausgeführte \"Estimation and Control Theory\". Die in dieser Woche behandelten Schätzverfahren sind die Grundlage dafür.</p></div>", 
+                "id": 3689, 
+                "indent": 0, 
+                "instance": 571, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/url/1519906000/icon", 
+                "modname": "url", 
+                "modplural": "Links/URLs", 
+                "name": "Estimation and Control", 
+                "url": "https://moodle.hsr.ch/mod/url/view.php?id=3689", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }
+        ], 
+        "name": "Woche 11: Parameter schätzen", 
+        "section": 12, 
+        "summary": "<p>Die verschiedenen behandelten Verteilungen sind parametrisiert, Berechungen auf Grund der Verteilung sind erst möglich, wenn man die Parameterwerte kennt. Diese müssen aus Beobachtungen geschätzt werden. Insbesondere werden wir dabei feststellen, dass die bisher verwendete Formel zur Schätzung der Varianz einen systematischen Fehler hat, und werden lernen, wie er korrigiert werden kann.</p>", 
+        "summaryformat": 1, 
+        "uservisible": true, 
+        "visible": 1
+    }, 
+    {
+        "hiddenbynumsections": 0, 
+        "id": 1468, 
+        "modules": [
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "l.pdf", 
+                        "filepath": "/", 
+                        "filesize": 62761, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/6315/mod_folder/content/10/l.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1385993456, 
+                        "timemodified": 1512401322, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "u.pdf", 
+                        "filepath": "/", 
+                        "filesize": 37851, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/6315/mod_folder/content/10/u.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1385993467, 
+                        "timemodified": 1512401330, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 3564, 
+                "indent": 0, 
+                "instance": 281, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/folder/1519906000/icon", 
+                "modname": "folder", 
+                "modplural": "Verzeichnisse", 
+                "name": "Übung 12", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "hypothesentest-handout.pdf", 
+                        "filepath": "/", 
+                        "filesize": 150167, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/77312/mod_resource/content/2/hypothesentest-handout.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 1, 
+                        "timecreated": 1512115643, 
+                        "timemodified": 1512115646, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 43494, 
+                "indent": 0, 
+                "instance": 21239, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/core/1519906000/f/pdf-24", 
+                "modname": "resource", 
+                "modplural": "Dateien", 
+                "name": "Hypothesentest", 
+                "url": "https://moodle.hsr.ch/mod/resource/view.php?id=43494", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "sugusauswertung.pdf", 
+                        "filepath": "/", 
+                        "filesize": 73182, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/77326/mod_resource/content/1/sugusauswertung.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 1, 
+                        "timecreated": 1512131101, 
+                        "timemodified": 1512131103, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 43508, 
+                "indent": 0, 
+                "instance": 21252, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/core/1519906000/f/pdf-24", 
+                "modname": "resource", 
+                "modplural": "Dateien", 
+                "name": "Auswertung Sugus-Test", 
+                "url": "https://moodle.hsr.ch/mod/resource/view.php?id=43508", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }
+        ], 
+        "name": "Woche 12: Hypothesentest", 
+        "section": 13, 
+        "summary": "<p>Wie beweist man, dass ein Medikament wirkt? Woher weiss man, dass eine Verbesserung in einem Computerprogramm tatsächlich eine Performance-Verbesserung gebracht hat? Wie untersucht man, ob elektromagnetische Wellen von Mobiltelefonen krank machen? Alle diese Fragen verlangen, dass man aus zufallsbehafteten Daten eine Entscheidung über eine Aussage ableitet. Es ist unvermeidlich, dass diese Entscheidung manchmal auch falsch sein wird, aber mindestens sollte man angeben können, wie wahrscheinlich eine Fehlentscheidung sein kann.</p>", 
+        "summaryformat": 1, 
+        "uservisible": true, 
+        "visible": 1
+    }, 
+    {
+        "hiddenbynumsections": 0, 
+        "id": 1469, 
+        "modules": [
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "l.pdf", 
+                        "filepath": "/", 
+                        "filesize": 100264, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/6316/mod_folder/content/15/l.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1386574354, 
+                        "timemodified": 1513232403, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "u.pdf", 
+                        "filepath": "/", 
+                        "filesize": 82406, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/6316/mod_folder/content/15/u.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1386574362, 
+                        "timemodified": 1513232410, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 3565, 
+                "indent": 0, 
+                "instance": 282, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/folder/1519906000/icon", 
+                "modname": "folder", 
+                "modplural": "Verzeichnisse", 
+                "name": "Übung 13", 
+                "url": "https://moodle.hsr.ch/mod/folder/view.php?id=3565", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }
+        ], 
+        "name": "Woche 13: Verteilung testen", 
+        "section": 14, 
+        "summary": "<p>Ob eine bestimmte Verteilung in einem bestimmten Problem tatsächlich anwendbar ist, sollte man natürlich auch testen können. Mit dem chi^2-Test und dem Kolmogorov-Smirnov-Test kann man dies entscheiden.</p>", 
+        "summaryformat": 1, 
+        "uservisible": true, 
+        "visible": 1
+    }, 
+    {
+        "hiddenbynumsections": 0, 
+        "id": 1470, 
+        "modules": [
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "l.pdf", 
+                        "filepath": "/", 
+                        "filesize": 66446, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/6317/mod_folder/content/8/l.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1387178636, 
+                        "timemodified": 1513863835, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "u.pdf", 
+                        "filepath": "/", 
+                        "filesize": 39996, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/6317/mod_folder/content/8/u.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 0, 
+                        "timecreated": 1387178644, 
+                        "timemodified": 1513863843, 
+                        "type": "file", 
+                        "userid": 176
+                    }, 
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "gewicht.csv", 
+                        "filepath": "/", 
+                        "filesize": 2700, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/6317/mod_folder/content/8/gewicht.csv?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "text/csv", 
+                        "sortorder": 0, 
+                        "timecreated": 1513594371, 
+                        "timemodified": 1513594374, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 3566, 
+                "indent": 0, 
+                "instance": 283, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/folder/1519906000/icon", 
+                "modname": "folder", 
+                "modplural": "Verzeichnisse", 
+                "name": "Übung 14", 
+                "url": "https://moodle.hsr.ch/mod/folder/view.php?id=3566", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": null, 
+                        "filename": "Bedeutung und Nachweis des Higgs, CERN Video", 
+                        "filepath": null, 
+                        "filesize": 0, 
+                        "fileurl": "http://www.youtube.com/watch?v=pD6BRGgpnK0", 
+                        "license": null, 
+                        "sortorder": null, 
+                        "timecreated": null, 
+                        "timemodified": 1387405065, 
+                        "type": "url", 
+                        "userid": null
+                    }
+                ], 
+                "id": 3791, 
+                "indent": 0, 
+                "instance": 576, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/url/1519906000/icon", 
+                "modname": "url", 
+                "modplural": "Links/URLs", 
+                "name": "Bedeutung und Nachweis des Higgs, CERN Video", 
+                "url": "https://moodle.hsr.ch/mod/url/view.php?id=3791", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": null, 
+                        "filename": "Particle Safari", 
+                        "filepath": null, 
+                        "filesize": 0, 
+                        "fileurl": "http://www.youtube.com/watch?v=m7bIhkw0LOo", 
+                        "license": null, 
+                        "sortorder": null, 
+                        "timecreated": null, 
+                        "timemodified": 1387404716, 
+                        "type": "url", 
+                        "userid": null
+                    }
+                ], 
+                "description": "<div class=\"no-overflow\"><p>Eine nicht ganz ernst gemeinte Visualisierung der Interaktionen des Standardmodells.</p></div>", 
+                "id": 3790, 
+                "indent": 0, 
+                "instance": 575, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/url/1519906000/icon", 
+                "modname": "url", 
+                "modplural": "Links/URLs", 
+                "name": "Particle Safari", 
+                "url": "https://moodle.hsr.ch/mod/url/view.php?id=3790", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "filterintro-handout.pdf", 
+                        "filepath": "/", 
+                        "filesize": 54066, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/77845/mod_resource/content/1/filterintro-handout.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 1, 
+                        "timecreated": 1513197424, 
+                        "timemodified": 1513197427, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 44002, 
+                "indent": 0, 
+                "instance": 21527, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/core/1519906000/f/pdf-24", 
+                "modname": "resource", 
+                "modplural": "Dateien", 
+                "name": "Einführung ins Filterproblem: optimale Schätzung", 
+                "url": "https://moodle.hsr.ch/mod/resource/view.php?id=44002", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "filter-handout.pdf", 
+                        "filepath": "/", 
+                        "filesize": 110418, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/77847/mod_resource/content/2/filter-handout.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 1, 
+                        "timecreated": 1513200919, 
+                        "timemodified": 1513200921, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 44004, 
+                "indent": 0, 
+                "instance": 21529, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/core/1519906000/f/pdf-24", 
+                "modname": "resource", 
+                "modplural": "Dateien", 
+                "name": "Filterproblem: Modellierung und Lösungsansatz", 
+                "url": "https://moodle.hsr.ch/mod/resource/view.php?id=44004", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }, 
+            {
+                "contents": [
+                    {
+                        "author": "Andreas Mueller", 
+                        "filename": "kalman-handout.pdf", 
+                        "filepath": "/", 
+                        "filesize": 83328, 
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/78452/mod_resource/content/1/kalman-handout.pdf?forcedownload=1", 
+                        "isexternalfile": false, 
+                        "license": "cc", 
+                        "mimetype": "application/pdf", 
+                        "sortorder": 1, 
+                        "timecreated": 1513846050, 
+                        "timemodified": 1513846054, 
+                        "type": "file", 
+                        "userid": 176
+                    }
+                ], 
+                "id": 44562, 
+                "indent": 0, 
+                "instance": 21739, 
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/core/1519906000/f/pdf-24", 
+                "modname": "resource", 
+                "modplural": "Dateien", 
+                "name": "Kalman-Filter Formeln", 
+                "url": "https://moodle.hsr.ch/mod/resource/view.php?id=44562", 
+                "uservisible": true, 
+                "visible": 1, 
+                "visibleoncoursepage": 1
+            }
+        ], 
+        "name": "Woche 14: Filtern", 
+        "section": 15, 
+        "summary": "<p>Messfehler sind unvermeidlich. Wenn jedoch zwischen den einzelnen Messungen eine Beziehung besteht, wie zum Beispiel bei aufeinanderfolgenden Positionsmessungen mit GPS, dann kann man den Messfehler herausfiltern. Die Technik dafür ist der Kalman-Filter.</p>\r\n<p>Weihnachtsvorlesung: Wie weist man das Higgs-Boson nach? Zur Statistik, die hinter der \"Entdeckung des Jahrhunderts\" steckt.</p>", 
+        "summaryformat": 1, 
+        "uservisible": true, 
+        "visible": 1
+    }
+]
