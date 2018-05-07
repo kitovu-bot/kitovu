@@ -23,4 +23,4 @@ Documentation
 If you want to generate the entire documentation of the project you can create it with::
 
  sphinx-apidoc --separate --no-toc --force -o docs/reference/complete src
- TOXENV=docs tox
+ tox -e docs
