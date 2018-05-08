@@ -60,6 +60,9 @@ def start(connection_name: str, connection_settings:
           ConnectionSettings,
           reporter: utils.AbstractReporter) -> None:
     """Sync files with the given plugin and username."""
+    # FIXME remove this after refactoring this function
+    # pylint: disable=too-many-locals
+
     logger.info(f'Syncing connection {connection_name}')
 
     plugin = _load_plugin(connection_settings, reporter)
