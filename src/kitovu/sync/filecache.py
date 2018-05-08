@@ -30,7 +30,7 @@ Normal cases
 -> REMOTE_CHANGED (file gets downloaded)
 
 5. remote file has contents A
-   remote file has contents A (same content)
+   local file has contents A (same content)
 -> NO_CHANGES (do nothing)
 
 Local file changed
@@ -143,6 +143,8 @@ class FileCache:
         if not local_full_path.exists():
             return FileState.NEW
 
+        if local_full_path not in self._data:
+            self._data[local_full_path] = File(cached_digest='', plugin_name=plugin.NAME)
         file: File = self._data[local_full_path]
 
         if plugin.NAME != file.plugin_name:
@@ -152,4 +154,8 @@ class FileCache:
 
         remote_digest: str = plugin.create_remote_digest(remote_full_path)
         local_digest: str = plugin.create_local_digest(local_full_path)
+
+        # Case 5 if both change to the same values
+        if remote_digest == local_digest and file.cached_digest != remote_digest:
+            file.cached_digest = remote_digest
         return self._compare_digests(remote_digest, local_digest, file.cached_digest)
