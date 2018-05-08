@@ -1,33 +1,58 @@
 import pathlib
-import requests
+import urllib.parse
+import typing
 
+
+import keyring
 import pytest
 
+from helpers import reporter
 from kitovu.sync import syncing
 from kitovu import utils
 from kitovu.sync.plugin import moodle
 
 
 @pytest.fixture
-def moodleplug(self) -> moodle.MoodlePlugin:
-    return moodle.MoodlePlugin
+def plugin() -> moodle.MoodlePlugin:
+    return moodle.MoodlePlugin(reporter.TestReporter())
 
 
 @pytest.fixture
-def connection(responses):
-    responses.add(responses.GET, "'https://moodle.hsr.ch/'")
+def assets_dir() -> pathlib.Path:
+    # FIXME find this in a better way
+    return pathlib.Path('./tests/assets')
 
 
 @pytest.fixture
-def credentials(self):
+def patch_get_site_info(responses, assets_dir):
+    body: str = (assets_dir / 'siteinfo.json').read_text()
+    _patch_request(responses, 'core_webservice_get_site_info', body=body)
+
+
+@pytest.fixture
+def credentials():
     """Creates connection for test purposes, so as if we required the config."""
-    pass
+    keyring.set_password("kitovu-moodle", "https://moodle.hsr.ch/", "some_token")
+
+
+def _patch_request(responses, wsfunction: str, body: str, **kwargs: str) -> None:
+    url = 'https://moodle.hsr.ch/webservice/rest/server.php'
+    req_data: typing.Dict[str, str] = {
+        'wstoken': 'some_token',
+        'moodlewsrestformat': 'json',
+        'wsfunction': wsfunction,
+    }
+    req_data.update(**kwargs)
+    querystring = urllib.parse.urlencode(req_data)
+    responses.add(responses.GET, f'{url}?{querystring}', body=body, match_querystring=True)
 
 
 class TestConnect:
 
-    def test_connect_with_default_options(self, responses):
-        pass
+    def test_connect(self, plugin, patch_get_site_info, credentials):
+        plugin.configure({})
+        plugin.connect()
+        assert plugin._user_id == 4322
 
     def test_connect_with_custom_options(self):
         pass
