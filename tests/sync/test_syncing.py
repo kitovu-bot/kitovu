@@ -1,14 +1,20 @@
-import pytest
 import pathlib
-import py.path
 
+import appdirs
 import stevedore
+import py.path
+import pytest
 
 from kitovu import utils
 from kitovu.sync import syncing
 from kitovu.sync.plugin import smb
 from kitovu.sync.settings import ConnectionSettings
 from helpers import dummyplugin, reporter
+
+
+@pytest.fixture(autouse=True)
+def patch(monkeypatch, temppath):
+    monkeypatch.setattr(appdirs, "user_data_dir", lambda _path: str(temppath))
 
 
 @pytest.fixture
