@@ -68,10 +68,11 @@ class FileState(enum.Enum):
 @attr.s
 class File:
 
-    cached_digest: str = attr.ib()  # local digest at synctime
+    cached_digest: typing.Optional[str] = attr.ib()  # local digest at synctime
     plugin_name: str = attr.ib()
 
     def to_dict(self) -> typing.Dict[str, str]:
+        assert self.cached_digest is not None
         return {"plugin": self.plugin_name,
                 "digest": self.cached_digest}
 
@@ -85,7 +86,7 @@ class FileCache:
     def _compare_digests(self,
                          remote_digest: str,
                          local_digest: str,
-                         cached_digest: str) -> FileState:
+                         cached_digest: typing.Optional[str]) -> FileState:
         local_changed: bool = local_digest != cached_digest
         remote_changed: bool = remote_digest != cached_digest
         if not remote_changed and not local_changed:  # case 5 above
@@ -144,7 +145,9 @@ class FileCache:
             return FileState.NEW
 
         if local_full_path not in self._data:
-            self._data[local_full_path] = File(cached_digest='', plugin_name=plugin.NAME)
+            assert plugin.NAME is not None
+            self._data[local_full_path] = File(cached_digest=None, plugin_name=plugin.NAME)
+
         file: File = self._data[local_full_path]
 
         if plugin.NAME != file.plugin_name:
