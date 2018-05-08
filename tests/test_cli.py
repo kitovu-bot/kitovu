@@ -25,13 +25,12 @@ def test_reporter(capsys, reporter):
     assert captured.err == "my test\nanother test\n"
 
 
-def test_docs(runner, monkeypatch):
-    calls = []
-    monkeypatch.setattr('webbrowser.open', lambda *args: calls.append(args))
+def test_docs(runner, mocker):
+    mock = mocker.patch('webbrowser.open_new_tab', autospec=True)
 
     runner.invoke(cli.docs)
 
-    assert calls == [('https://kitovu.readthedocs.io/en/latest', 2)]
+    mock.assert_called_once_with('https://kitovu.readthedocs.io/en/latest')
 
 
 class TestEdit:
