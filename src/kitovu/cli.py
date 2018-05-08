@@ -27,7 +27,6 @@ import click
 
 from kitovu import utils
 from kitovu.sync import syncing, settings
-from kitovu.gui import app as guiapp
 
 
 class CliReporter(utils.AbstractReporter):
@@ -45,6 +44,7 @@ def cli() -> None:
 @cli.command()
 def gui() -> None:
     """Start the kitovu GUI."""
+    from kitovu.gui import app as guiapp
     sys.exit(guiapp.run())
 
 
