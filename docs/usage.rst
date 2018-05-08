@@ -19,6 +19,8 @@ Die Kommandozeile bietet folgende Optionen:
     * ``kitovu sync`` startet die Synchronisation mit der von dir gewählten Konfiguration.
     * ``kitovu validate`` prüft, ob deine gewählte Konfiguration korrekt ist.
     * ``kitovu fileinfo`` sagt dir, wo kitovu zwei wichtige Dateien speichert, die Konfigurationsdatei und der FileCache.
+    * ``kitovu edit`` öffnet die Konfigurationsdatei in einem Editor. Dieser kann mit ``--editor [EDITOR_NAME]`` oder über die Umgebungsvariable ``EDITOR`` angegeben werden. Ansonsten versucht er gängige Editoren zu finden.
+    * ``kitovu docs`` öffnet die Dokumentation von Kitovu in einem Webbrowser.
 
 Verwendung der grafischen Oberfläche
 ------------------------------------
@@ -34,7 +36,7 @@ Mit einem Klick auf "Dateien synchronisieren" lädst du alle benötigten Dateien
 Konfiguration von kitovu
 ------------------------
 
-Um überhaupt Dateien synchronisieren zu können, musst du zuerst festlegen, über welche Verbindungen das geschieht. Dies legst du in der Konfigurationsdatei fest. Je nach Betriebssystem liegt diese an einem anderen Ort. Du siehst, wo diese Datei gespeichert ist, indem du ``kitovu fileinfo`` auf der Kommandozeile eingibst. Die Datei kannst du in jedem beliebigen Texteditor konfigurieren.
+Um überhaupt Dateien synchronisieren zu können, musst du zuerst festlegen, über welche Verbindungen das geschieht. Dies legst du in der Konfigurationsdatei fest. Je nach Betriebssystem liegt diese an einem anderen Ort. Du kannst diese Datei direkt mit ``kitovu edit`` bearbeiten. Alternativ siehst du, wo diese Datei gespeichert ist, indem du ``kitovu fileinfo`` auf der Kommandozeile eingibst. Die Datei kannst du in jedem beliebigen Texteditor konfigurieren.
 
 .. important::
     
