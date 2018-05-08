@@ -2,18 +2,13 @@
 Usage
 =====
 
-.. toctree::
-    :glob:
-
-    usage/*
-
 .. important::
 
     Kitovu addresses a primarily German-speaking audience, so we decided to write the following usage instructions in German first. An English translation will follow.
 
 
 Verwendung über die Kommandozeile
-----------------------------------
+---------------------------------
 
 Du kannst kitovu sowohl mit einer grafischen Oberfläche verwenden als auch über die Kommandozeile. Bevor du kitovu verwenden kannst, musst du jedoch die Konfigurationsdatei erstellen, siehe weiter unten.
 
@@ -26,7 +21,7 @@ Die Kommandozeile bietet folgende Optionen:
     * ``kitovu fileinfo`` sagt dir, wo kitovu zwei wichtige Dateien speichert, die Konfigurationsdatei und der FileCache.
 
 Verwendung der grafischen Oberfläche
--------------------------------------
+------------------------------------
 
 Unter "Konfiguration verwalten" stellst du ein, wo und wie kitovu Dateien synchronisiert. Wie die Konfiguration genau aufgebaut ist, liest du weiter unten.
 
@@ -37,7 +32,7 @@ Mit einem Klick auf "Dateien synchronisieren" lädst du alle benötigten Dateien
     Dateien die sich zwischen zwei Synchronisationszeitpunkten geändert haben - etwa, weil du sie selber bearbeitet hast -, werden beim derzeitigen Entwicklungsstandpunkt von kitovu überschrieben.
 
 Konfiguration von kitovu
-------------------------------
+------------------------
 
 Um überhaupt Dateien synchronisieren zu können, musst du zuerst festlegen, über welche Verbindungen das geschieht. Dies legst du in der Konfigurationsdatei fest. Je nach Betriebssystem liegt diese an einem anderen Ort. Du siehst, wo diese Datei gespeichert ist, indem du ``kitovu fileinfo`` auf der Kommandozeile eingibst. Die Datei kannst du in jedem beliebigen Texteditor konfigurieren.
 
@@ -70,12 +65,12 @@ So sieht eine Beispielkonfiguration aus:
 Es sind keine Leerzeichen in Namen erlaubt. Möchtest du Leerzeichen verwenden, etwa für ``name``, musst du es in Gänsefüsschen setzen: ``Betriebssysteme2`` oder ``"Betriebssysteme 2"``.
 
 Aufbau der Konfigurationsdatei
-###############################
+##############################
 
 ``root-dir``: Das Installationsverzeichnis von kitovu.
 
 Abschnitt ``connections``
-**************************
+*************************
 
 ``connections``: Die Verbindungen zu den Plattformen, von denen du deine Unterrichtsmaterialien synchronisierst, in der Regel ist das ein SMB-Skripteserver oder Moodle.
 
@@ -112,7 +107,7 @@ Moodle hingegen ist ein Spezialfall. Um dich erfolgreich mit Moodle verbinden zu
     #. Kopiere den Eintrag unter "Schlüssel", der mit dem Servie "Moodle mobile web service" beschrieben wird. Das ist eine lange Kette von Zeichen und Zahlen. **Gib auf keinen Fall diesen Sicherheitsschlüssel weiter und behalte ihn für dich!**
     #. Füge den Sicherheitsschlüssel in kitovu ein, wenn dich das Programm danach fragt.
 
-Log: der FileCache
-------------------
+Der FileCache
+-------------
 
 Wenn du Dateien synchronisierst, hält kitovu das in einem Log fest. Nach Ende eines Semesters bzw. nach Prüfungsende kannst du diese Datei wieder löschen - also wenn keines der Unterrichtsmodule des vergangenen Semesters mehr synchronisiert werden sollte. Du siehst, wo diese Datei gespeichert ist, indem du ``kitovu fileinfo`` auf der Kommandozeile eingibst.
