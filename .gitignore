@@ -104,4 +104,4 @@ ENV/
 .mypy_cache/
 
 # auto-generated documentation
-/docs/reference/
+/docs/reference/complete/

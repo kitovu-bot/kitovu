@@ -18,12 +18,15 @@ Why does this file exist, and why not put this in __main__?
 import pathlib
 import typing
 import sys
+from distutils import spawn
+import subprocess
+import os
+import webbrowser
 
 import click
 
 from kitovu import utils
-from kitovu.sync import syncing
-from kitovu.gui import app as guiapp
+from kitovu.sync import syncing, settings
 
 
 class CliReporter(utils.AbstractReporter):
@@ -41,6 +44,7 @@ def cli() -> None:
 @cli.command()
 def gui() -> None:
     """Start the kitovu GUI."""
+    from kitovu.gui import app as guiapp
     sys.exit(guiapp.run())
 
 
@@ -62,3 +66,49 @@ def validate(config: typing.Optional[pathlib.Path] = None) -> None:
         syncing.validate_config(config, CliReporter())
     except utils.UsageError as ex:
         raise click.ClickException(str(ex))
+
+
+@cli.command()
+def docs() -> None:
+    """Open the documentation in the browser."""
+    # FIXME: make version aware
+    webbrowser.open_new_tab('https://kitovu.readthedocs.io/en/latest')
+
+
+DEFAULT_EDITORS = [
+    'vim',
+    'emacs',
+    'nano',
+    'editor',
+    'notepad',
+]
+
+
+@cli.command()
+@click.option('--config', type=pathlib.Path, help="The configuration file to edit")
+@click.option('--editor', type=str, help="The command of the editor to use. "
+              f"Default: $EDITOR or the first existing out of {', '.join(DEFAULT_EDITORS)}")
+def edit(config: typing.Optional[pathlib.Path] = None, editor: typing.Optional[str] = None) -> None:
+    """Edit the specified configuration file."""
+    if editor is None and 'EDITOR' in os.environ:
+        editor = os.environ['EDITOR']
+    editor_path: str = _get_editor_path(editor)
+
+    if config is None:
+        config = settings.get_config_file_path()
+    subprocess.call([editor_path, config])
+
+
+def _get_editor_path(editor: typing.Optional[str]) -> str:
+    if editor is not None:
+        path = spawn.find_executable(editor)
+        if path is None:
+            raise click.ClickException(f"Could not find the editor {editor}")
+        return path
+
+    for default_editor in DEFAULT_EDITORS:
+        path = spawn.find_executable(default_editor)
+        if path is not None:
+            return path
+
+    raise click.ClickException('Could not find a valid editor')
