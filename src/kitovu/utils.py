@@ -3,9 +3,13 @@
 import typing
 import getpass
 import abc
+import logging
 
 import keyring
 import jsonschema
+
+
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 def get_password(plugin: str, identifier: str) -> str:
@@ -16,6 +20,7 @@ def get_password(plugin: str, identifier: str) -> str:
        identifier: An unique identifier (such as an URL) for the connection.
     """
     service = f'kitovu-{plugin}'
+    logger.debug(f'Getting password for {service}, identifier {identifier}')
     password: typing.Optional[str] = keyring.get_password(service, identifier)
     if password is None:
         # FIXME handle this in a nicer way

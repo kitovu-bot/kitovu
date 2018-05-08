@@ -49,10 +49,14 @@ import enum
 import json
 import pathlib
 import typing
+import logging
 
 import attr
 
 from kitovu.sync import syncplugin
+
+
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 class FileState(enum.Enum):
@@ -86,6 +90,8 @@ class FileCache:
                          remote_digest: str,
                          local_digest: str,
                          cached_digest: str) -> FileState:
+        logger.debug(f'Comparing digests: remote {remote_digest}, local {local_digest}, '
+                     f'cached {cached_digest}')
         local_changed: bool = local_digest != cached_digest
         remote_changed: bool = remote_digest != cached_digest
         if not remote_changed and not local_changed:  # case 5 above
@@ -102,6 +108,8 @@ class FileCache:
 
     def write(self) -> None:
         """"Writes the data-dict to JSON."""
+        logger.debug(f"Writing to {self._filename}")
+
         json_data: typing.Dict[str, typing.Dict[str, str]] = {}
 
         for key, value in self._data.items():
@@ -113,6 +121,8 @@ class FileCache:
 
     def load(self) -> None:
         """This is called first when the synchronisation process is started."""
+        logger.debug(f"Loading from {self._filename}")
+
         try:
             with self._filename.open("r") as f:
                 json_data = json.load(f)
@@ -128,6 +138,7 @@ class FileCache:
                path: pathlib.Path,
                plugin: syncplugin.AbstractSyncPlugin,
                local_digest_at_synctime: str) -> None:
+        logger.debug(f"Modifying cached digest for {path} by {plugin}: {local_digest_at_synctime}")
         assert plugin.NAME is not None
         file = File(cached_digest=local_digest_at_synctime, plugin_name=plugin.NAME)
         self._data[path] = file
@@ -140,7 +151,10 @@ class FileCache:
 
         Change is discovered between local file cache and local file.
         """
+        logger.debug(f"Discovering changes for local: {local_full_path} / "
+                     f"remote: {remote_full_path} by plugin {plugin.NAME}")
         if not local_full_path.exists():
+            logger.debug(f"Local path does not exist!")
             return FileState.NEW
 
         file: File = self._data[local_full_path]

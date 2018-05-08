@@ -4,6 +4,7 @@ import enum
 import socket
 import typing
 import pathlib
+import logging
 
 import attr
 from smb.SMBConnection import SMBConnection
@@ -11,6 +12,9 @@ from smb.base import SharedFile
 
 from kitovu import utils
 from kitovu.sync import syncplugin
+
+
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 class _SignOptions(enum.IntEnum):
@@ -85,6 +89,8 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
         default_port = 445 if self._info.is_direct_tcp else 139
         self._info.port = info.get('port', default_port)
 
+        logger.debug(f'Configured: {self._info}')
+
     def connect(self) -> None:
         self._connection = SMBConnection(username=self._info.username,
                                          password=self._info.password,
@@ -97,6 +103,8 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
 
         # FIXME: Handle OSError (not in HSR net)
         server_ip: str = socket.gethostbyname(self._info.hostname)
+        logger.debug(f'Connecting to {server_ip} ({self._info.hostname}) port {self._info.port}')
+
         # FIXME: Handle smb.smb_structs.ProtocolError (wrong password)
         success = self._connection.connect(server_ip, self._info.port)
         if not success:
@@ -141,6 +149,7 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
     def retrieve_file(self,
                       path: pathlib.PurePath,
                       fileobj: typing.IO[bytes]) -> typing.Optional[int]:
+        logger.debug(f'Retrieving file {path}')
         self._connection.retrieveFile(self._info.share, str(path), fileobj)
         mtime: int = self._attributes[path].last_write_time
         return mtime

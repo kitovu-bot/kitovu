@@ -18,6 +18,7 @@ Why does this file exist, and why not put this in __main__?
 import pathlib
 import typing
 import sys
+import logging
 
 import click
 
@@ -34,8 +35,20 @@ class CliReporter(utils.AbstractReporter):
 
 
 @click.group()
-def cli() -> None:
-    pass
+@click.option('--loglevel',
+              type=click.Choice(['debug', 'info', 'warning', 'error', 'critical']),
+              default='info')
+def cli(loglevel: str) -> None:
+    level: int = getattr(logging, loglevel.upper())
+    if level == logging.DEBUG:
+        logformat = '%(asctime)s [%(levelname)5s] %(name)25s %(message)s'
+    else:
+        logformat = '%(message)s'
+
+    # PySMB has too verbose logging, we don't want to see that.
+    logging.getLogger('SMB.SMBConnection').propagate = False
+
+    logging.basicConfig(level=level, format=logformat)
 
 
 @cli.command()

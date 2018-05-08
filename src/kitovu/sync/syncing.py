@@ -3,6 +3,7 @@
 import os
 import pathlib
 import typing
+import logging
 
 import appdirs
 import stevedore
@@ -14,6 +15,9 @@ from kitovu.sync import filecache
 from kitovu.sync.syncplugin import AbstractSyncPlugin
 from kitovu.sync.settings import Settings, ConnectionSettings
 from kitovu.sync.plugin import smb, moodle
+
+
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 def _load_plugin(plugin_settings: ConnectionSettings,
@@ -48,12 +52,16 @@ def _load_plugin(plugin_settings: ConnectionSettings,
 def start_all(config_file: typing.Optional[pathlib.Path], reporter: utils.AbstractReporter) -> None:
     """Sync all files with the given configuration file."""
     settings = Settings.from_yaml_file(config_file)
-    for _plugin_key, connection_settings in sorted(settings.connections.items()):
-        start(connection_settings, reporter)
+    for connection_name, connection_settings in sorted(settings.connections.items()):
+        start(connection_name, connection_settings, reporter)
 
 
-def start(connection_settings: ConnectionSettings, reporter: utils.AbstractReporter) -> None:
+def start(connection_name: str, connection_settings:
+          ConnectionSettings,
+          reporter: utils.AbstractReporter) -> None:
     """Sync files with the given plugin and username."""
+    logger.info(f'Syncing connection {connection_name}')
+
     plugin = _load_plugin(connection_settings, reporter)
     plugin.configure(connection_settings.connection)
     plugin.connect()
@@ -63,15 +71,17 @@ def start(connection_settings: ConnectionSettings, reporter: utils.AbstractRepor
     cache.load()
 
     for subject in connection_settings.subjects:
+        logger.info(f'Syncing subject {subject["name"]}')
+
         remote_dir = pathlib.PurePath(subject['remote-dir'])  # /Informatik/Fachbereich/EPJ/
         local_dir = pathlib.Path(subject['local-dir'])  # /home/leonie/HSR/EPJ/
 
         for remote_full_path in plugin.list_path(remote_dir):
             # each plugin should now yield all files recursively with list_path
-            print(f'Checking: {remote_full_path}')
+            logger.debug(f'Checking: {remote_full_path}')
 
             remote_digest = plugin.create_remote_digest(remote_full_path)
-            print(f'Remote digest: {remote_digest}')
+            logger.debug(f'Remote digest: {remote_digest}')
 
             # local_dir: /home/leonie/HSR/EPJ/
             # remote_full_path: /Informatik/Fachbereich/EPJ/Dokumente/Anleitung.pdf
@@ -85,11 +95,11 @@ def start(connection_settings: ConnectionSettings, reporter: utils.AbstractRepor
                 local_full_path=local_full_path, remote_full_path=remote_full_path, plugin=plugin)
             if state_of_file in [filecache.FileState.NO_CHANGES,
                                  filecache.FileState.LOCAL_CHANGED]:
-                print("No remote changes.")
+                logger.debug("No remote changes.")
             elif state_of_file in [filecache.FileState.REMOTE_CHANGED,
                                    filecache.FileState.NEW,
                                    filecache.FileState.BOTH_CHANGED]:
-                print("Downloading...")
+                logger.info(f"Downloading {remote_full_path}")
                 local_full_path.parent.mkdir(parents=True, exist_ok=True)
 
                 with local_full_path.open('wb') as fileobj:
@@ -99,10 +109,12 @@ def start(connection_settings: ConnectionSettings, reporter: utils.AbstractRepor
                     os.utime(local_full_path, (local_full_path.stat().st_atime, mtime))
 
                 local_digest = plugin.create_local_digest(local_full_path)
-                print(f'Local digest: {local_digest}')
+                logger.debug(f"Local digest: {local_digest}")
 
                 assert remote_digest == local_digest, local_full_path
                 cache.modify(local_full_path, plugin, local_digest)
+
+    logger.info('')
     cache.write()
     plugin.disconnect()
 
