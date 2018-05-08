@@ -57,7 +57,9 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         if not self._url.endswith('/'):
             self._url += '/'
 
-        self._token = utils.get_password('moodle', self._url)
+        prompt = ("Enter token from https://moodle.hsr.ch/user/preferences.php -> "
+                  "Sicherheitsschlüssel")
+        self._token = utils.get_password('moodle', self._url, prompt)
 
     def connect(self) -> None:
         # Get our own user ID

@@ -8,18 +8,18 @@ import keyring
 import jsonschema
 
 
-def get_password(plugin: str, identifier: str) -> str:
+def get_password(plugin: str, identifier: str, prompt: str) -> str:
     """Get the password for the given URL via keyring.
 
     Args:
        plugin: The name of the plugin requesting a password.
        identifier: An unique identifier (such as an URL) for the connection.
+       prompt: An additional prompt to display to the user.
     """
     service = f'kitovu-{plugin}'
     password: typing.Optional[str] = keyring.get_password(service, identifier)
     if password is None:
-        # FIXME handle this in a nicer way
-        password = getpass.getpass()
+        password = getpass.getpass(f"Enter password for {plugin} ({prompt}): ")
         keyring.set_password(service, identifier, password)
     return password
 
