@@ -4,7 +4,7 @@ import pathlib
 from kitovu import utils
 
 
-class TestSanitizeFilename():
+class TestSanitizeFilename:
 
     @pytest.mark.parametrize('filename,expected', [
         ('test.txt', 'test.txt'),
