@@ -57,12 +57,15 @@ setup(
         # eg: 'keyword1', 'keyword2', 'keyword3',
     ],
     install_requires=[
-        'click',
         'attrs',
+        'click',
         'pysmb',
         'keyring',
         'pyyaml',
         'stevedore',
+        'appdirs',
+        'requests',
+        'jsonschema',
     ],
     extras_require={
         # eg:
