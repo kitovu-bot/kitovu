@@ -30,8 +30,7 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
 
     NAME = 'moodle'
 
-    def __init__(self, reporter: utils.AbstractReporter) -> None:
-        super().__init__(reporter)
+    def __init__(self) -> None:
         self._url: str = ''
         self._user_id: int = -1
         self._token: str = ''

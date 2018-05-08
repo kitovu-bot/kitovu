@@ -21,15 +21,14 @@ logger: logging.Logger = logging.getLogger(__name__)
 
 
 def _load_plugin(plugin_settings: ConnectionSettings,
-                 reporter: utils.AbstractReporter,
                  validator: typing.Optional[utils.SchemaValidator] = None) -> AbstractSyncPlugin:
     """Find and load an appropriate sync plugin with the given settings."""
     if validator is None:
         validator = utils.SchemaValidator()
 
     builtin_plugins = {
-        'smb': smb.SmbPlugin(reporter),
-        'moodle': moodle.MoodlePlugin(reporter),
+        'smb': smb.SmbPlugin(),
+        'moodle': moodle.MoodlePlugin(),
     }
     plugin_name = plugin_settings.plugin_name
     if plugin_name in builtin_plugins:
@@ -37,8 +36,7 @@ def _load_plugin(plugin_settings: ConnectionSettings,
     else:
         try:
             manager = stevedore.driver.DriverManager(namespace='kitovu.sync.plugin',
-                                                     name=plugin_name, invoke_on_load=True,
-                                                     invoke_args=(reporter,))
+                                                     name=plugin_name, invoke_on_load=True)
         except stevedore.exception.NoMatches:
             raise utils.NoPluginError(f"The plugin {plugin_name} was not found")
 
@@ -49,23 +47,21 @@ def _load_plugin(plugin_settings: ConnectionSettings,
     return plugin
 
 
-def start_all(config_file: typing.Optional[pathlib.Path], reporter: utils.AbstractReporter) -> None:
+def start_all(config_file: typing.Optional[pathlib.Path]) -> None:
     """Sync all files with the given configuration file."""
     settings = Settings.from_yaml_file(config_file)
     for connection_name, connection_settings in sorted(settings.connections.items()):
-        start(connection_name, connection_settings, reporter)
+        start(connection_name, connection_settings)
 
 
-def start(connection_name: str, connection_settings:
-          ConnectionSettings,
-          reporter: utils.AbstractReporter) -> None:
+def start(connection_name: str, connection_settings: ConnectionSettings) -> None:
     """Sync files with the given plugin and username."""
     # FIXME remove this after refactoring this function
     # pylint: disable=too-many-locals
 
     logger.info(f'Syncing connection {connection_name}')
 
-    plugin = _load_plugin(connection_settings, reporter)
+    plugin = _load_plugin(connection_settings)
     plugin.configure(connection_settings.connection)
     plugin.connect()
 
@@ -122,8 +118,7 @@ def start(connection_name: str, connection_settings:
     plugin.disconnect()
 
 
-def validate_config(config_file: typing.Optional[pathlib.Path],
-                    reporter: utils.AbstractReporter) -> None:
+def validate_config(config_file: typing.Optional[pathlib.Path]) -> None:
     """Validates the given configuration file.
 
     Raises an UsageError if the configuration is not valid.
@@ -131,6 +126,6 @@ def validate_config(config_file: typing.Optional[pathlib.Path],
     settings = Settings.from_yaml_file(config_file)
     validator = utils.SchemaValidator(abort=False)
     for _connection_key, connection_settings in sorted(settings.connections.items()):
-        _load_plugin(connection_settings, reporter, validator)
+        _load_plugin(connection_settings, validator)
     if not validator.is_valid:
         validator.raise_error()
