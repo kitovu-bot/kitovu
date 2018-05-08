@@ -8,7 +8,9 @@ disable=
     global-statement,
     too-few-public-methods,
     no-self-use,
-    missing-docstring
+    missing-docstring,
+    locally-disabled,
+    suppressed-message
 
 [reports]
 format=colorized
