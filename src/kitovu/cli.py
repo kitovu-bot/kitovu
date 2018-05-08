@@ -86,8 +86,8 @@ DEFAULT_EDITORS = [
 
 @cli.command()
 @click.option('--config', type=pathlib.Path, help="The configuration file to edit")
-@click.option('--editor', type=str, help=f"The command of the editor to use. \
-              Default: $EDITOR or the first existing out of {', '.join(DEFAULT_EDITORS)}")
+@click.option('--editor', type=str, help="The command of the editor to use. "
+              f"Default: $EDITOR or the first existing out of {', '.join(DEFAULT_EDITORS)}")
 def edit(config: typing.Optional[pathlib.Path] = None, editor: typing.Optional[str] = None) -> None:
     """Edit the specified configuration file."""
     if editor is None and 'EDITOR' in os.environ:
