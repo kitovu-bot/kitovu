@@ -1,4 +1,5 @@
 import pytest
+import pathlib
 
 from kitovu import utils
 
@@ -16,4 +17,4 @@ class TestSanitizeFilename():
         ('with an underscore _', 'with an underscore _'),
     ])
     def test_santize(self, filename, expected):
-        assert utils.sanitize_filename(filename) == expected
+        assert utils.sanitize_filename(pathlib.PurePath(filename)) == pathlib.PurePath(expected)
