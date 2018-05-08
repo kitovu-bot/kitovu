@@ -52,7 +52,7 @@ class TestEdit:
             assert result.exit_code == 1
 
             assert self.checked_editors == ['vim', 'emacs', 'nano', 'editor', 'notepad']
-            assert result.output == 'Could not find a valid editor\n'
+            assert result.output == 'Error: Could not find a valid editor\n'
 
         def test_from_args(self, runner):
             result = runner.invoke(cli.edit, ['--editor', 'myeditor'])
@@ -60,7 +60,7 @@ class TestEdit:
             assert result.exit_code == 1
 
             assert self.checked_editors == ['myeditor']
-            assert result.output == 'Could not find the editor myeditor\n'
+            assert result.output == 'Error: Could not find the editor myeditor\n'
 
         def test_from_env(self, runner, monkeypatch):
             monkeypatch.setenv('EDITOR', 'editor_from_env')
@@ -70,7 +70,7 @@ class TestEdit:
             assert result.exit_code == 1
 
             assert self.checked_editors == ['editor_from_env']
-            assert result.output == 'Could not find the editor editor_from_env\n'
+            assert result.output == 'Error: Could not find the editor editor_from_env\n'
 
         def _find_executable_patch(self, editor):
             self.checked_editors.append(editor)
