@@ -62,25 +62,41 @@ def start(connection_name: str, connection_settings: ConnectionSettings) -> None
     logger.info(f'Syncing connection {connection_name}')
 
     plugin = _load_plugin(connection_settings)
-    plugin.configure(connection_settings.connection)
-    plugin.connect()
+
+    try:
+        plugin.configure(connection_settings.connection)
+        plugin.connect()
+    except utils.PluginOperationError as e:
+        logger.error(f'Error from {plugin.NAME} plugin: {e}, skipping this plugin')
 
     filecache_path: pathlib.Path = pathlib.Path(appdirs.user_data_dir('kitovu')) / 'filecache.json'
     cache: filecache.FileCache = filecache.FileCache(filecache_path)
     cache.load()
 
     for subject in connection_settings.subjects:
-        logger.info(f'Syncing subject {subject["name"]}')
-
-        remote_dir = pathlib.PurePath(subject['remote-dir'])  # /Informatik/Fachbereich/EPJ/
-        local_dir = pathlib.Path(subject['local-dir'])  # /home/leonie/HSR/EPJ/
-
-        for remote_full_path in plugin.list_path(remote_dir):
-            _sync_path(remote_full_path, local_dir, remote_dir, plugin, cache)
+        try:
+            _sync_subject(subject, plugin, cache)
+        except utils.PluginOperationError as e:
+            logger.error(f'Error from {plugin.NAME} plugin: {e}, skipping this subject')
+            continue
 
     logger.info('')
     cache.write()
     plugin.disconnect()
+
+
+def _sync_subject(subject, plugin, cache):
+    logger.info(f'Syncing subject {subject["name"]}')
+
+    remote_dir = pathlib.PurePath(subject['remote-dir'])  # /Informatik/Fachbereich/EPJ/
+    local_dir = pathlib.Path(subject['local-dir'])  # /home/leonie/HSR/EPJ/
+
+    for remote_full_path in plugin.list_path(remote_dir):
+        try:
+            _sync_path(remote_full_path, local_dir, remote_dir, plugin, cache)
+        except utils.PluginOperationError as e:
+            logger.error(f'Error from {plugin.NAME} plugin: {e}, skipping this file')
+            continue
 
 
 def _sync_path(remote_full_path, local_dir, remote_dir, plugin, cache):
