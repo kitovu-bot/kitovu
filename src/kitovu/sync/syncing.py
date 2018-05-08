@@ -76,46 +76,50 @@ def start(connection_name: str, connection_settings: ConnectionSettings) -> None
         local_dir = pathlib.Path(subject['local-dir'])  # /home/leonie/HSR/EPJ/
 
         for remote_full_path in plugin.list_path(remote_dir):
-            # each plugin should now yield all files recursively with list_path
-            logger.debug(f'Checking: {remote_full_path}')
-
-            remote_digest = plugin.create_remote_digest(remote_full_path)
-            logger.debug(f'Remote digest: {remote_digest}')
-
-            # local_dir: /home/leonie/HSR/EPJ/
-            # remote_full_path: /Informatik/Fachbereich/EPJ/Dokumente/Anleitung.pdf
-            #   with relative_to: Dokumente/Anleitung.pdf
-            # -> local_full_path: /home/leonie/HSR/EPJ/Dokumente/Anleitung.pdf
-            local_full_path: pathlib.Path = local_dir / remote_full_path.relative_to(remote_dir)
-
-            # When both files changed, we currently override the local file, but this can and should
-            # later be handled as a user decision. https://jira.keltec.ch/jira/browse/EPJ-78
-            state_of_file: filecache.FileState = cache.discover_changes(
-                local_full_path=local_full_path, remote_full_path=remote_full_path, plugin=plugin)
-            if state_of_file in [filecache.FileState.NO_CHANGES,
-                                 filecache.FileState.LOCAL_CHANGED]:
-                logger.debug("No remote changes.")
-            elif state_of_file in [filecache.FileState.REMOTE_CHANGED,
-                                   filecache.FileState.NEW,
-                                   filecache.FileState.BOTH_CHANGED]:
-                logger.info(f"Downloading {remote_full_path}")
-                local_full_path.parent.mkdir(parents=True, exist_ok=True)
-
-                with local_full_path.open('wb') as fileobj:
-                    mtime: typing.Optional[int] = plugin.retrieve_file(remote_full_path, fileobj)
-
-                if mtime is not None:
-                    os.utime(local_full_path, (local_full_path.stat().st_atime, mtime))
-
-                local_digest = plugin.create_local_digest(local_full_path)
-                logger.debug(f"Local digest: {local_digest}")
-
-                assert remote_digest == local_digest, local_full_path
-                cache.modify(local_full_path, plugin, local_digest)
+            _sync_path(remote_full_path, local_dir, remote_dir, plugin, cache)
 
     logger.info('')
     cache.write()
     plugin.disconnect()
+
+
+def _sync_path(remote_full_path, local_dir, remote_dir, plugin, cache):
+    # each plugin should now yield all files recursively with list_path
+    logger.debug(f'Checking: {remote_full_path}')
+
+    remote_digest = plugin.create_remote_digest(remote_full_path)
+    logger.debug(f'Remote digest: {remote_digest}')
+
+    # local_dir: /home/leonie/HSR/EPJ/
+    # remote_full_path: /Informatik/Fachbereich/EPJ/Dokumente/Anleitung.pdf
+    #   with relative_to: Dokumente/Anleitung.pdf
+    # -> local_full_path: /home/leonie/HSR/EPJ/Dokumente/Anleitung.pdf
+    local_full_path: pathlib.Path = local_dir / remote_full_path.relative_to(remote_dir)
+
+    # When both files changed, we currently override the local file, but this can and should
+    # later be handled as a user decision. https://jira.keltec.ch/jira/browse/EPJ-78
+    state_of_file: filecache.FileState = cache.discover_changes(
+        local_full_path=local_full_path, remote_full_path=remote_full_path, plugin=plugin)
+    if state_of_file in [filecache.FileState.NO_CHANGES,
+                         filecache.FileState.LOCAL_CHANGED]:
+        logger.debug("No remote changes.")
+    elif state_of_file in [filecache.FileState.REMOTE_CHANGED,
+                           filecache.FileState.NEW,
+                           filecache.FileState.BOTH_CHANGED]:
+        logger.info(f"Downloading {remote_full_path}")
+        local_full_path.parent.mkdir(parents=True, exist_ok=True)
+
+        with local_full_path.open('wb') as fileobj:
+            mtime: typing.Optional[int] = plugin.retrieve_file(remote_full_path, fileobj)
+
+        if mtime is not None:
+            os.utime(local_full_path, (local_full_path.stat().st_atime, mtime))
+
+        local_digest = plugin.create_local_digest(local_full_path)
+        logger.debug(f"Local digest: {local_digest}")
+
+        assert remote_digest == local_digest, local_full_path
+        cache.modify(local_full_path, plugin, local_digest)
 
 
 def validate_config(config_file: typing.Optional[pathlib.Path]) -> None:
