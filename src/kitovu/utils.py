@@ -24,23 +24,17 @@ def get_password(plugin: str, identifier: str) -> str:
     return password
 
 
-def sanitize_filename(name: str, replacement: typing.Optional[str] = '_') -> str:
+def sanitize_filename(name: str) -> str:
     r"""Replace invalid filename characters.
 
     Note: This does not escape directory separators (/ and \).
-
-    Args:
-        name: The filename.
-        replacement: The replacement character (or None).
     """
-    if replacement is None:
-        replacement = ''
     # Bad characters taken from Windows, there are even fewer on Linux
     # See also
     # https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words
     bad_chars = ':*?"<>|'
     for bad_char in bad_chars:
-        name = name.replace(bad_char, replacement)
+        name = name.replace(bad_char, '_')
     return name
 
 
