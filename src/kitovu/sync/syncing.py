@@ -56,9 +56,6 @@ def start_all(config_file: typing.Optional[pathlib.Path]) -> None:
 
 def start(connection_name: str, connection_settings: ConnectionSettings) -> None:
     """Sync files with the given plugin and username."""
-    # FIXME remove this after refactoring this function
-    # pylint: disable=too-many-locals
-
     logger.info(f'Syncing connection {connection_name}')
 
     plugin = _load_plugin(connection_settings)
@@ -66,8 +63,8 @@ def start(connection_name: str, connection_settings: ConnectionSettings) -> None
     try:
         plugin.configure(connection_settings.connection)
         plugin.connect()
-    except utils.PluginOperationError as e:
-        logger.error(f'Error from {plugin.NAME} plugin: {e}, skipping this plugin')
+    except utils.PluginOperationError as ex:
+        logger.error(f'Error from {plugin.NAME} plugin: {ex}, skipping this plugin')
 
     filecache_path: pathlib.Path = pathlib.Path(appdirs.user_data_dir('kitovu')) / 'filecache.json'
     cache: filecache.FileCache = filecache.FileCache(filecache_path)
@@ -76,8 +73,8 @@ def start(connection_name: str, connection_settings: ConnectionSettings) -> None
     for subject in connection_settings.subjects:
         try:
             _sync_subject(subject, plugin, cache)
-        except utils.PluginOperationError as e:
-            logger.error(f'Error from {plugin.NAME} plugin: {e}, skipping this subject')
+        except utils.PluginOperationError as ex:
+            logger.error(f'Error from {plugin.NAME} plugin: {ex}, skipping this subject')
             continue
 
     logger.info('')
@@ -85,7 +82,9 @@ def start(connection_name: str, connection_settings: ConnectionSettings) -> None
     plugin.disconnect()
 
 
-def _sync_subject(subject, plugin, cache):
+def _sync_subject(subject: typing.Dict[str, str],
+                  plugin: AbstractSyncPlugin,
+                  cache: filecache.FileCache) -> None:
     logger.info(f'Syncing subject {subject["name"]}')
 
     remote_dir = pathlib.PurePath(subject['remote-dir'])  # /Informatik/Fachbereich/EPJ/
@@ -94,12 +93,16 @@ def _sync_subject(subject, plugin, cache):
     for remote_full_path in plugin.list_path(remote_dir):
         try:
             _sync_path(remote_full_path, local_dir, remote_dir, plugin, cache)
-        except utils.PluginOperationError as e:
-            logger.error(f'Error from {plugin.NAME} plugin: {e}, skipping this file')
+        except utils.PluginOperationError as ex:
+            logger.error(f'Error from {plugin.NAME} plugin: {ex}, skipping this file')
             continue
 
 
-def _sync_path(remote_full_path, local_dir, remote_dir, plugin, cache):
+def _sync_path(remote_full_path: pathlib.PurePath,
+               local_dir: pathlib.Path,
+               remote_dir: pathlib.PurePath,
+               plugin: AbstractSyncPlugin,
+               cache: filecache.FileCache) -> None:
     # each plugin should now yield all files recursively with list_path
     logger.debug(f'Checking: {remote_full_path}')
 
