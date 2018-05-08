@@ -26,7 +26,7 @@ import webbrowser
 import click
 
 from kitovu import utils
-from kitovu.sync import syncing
+from kitovu.sync import syncing, settings
 from kitovu.gui import app as guiapp
 
 
@@ -94,6 +94,8 @@ def edit(config: typing.Optional[pathlib.Path] = None, editor: typing.Optional[s
         editor = os.environ['EDITOR']
     editor_path: str = _get_editor_path(editor)
 
+    if config is None:
+        config = settings.get_config_file_path()
     subprocess.call([editor_path, config])
 
 
