@@ -92,25 +92,21 @@ def edit(config: typing.Optional[pathlib.Path] = None, editor: typing.Optional[s
     """Edit the specified configuration file."""
     if editor is None and 'EDITOR' in os.environ:
         editor = os.environ['EDITOR']
-    editor_path: typing.Optional[str] = _get_editor_path(editor)
-
-    if editor_path is None:
-        if editor is None:
-            print('Could not find a valid editor')
-        else:
-            print(f"Could not find the editor {editor}")
-        sys.exit(1)
+    editor_path: str = _get_editor_path(editor)
 
     subprocess.call([editor_path, config])
 
 
-def _get_editor_path(editor: typing.Optional[str]) -> typing.Optional[str]:
+def _get_editor_path(editor: typing.Optional[str]) -> str:
     if editor is not None:
-        return spawn.find_executable(editor)
+        path = spawn.find_executable(editor)
+        if path is None:
+            raise click.ClickException(f"Could not find the editor {editor}")
+        return path
 
     for default_editor in DEFAULT_EDITORS:
         path = spawn.find_executable(default_editor)
         if path is not None:
             return path
 
-    return None
+    raise click.ClickException('Could not find a valid editor')
