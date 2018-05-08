@@ -58,7 +58,7 @@ def start(connection_settings: ConnectionSettings, reporter: utils.AbstractRepor
     plugin.configure(connection_settings.connection)
     plugin.connect()
 
-    filecache_path: pathlib.Path = pathlib.Path(appdirs.user_data_dir('kitovu')) / 'filecache.json'
+    filecache_path: pathlib.Path = get_filecache_path()
     cache: filecache.FileCache = filecache.FileCache(filecache_path)
     cache.load()
 
@@ -119,3 +119,7 @@ def validate_config(config_file: typing.Optional[pathlib.Path],
         _load_plugin(connection_settings, reporter, validator)
     if not validator.is_valid:
         validator.raise_error()
+
+
+def get_filecache_path() -> pathlib.Path:
+    return pathlib.Path(appdirs.user_data_dir('kitovu')) / 'filecache.json'

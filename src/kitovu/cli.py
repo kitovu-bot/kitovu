@@ -24,6 +24,7 @@ import click
 from kitovu import utils
 from kitovu.sync import syncing
 from kitovu.gui import app as guiapp
+from kitovu.sync import settings
 
 
 class CliReporter(utils.AbstractReporter):
@@ -62,3 +63,10 @@ def validate(config: typing.Optional[pathlib.Path] = None) -> None:
         syncing.validate_config(config, CliReporter())
     except utils.UsageError as ex:
         raise click.ClickException(str(ex))
+
+
+@cli.command()
+def fileinfo() -> None:
+    """Show the paths to the configuration file and the FileCache."""
+    print("The configuration file is located at: {}".format(settings.get_config_file_path()))
+    print("\nThe FileCache is located at: {}".format(syncing.get_filecache_path()))

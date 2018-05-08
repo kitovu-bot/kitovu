@@ -23,6 +23,7 @@ Die Kommandozeile bietet folgende Optionen:
     * ``kitovu gui`` startet die grafische Oberfläche
     * ``kitovu sync`` startet die Synchronisation mit der von dir gewählten Konfiguration.
     * ``kitovu validate`` prüft, ob deine gewählte Konfiguration korrekt ist.
+    * ``kitovu fileinfo`` sagt dir, wo kitovu zwei wichtige Dateien speichert, die Konfigurationsdatei und der FileCache.
 
 Verwendung der grafischen Oberfläche
 -------------------------------------
@@ -38,11 +39,7 @@ Mit einem Klick auf "Dateien synchronisieren" lädst du alle benötigten Dateien
 Konfiguration von kitovu
 ------------------------------
 
-Um überhaupt Dateien synchronisieren zu können, musst du zuerst festlegen, über welche Verbindungen das geschieht. Dies legst du in der Konfigurationsdatei fest, die je nach Betriebssystem an einem anderen Ort liegt:
-
-    * FIXME change args of kitovu
-
-    * Für Linux: ``~/.config/kitovu/kitovu.yaml``
+Um überhaupt Dateien synchronisieren zu können, musst du zuerst festlegen, über welche Verbindungen das geschieht. Dies legst du in der Konfigurationsdatei fest. Je nach Betriebssystem liegt diese an einem anderen Ort. Du siehst, wo diese Datei gespeichert ist, indem du ``kitovu fileinfo`` auf der Kommandozeile eingibst. Die Datei kannst du in jedem beliebigen Texteditor konfigurieren.
 
 .. important::
     
@@ -118,8 +115,4 @@ Moodle hingegen ist ein Spezialfall. Um dich erfolgreich mit Moodle verbinden zu
 Log: der FileCache
 ------------------
 
-Wenn du Dateien synchronisierst, hält schreibt kitovu das in eine Datei fest. Nach Ende eines Semesters bzw. nach Prüfungsende kannst du diese Datei wieder löschen - also in dem Fall, in dem keines der Unterrichtsmodule des vergangenen Semesters mehr synchronisiert werden sollte. Du findest die Datei in folgenden Verzeichnissen:
-
-    * Für Linux:  ``~/.local/share/kitovu/filecache.json``
-    * Für Windows: ``C:\Users\legger\AppData\Local\kitovu\filecache.json``
-FIXME command-line argument to reveal location
+Wenn du Dateien synchronisierst, hält kitovu das in einem Log fest. Nach Ende eines Semesters bzw. nach Prüfungsende kannst du diese Datei wieder löschen - also wenn keines der Unterrichtsmodule des vergangenen Semesters mehr synchronisiert werden sollte. Du siehst, wo diese Datei gespeichert ist, indem du ``kitovu fileinfo`` auf der Kommandozeile eingibst.
