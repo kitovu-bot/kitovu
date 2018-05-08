@@ -28,7 +28,6 @@ import click
 from kitovu import utils
 from kitovu.sync import syncing, settings
 from kitovu.gui import app as guiapp
-from kitovu.sync import settings
 
 
 class CliReporter(utils.AbstractReporter):
@@ -73,9 +72,10 @@ def validate(config: typing.Optional[pathlib.Path] = None) -> None:
 def fileinfo() -> None:
     """Show the paths to the configuration file and the FileCache."""
     print("The configuration file is located at: {}".format(settings.get_config_file_path()))
-    print("\nThe FileCache is located at: {}".format(syncing.get_filecache_path()))
+    print("The FileCache is located at: {}".format(syncing.get_filecache_path()))
 
-@cli.command()    
+
+@cli.command()
 def docs() -> None:
     """Open the documentation in the browser."""
     # FIXME: make version aware
