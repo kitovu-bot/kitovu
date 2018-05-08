@@ -5,3 +5,5 @@ Reference
     :glob:
 
     reference/*
+
+    reference/complete/*

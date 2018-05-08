@@ -25,3 +25,6 @@ max-attributes = 10
 # _CountingAttr: Needed for attrs
 # pathlib.PurePath: Detected when we actually have a pathlib.Path
 ignored-classes=_CountingAttr,pathlib.PurePath
+
+# distutils: See issue https://github.com/PyCQA/pylint/issues/73
+ignored-modules=distutils
