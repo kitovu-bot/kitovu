@@ -4,6 +4,7 @@ import typing
 import getpass
 import abc
 import logging
+import pathlib
 
 import keyring
 import jsonschema
@@ -27,6 +28,21 @@ def get_password(plugin: str, identifier: str) -> str:
         password = getpass.getpass()
         keyring.set_password(service, identifier, password)
     return password
+
+
+def sanitize_filename(name: pathlib.PurePath) -> pathlib.PurePath:
+    r"""Replace invalid filename characters.
+
+    Note: This does not escape directory separators (/ and \).
+    """
+    name_str: str = str(name)
+    # Bad characters taken from Windows, there are even fewer on Linux
+    # See also
+    # https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words
+    bad_chars = ':*?"<>|'
+    for bad_char in bad_chars:
+        name_str = name_str.replace(bad_char, '_')
+    return pathlib.PurePath(name_str)
 
 
 JsonSchemaType = typing.Dict[str, typing.Any]

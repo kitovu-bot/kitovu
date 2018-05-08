@@ -90,7 +90,9 @@ def start(connection_name: str, connection_settings:
             # remote_full_path: /Informatik/Fachbereich/EPJ/Dokumente/Anleitung.pdf
             #   with relative_to: Dokumente/Anleitung.pdf
             # -> local_full_path: /home/leonie/HSR/EPJ/Dokumente/Anleitung.pdf
-            local_full_path: pathlib.Path = local_dir / remote_full_path.relative_to(remote_dir)
+            # FIXME extract filename to separate variable
+            local_full_path: pathlib.Path = local_dir / \
+                utils.sanitize_filename(remote_full_path.relative_to(remote_dir))
 
             # When both files changed, we currently override the local file, but this can and should
             # later be handled as a user decision. https://jira.keltec.ch/jira/browse/EPJ-78
