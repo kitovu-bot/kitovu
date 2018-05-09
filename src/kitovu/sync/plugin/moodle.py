@@ -61,7 +61,9 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         if not self._url.endswith('/'):
             self._url += '/'
 
-        self._token = utils.get_password('moodle', self._url)
+        prompt = ("Enter token from https://moodle.hsr.ch/user/preferences.php -> "
+                  "Sicherheitsschlüssel")
+        self._token = utils.get_password('moodle', self._url, prompt)
 
     def connect(self) -> None:
         # Get our own user ID
@@ -103,7 +105,8 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
                                                        courseid=str(course_id))
 
         for section in lessons:
-            section_path: pathlib.PurePath = course_path / section['name']
+            section_nr = "{:02d}".format(section['section'])
+            section_path: pathlib.PurePath = course_path / f"{section_nr} - {section['name']}"
             for module in section['modules']:
                 module_path: pathlib.PurePath = section_path / module['name']
                 for elem in module.get('contents', []):
