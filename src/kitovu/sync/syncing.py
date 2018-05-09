@@ -65,6 +65,7 @@ def start(connection_name: str, connection_settings: ConnectionSettings) -> None
         plugin.connect()
     except utils.PluginOperationError as ex:
         logger.error(f'Error from {plugin.NAME} plugin: {ex}, skipping this plugin')
+        return
 
     filecache_path: pathlib.Path = pathlib.Path(appdirs.user_data_dir('kitovu')) / 'filecache.json'
     cache: filecache.FileCache = filecache.FileCache(filecache_path)
