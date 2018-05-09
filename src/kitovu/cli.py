@@ -48,9 +48,6 @@ def cli(loglevel: str) -> None:
     else:
         logformat = '%(message)s'
 
-    # PySMB has too verbose logging, we don't want to see that.
-    logging.getLogger('SMB.SMBConnection').propagate = False
-
     logging.basicConfig(level=level, format=logformat)
 
 
