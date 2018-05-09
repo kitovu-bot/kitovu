@@ -4,6 +4,7 @@ import enum
 import socket
 import typing
 import pathlib
+import logging
 
 import attr
 from smb.SMBConnection import SMBConnection
@@ -11,6 +12,9 @@ from smb.base import SharedFile
 
 from kitovu import utils
 from kitovu.sync import syncplugin
+
+
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 class _SignOptions(enum.IntEnum):
@@ -44,8 +48,7 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
 
     NAME: str = "smb"
 
-    def __init__(self, reporter: utils.AbstractReporter) -> None:
-        super().__init__(reporter)
+    def __init__(self) -> None:
         self._connection: SMBConnection = None
         self._info = _ConnectionInfo()
         self._attributes: typing.Dict[pathlib.PurePath, SharedFile] = {}
@@ -80,10 +83,17 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
         self._info.share = info.get('share', 'skripte')
         self._info.hostname = info.get('hostname', 'svm-c213.hsr.ch')
 
-        self._info.password = utils.get_password('smb', self._password_identifier())
+        prompt = f'{self._info.username}@{self._info.hostname}'
+        self._info.password = utils.get_password('smb', self._password_identifier(), prompt)
 
         default_port = 445 if self._info.is_direct_tcp else 139
         self._info.port = info.get('port', default_port)
+
+        if not info.get('debug', False):
+            # PySMB has too verbose logging, we don't want to see that.
+            logging.getLogger('SMB.SMBConnection').propagate = False
+
+        logger.debug(f'Configured: {self._info}')
 
     def connect(self) -> None:
         self._connection = SMBConnection(username=self._info.username,
@@ -97,6 +107,8 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
 
         # FIXME: Handle OSError (not in HSR net)
         server_ip: str = socket.gethostbyname(self._info.hostname)
+        logger.debug(f'Connecting to {server_ip} ({self._info.hostname}) port {self._info.port}')
+
         # FIXME: Handle smb.smb_structs.ProtocolError (wrong password)
         success = self._connection.connect(server_ip, self._info.port)
         if not success:
@@ -141,6 +153,7 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
     def retrieve_file(self,
                       path: pathlib.PurePath,
                       fileobj: typing.IO[bytes]) -> typing.Optional[int]:
+        logger.debug(f'Retrieving file {path}')
         self._connection.retrieveFile(self._info.share, str(path), fileobj)
         mtime: int = self._attributes[path].last_write_time
         return mtime
@@ -160,6 +173,7 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
                 },
                 'use_ntlm_v2': {'type': 'boolean'},
                 'is_direct_tcp': {'type': 'boolean'},
+                'debug': {'type': 'boolean'},
             },
             'required': [
                 'username',

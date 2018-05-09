@@ -30,7 +30,7 @@ Normal cases
 -> REMOTE_CHANGED (file gets downloaded)
 
 5. remote file has contents A
-   remote file has contents A (same content)
+   local file has contents A (same content)
 -> NO_CHANGES (do nothing)
 
 Local file changed
@@ -49,10 +49,14 @@ import enum
 import json
 import pathlib
 import typing
+import logging
 
 import attr
 
 from kitovu.sync import syncplugin
+
+
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 class FileState(enum.Enum):
@@ -68,10 +72,11 @@ class FileState(enum.Enum):
 @attr.s
 class File:
 
-    cached_digest: str = attr.ib()  # local digest at synctime
+    cached_digest: typing.Optional[str] = attr.ib()  # local digest at synctime
     plugin_name: str = attr.ib()
 
     def to_dict(self) -> typing.Dict[str, str]:
+        assert self.cached_digest is not None
         return {"plugin": self.plugin_name,
                 "digest": self.cached_digest}
 
@@ -85,7 +90,9 @@ class FileCache:
     def _compare_digests(self,
                          remote_digest: str,
                          local_digest: str,
-                         cached_digest: str) -> FileState:
+                         cached_digest: typing.Optional[str]) -> FileState:
+        logger.debug(f'Comparing digests: remote {remote_digest}, local {local_digest}, '
+                     f'cached {cached_digest}')
         local_changed: bool = local_digest != cached_digest
         remote_changed: bool = remote_digest != cached_digest
         if not remote_changed and not local_changed:  # case 5 above
@@ -102,6 +109,8 @@ class FileCache:
 
     def write(self) -> None:
         """"Writes the data-dict to JSON."""
+        logger.debug(f"Writing to {self._filename}")
+
         json_data: typing.Dict[str, typing.Dict[str, str]] = {}
 
         for key, value in self._data.items():
@@ -113,6 +122,8 @@ class FileCache:
 
     def load(self) -> None:
         """This is called first when the synchronisation process is started."""
+        logger.debug(f"Loading from {self._filename}")
+
         try:
             with self._filename.open("r") as f:
                 json_data = json.load(f)
@@ -128,6 +139,7 @@ class FileCache:
                path: pathlib.Path,
                plugin: syncplugin.AbstractSyncPlugin,
                local_digest_at_synctime: str) -> None:
+        logger.debug(f"Modifying cached digest for {path} by {plugin}: {local_digest_at_synctime}")
         assert plugin.NAME is not None
         file = File(cached_digest=local_digest_at_synctime, plugin_name=plugin.NAME)
         self._data[path] = file
@@ -140,8 +152,15 @@ class FileCache:
 
         Change is discovered between local file cache and local file.
         """
+        logger.debug(f"Discovering changes for local: {local_full_path} / "
+                     f"remote: {remote_full_path} by plugin {plugin.NAME}")
         if not local_full_path.exists():
+            logger.debug(f"Local path does not exist!")
             return FileState.NEW
+
+        if local_full_path not in self._data:
+            assert plugin.NAME is not None
+            self._data[local_full_path] = File(cached_digest=None, plugin_name=plugin.NAME)
 
         file: File = self._data[local_full_path]
 
@@ -152,4 +171,11 @@ class FileCache:
 
         remote_digest: str = plugin.create_remote_digest(remote_full_path)
         local_digest: str = plugin.create_local_digest(local_full_path)
+
+        # If both the remote and local files are updated but the cache didn't realize it.
+        # remote = B, local = B, cache A => update the cache to B
+        # eg. Downloaded the file not via kitovu
+        if remote_digest == local_digest and file.cached_digest != remote_digest:
+            file.cached_digest = remote_digest
+
         return self._compare_digests(remote_digest, local_digest, file.cached_digest)

@@ -6,8 +6,8 @@ from kitovu.gui import confscreen
 
 
 @pytest.fixture(autouse=True)
-def kitovu_yaml(monkeypatch, tmpdir):
-    config = tmpdir / 'kitovu.yaml'
+def kitovu_yaml(monkeypatch, temppath):
+    config = temppath / 'kitovu.yaml'
     config.write_text('root-dir: ~/hsr', encoding='utf-8')
     monkeypatch.setattr(confscreen.settings, 'get_config_file_path',
                         lambda: pathlib.Path(config))

@@ -2,26 +2,46 @@
 
 import typing
 import getpass
-import abc
+import logging
+import pathlib
 
 import keyring
 import jsonschema
 
 
-def get_password(plugin: str, identifier: str) -> str:
+logger: logging.Logger = logging.getLogger(__name__)
+
+
+def get_password(plugin: str, identifier: str, prompt: str) -> str:
     """Get the password for the given URL via keyring.
 
     Args:
        plugin: The name of the plugin requesting a password.
        identifier: An unique identifier (such as an URL) for the connection.
+       prompt: An additional prompt to display to the user.
     """
     service = f'kitovu-{plugin}'
+    logger.debug(f'Getting password for {service}, identifier {identifier}')
     password: typing.Optional[str] = keyring.get_password(service, identifier)
     if password is None:
-        # FIXME handle this in a nicer way
-        password = getpass.getpass()
+        password = getpass.getpass(f"Enter password for {plugin} ({prompt}): ")
         keyring.set_password(service, identifier, password)
     return password
+
+
+def sanitize_filename(name: pathlib.PurePath) -> pathlib.PurePath:
+    r"""Replace invalid filename characters.
+
+    Note: This does not escape directory separators (/ and \).
+    """
+    name_str: str = str(name)
+    # Bad characters taken from Windows, there are even fewer on Linux
+    # See also
+    # https://en.wikipedia.org/wiki/Filename#Reserved_characters_and_words
+    bad_chars = ':*?"<>|'
+    for bad_char in bad_chars:
+        name_str = name_str.replace(bad_char, '_')
+    return pathlib.PurePath(name_str)
 
 
 JsonSchemaType = typing.Dict[str, typing.Any]
@@ -79,9 +99,5 @@ class InvalidSettingsError(UsageError):
         self.errors: typing.List[str] = validator.errors
 
 
-class AbstractReporter(metaclass=abc.ABCMeta):
-    """A class that handles the reporting of warnings to the UI or CLI."""
-    @abc.abstractmethod
-    def warn(self, message: str) -> None:
-        """Print the warning according to the current interface."""
-        raise NotImplementedError
+class PluginOperationError(Error):
+    pass
