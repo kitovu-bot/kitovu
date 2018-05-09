@@ -48,7 +48,7 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         req: requests.Response = requests.get(url, req_data)
         assert req.status_code == 200, req  # FIXME
         data: JsonType = req.json()
-        assert 'exception' not in data, data
+        assert 'exception' not in data, data # FIXME not assertion error, but plugin error
         assert 'error' not in data, data
         return data
 
@@ -132,7 +132,7 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         assert req.status_code == 200, req  # FIXME
         if 'json' in req.headers['content-type']:
             data: JsonType = req.json()
-            assert 'exception' not in data, data
+            assert 'exception' not in data, data # FIXME not assertion error, but plugin error
             assert 'error' not in data, data
         for chunk in req:
             fileobj.write(chunk)
