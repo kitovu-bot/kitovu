@@ -18,6 +18,7 @@ Why does this file exist, and why not put this in __main__?
 import pathlib
 import typing
 import sys
+import logging
 from distutils import spawn
 import subprocess
 import os
@@ -37,8 +38,17 @@ class CliReporter(utils.AbstractReporter):
 
 
 @click.group()
-def cli() -> None:
-    pass
+@click.option('--loglevel',
+              type=click.Choice(['debug', 'info', 'warning', 'error', 'critical']),
+              default='info')
+def cli(loglevel: str) -> None:
+    level: int = getattr(logging, loglevel.upper())
+    if level == logging.DEBUG:
+        logformat = '%(asctime)s [%(levelname)5s] %(name)25s %(message)s'
+    else:
+        logformat = '%(message)s'
+
+    logging.basicConfig(level=level, format=logformat)
 
 
 @cli.command()

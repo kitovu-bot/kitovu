@@ -3,6 +3,7 @@
 import os
 import typing
 import pathlib
+import logging
 
 import attr
 import requests
@@ -11,6 +12,7 @@ from kitovu import utils
 from kitovu.sync import syncplugin
 
 
+logger: logging.Logger = logging.getLogger(__name__)
 JsonType = typing.Dict[str, typing.Any]
 
 
@@ -44,10 +46,13 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
             'wsfunction': func,
         }
         req_data.update(**kwargs)
+        logger.debug(f'Getting {url} with data {req_data}')
 
         req: requests.Response = requests.get(url, req_data)
         assert req.status_code == 200, req  # FIXME
         data: JsonType = req.json()
+        logger.debug(f'Got data: {data}')
+
         assert 'exception' not in data, data
         assert 'error' not in data, data
         return data
@@ -87,6 +92,7 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
                                                        userid=str(self._user_id))
         for course in courses:
             self._courses[course['fullname']] = int(course['id'])
+        logger.debug(f'Got courses: {self._courses}')
         return list(self._courses)
 
     def _list_files_in_course(self,
@@ -115,6 +121,7 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
                     self._files[full_path] = _MoodleFile(elem['fileurl'],
                                                          elem['filesize'],
                                                          elem['timemodified'])
+                    logger.debug(f'New file at {full_path}: {self._files[full_path]}')
                     yield full_path
 
     def list_path(self, path: pathlib.PurePath) -> typing.Iterable[pathlib.PurePath]:
@@ -130,6 +137,7 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
                       path: pathlib.PurePath,
                       fileobj: typing.IO[bytes]) -> typing.Optional[int]:
         moodle_file: _MoodleFile = self._files[path]
+        logger.debug(f'Getting {moodle_file.url}')
 
         req: requests.Response = requests.get(moodle_file.url, {'token': self._token})
         assert req.status_code == 200, req  # FIXME

@@ -3,10 +3,14 @@
 import typing
 import getpass
 import abc
+import logging
 import pathlib
 
 import keyring
 import jsonschema
+
+
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 def get_password(plugin: str, identifier: str, prompt: str) -> str:
@@ -18,6 +22,7 @@ def get_password(plugin: str, identifier: str, prompt: str) -> str:
        prompt: An additional prompt to display to the user.
     """
     service = f'kitovu-{plugin}'
+    logger.debug(f'Getting password for {service}, identifier {identifier}')
     password: typing.Optional[str] = keyring.get_password(service, identifier)
     if password is None:
         password = getpass.getpass(f"Enter password for {plugin} ({prompt}): ")
