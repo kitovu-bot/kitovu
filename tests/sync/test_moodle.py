@@ -6,7 +6,6 @@ import keyring
 import pytest
 
 
-from helpers import reporter
 import kitovu.utils
 from kitovu.sync.plugin import moodle
 from kitovu.sync import syncing
@@ -14,7 +13,7 @@ from kitovu.sync import syncing
 
 @pytest.fixture
 def plugin() -> moodle.MoodlePlugin:
-    return moodle.MoodlePlugin(reporter.TestReporter())
+    return moodle.MoodlePlugin()
 
 
 @pytest.fixture
@@ -100,13 +99,13 @@ class TestValidations:
                 - connection: mytest-moodle
                   remote-dir: "Wirtschaftsinformatik 2 FS2018"             
         """)
-        syncing.validate_config(config_yml, reporter.TestReporter())
+        syncing.validate_config(config_yml)
 
     def test_with_empty_config(self, temppath):
         config_yml = temppath / 'config.yml'
         config_yml.write_text("")
         with pytest.raises(kitovu.utils.InvalidSettingsError):
-            syncing.validate_config(config_yml, reporter.TestReporter())
+            syncing.validate_config(config_yml)
 
     def test_config_with_unexpected_connection_fields(self, temppath):
         # bogus setting: connection: 42
@@ -124,7 +123,7 @@ class TestValidations:
                           remote-dir: "Wirtschaftsinformatik 2 FS2018"             
                 """)
         with pytest.raises(kitovu.utils.InvalidSettingsError):
-            syncing.validate_config(config_yml, reporter.TestReporter())
+            syncing.validate_config(config_yml)
 
 
 class TestWithConnectedPlugin:
