@@ -109,7 +109,7 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
         try:
             server_ip: str = socket.gethostbyname(self._info.hostname)
         except socket.gaierror:
-            raise utils.UsageError(f'Could not find server {self._info.hostname}. '
+            raise utils.PluginOperationError(f'Could not find server {self._info.hostname}. '
                 'Maybe you need to open a VPN connection or the server is not available.')
 
         logger.debug(f'Connecting to {server_ip} ({self._info.hostname}) port {self._info.port}')
@@ -117,7 +117,7 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
         try:
             success = self._connection.connect(server_ip, self._info.port)
         except ConnectionRefusedError:
-            raise utils.UsageError(f'Could not connect to {server_ip}:{self._info.port}')
+            raise utils.PluginOperationError(f'Could not connect to {server_ip}:{self._info.port}')
         if not success:
             raise utils.AuthenticationError(f'Authentication failed for {server_ip}:{self._info.port}')
 
@@ -145,8 +145,7 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
         try:
             attributes = self._connection.getAttributes(self._info.share, str(path))
         except OperationFailure:
-            # FIXME: change to plugin error
-            raise utils.UsageError(f'Could not find remote file {path} in share "{self._info.share}"')
+            raise utils.PluginOperationError(f'Could not find remote file {path} in share "{self._info.share}"')
 
         self._attributes[path] = attributes
         return self._create_digest(size=attributes.file_size,
@@ -157,7 +156,7 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
         try:
             entries = self._connection.listPath(self._info.share, str(path))
         except OperationFailure:
-            raise utils.UsageError(f'Folder "{path}" not found')
+            raise utils.PluginOperationError(f'Folder "{path}" not found')
 
         for entry in entries:
             if entry.isDirectory:
@@ -174,8 +173,7 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
         try:
             self._connection.retrieveFile(self._info.share, str(path), fileobj)
         except OperationFailure:
-            # FIXME: change to plugin error
-            raise utils.UsageError(f'Could not download {path} from share "{self._info.share}"')
+            raise utils.PluginOperationError(f'Could not download {path} from share "{self._info.share}"')
 
         mtime: int = self._attributes[path].last_write_time
         return mtime

@@ -91,11 +91,6 @@ class NoPluginError(UsageError):
     pass
 
 
-class AuthenticationError(UsageError):
-    """Thrown when the authentication could not be completed."""
-    pass
-
-
 class InvalidSettingsError(UsageError):
     """Thrown when the settings file is invalid."""
 
@@ -105,4 +100,10 @@ class InvalidSettingsError(UsageError):
 
 
 class PluginOperationError(Error):
+    """Thrown when something in a plugin fails."""
+    pass
+
+
+class AuthenticationError(PluginOperationError):
+    """Thrown when the authentication could not be completed."""
     pass
