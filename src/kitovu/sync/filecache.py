@@ -30,7 +30,7 @@ Normal cases
 -> REMOTE_CHANGED (file gets downloaded)
 
 5. remote file has contents A
-   remote file has contents A (same content)
+   local file has contents A (same content)
 -> NO_CHANGES (do nothing)
 
 Local file changed
@@ -68,10 +68,11 @@ class FileState(enum.Enum):
 @attr.s
 class File:
 
-    cached_digest: str = attr.ib()  # local digest at synctime
+    cached_digest: typing.Optional[str] = attr.ib()  # local digest at synctime
     plugin_name: str = attr.ib()
 
     def to_dict(self) -> typing.Dict[str, str]:
+        assert self.cached_digest is not None
         return {"plugin": self.plugin_name,
                 "digest": self.cached_digest}
 
@@ -85,7 +86,7 @@ class FileCache:
     def _compare_digests(self,
                          remote_digest: str,
                          local_digest: str,
-                         cached_digest: str) -> FileState:
+                         cached_digest: typing.Optional[str]) -> FileState:
         local_changed: bool = local_digest != cached_digest
         remote_changed: bool = remote_digest != cached_digest
         if not remote_changed and not local_changed:  # case 5 above
@@ -143,6 +144,10 @@ class FileCache:
         if not local_full_path.exists():
             return FileState.NEW
 
+        if local_full_path not in self._data:
+            assert plugin.NAME is not None
+            self._data[local_full_path] = File(cached_digest=None, plugin_name=plugin.NAME)
+
         file: File = self._data[local_full_path]
 
         if plugin.NAME != file.plugin_name:
@@ -152,4 +157,11 @@ class FileCache:
 
         remote_digest: str = plugin.create_remote_digest(remote_full_path)
         local_digest: str = plugin.create_local_digest(local_full_path)
+
+        # If both the remote and local files are updated but the cache didn't realize it.
+        # remote = B, local = B, cache A => update the cache to B
+        # eg. Downloaded the file not via kitovu
+        if remote_digest == local_digest and file.cached_digest != remote_digest:
+            file.cached_digest = remote_digest
+
         return self._compare_digests(remote_digest, local_digest, file.cached_digest)
