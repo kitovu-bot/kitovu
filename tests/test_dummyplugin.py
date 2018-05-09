@@ -1,8 +1,6 @@
 import pathlib
 import typing
 
-import py.path
-
 
 def test_connection_active(plugin) -> None:
     plugin.connect()
@@ -53,8 +51,8 @@ def test_if_list_path_lists_correct_pathnames(plugin):
     assert all_paths == pathnames
 
 
-def test_if_correct_file_retrieved(plugin, tmpdir: py.path.local):
-    sample = tmpdir / 'testsample.txt'
+def test_if_correct_file_retrieved(plugin, temppath: pathlib.Path):
+    sample = temppath / 'testsample.txt'
 
     plugin.connect()
     with sample.open("wb") as f:
@@ -64,8 +62,8 @@ def test_if_correct_file_retrieved(plugin, tmpdir: py.path.local):
     assert text == str(pathlib.PurePath("remote_dir/test/example1.txt")) + "\n1"
 
 
-def test_if_changed_digest_still_retrieves_correct_file(plugin, tmpdir: py.path.local):
-    sample = tmpdir / 'testsample.txt'
+def test_if_changed_digest_still_retrieves_correct_file(plugin, temppath: pathlib.Path):
+    sample = temppath / 'testsample.txt'
 
     plugin.connect()
     plugin.remote_digests[pathlib.PurePath("remote_dir/test/example1.txt")] = "42"  # change remote digest
