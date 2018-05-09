@@ -56,8 +56,8 @@ def patch_course_get_contents(responses, assets_dir):
 def patch_get_site_info_wrong_token(responses):
     body: str = """
     {
-    "errorcode": "invalidtoken", 
-    "exception": "moodle_exception", 
+    "errorcode": "invalidtoken",
+    "exception": "moodle_exception",
     "message": "Ungültiges Token - Token wurde nicht gefunden"
     }
     """
@@ -97,7 +97,7 @@ class TestValidations:
             - name: Wi2
               sources:
                 - connection: mytest-moodle
-                  remote-dir: "Wirtschaftsinformatik 2 FS2018"             
+                  remote-dir: "Wirtschaftsinformatik 2 FS2018"
         """)
         syncing.validate_config(config_yml)
 
@@ -120,7 +120,7 @@ class TestValidations:
                     - name: Wi2
                       sources:
                         - connection: mytest-moodle
-                          remote-dir: "Wirtschaftsinformatik 2 FS2018"             
+                          remote-dir: "Wirtschaftsinformatik 2 FS2018"
                 """)
         with pytest.raises(kitovu.utils.InvalidSettingsError):
             syncing.validate_config(config_yml)
@@ -163,7 +163,7 @@ class TestWithConnectedPlugin:
             - name: Wi2
               sources:
                 - connection: mytest-moodle
-                  remote-dir: "M_WI2_FS2018"             
+                  remote-dir: "M_WI2_FS2018"
         """)
         with pytest.raises(KeyError):
             plugin.list_path()
