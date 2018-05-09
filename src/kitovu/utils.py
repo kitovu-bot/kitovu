@@ -97,3 +97,7 @@ class InvalidSettingsError(UsageError):
     def __init__(self, validator: SchemaValidator) -> None:
         super().__init__(validator.error_message)
         self.errors: typing.List[str] = validator.errors
+
+
+class PluginOperationError(Error):
+    pass
