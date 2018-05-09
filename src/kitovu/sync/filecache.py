@@ -158,7 +158,10 @@ class FileCache:
         remote_digest: str = plugin.create_remote_digest(remote_full_path)
         local_digest: str = plugin.create_local_digest(local_full_path)
 
-        # Case 5 if both change to the same values
+        # If both the remote and local files are updated but the cache didn't realize it.
+        # remote = B, local = B, cache A => update the cache to B
+        # eg. Downloaded the file not via kitovu
         if remote_digest == local_digest and file.cached_digest != remote_digest:
             file.cached_digest = remote_digest
+
         return self._compare_digests(remote_digest, local_digest, file.cached_digest)
