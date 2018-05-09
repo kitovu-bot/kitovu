@@ -2,7 +2,6 @@ import pathlib
 
 import appdirs
 import stevedore
-import py.path
 import pytest
 
 from kitovu import utils
@@ -80,10 +79,10 @@ class TestSyncAll:
             pathlib.PurePath('Another/Test/Dir2/group4-file2.txt'): '42',
         })
 
-    def test_complex_sync_all(self, tmpdir: py.path.local):
-        config_yml = tmpdir / 'config.yml'
+    def test_complex_sync_all(self, temppath: pathlib.Path):
+        config_yml = temppath / 'config.yml'
         config_yml.write_text(f"""
-        root-dir: {tmpdir}/syncs
+        root-dir: {temppath}/syncs
         connections:
           - name: mytest-plugin
             plugin: dummy
@@ -105,25 +104,25 @@ class TestSyncAll:
         """, encoding='utf-8')
         syncing.start_all(config_yml, reporter.TestReporter())
 
-        assert sorted(pathlib.Path(tmpdir).glob("syncs/**/*")) == [
-            pathlib.Path(f'{tmpdir}/syncs/sync-1'),
-            pathlib.Path(f'{tmpdir}/syncs/sync-1/group1-file1.txt'),
-            pathlib.Path(f'{tmpdir}/syncs/sync-1/group1-file2.txt'),
-            pathlib.Path(f'{tmpdir}/syncs/sync-1/group1-file3.txt'),
-            pathlib.Path(f'{tmpdir}/syncs/sync-1/group2-file1.txt'),
-            pathlib.Path(f'{tmpdir}/syncs/sync-1/group2-file2.txt'),
-            pathlib.Path(f'{tmpdir}/syncs/sync-2'),
-            pathlib.Path(f'{tmpdir}/syncs/sync-2/group3-file1.txt'),
-            pathlib.Path(f'{tmpdir}/syncs/sync-2/group3-file2.txt'),
-            pathlib.Path(f'{tmpdir}/syncs/sync-2/group4-file1.txt'),
-            pathlib.Path(f'{tmpdir}/syncs/sync-2/group4-file2.txt'),
+        assert sorted(pathlib.Path(temppath).glob("syncs/**/*")) == [
+            pathlib.Path(f'{temppath}/syncs/sync-1'),
+            pathlib.Path(f'{temppath}/syncs/sync-1/group1-file1.txt'),
+            pathlib.Path(f'{temppath}/syncs/sync-1/group1-file2.txt'),
+            pathlib.Path(f'{temppath}/syncs/sync-1/group1-file3.txt'),
+            pathlib.Path(f'{temppath}/syncs/sync-1/group2-file1.txt'),
+            pathlib.Path(f'{temppath}/syncs/sync-1/group2-file2.txt'),
+            pathlib.Path(f'{temppath}/syncs/sync-2'),
+            pathlib.Path(f'{temppath}/syncs/sync-2/group3-file1.txt'),
+            pathlib.Path(f'{temppath}/syncs/sync-2/group3-file2.txt'),
+            pathlib.Path(f'{temppath}/syncs/sync-2/group4-file1.txt'),
+            pathlib.Path(f'{temppath}/syncs/sync-2/group4-file2.txt'),
         ]
 
 
 class TestConfigError:
 
-    def test_valid_configuration(self, tmpdir: py.path.local):
-        config_yml = tmpdir / 'config.yml'
+    def test_valid_configuration(self, temppath: pathlib.Path):
+        config_yml = temppath / 'config.yml'
         config_yml.write_text(f"""
         root-dir: ./asdf
         connections:
@@ -150,44 +149,44 @@ class TestConfigError:
 
         syncing.validate_config(config_yml, reporter.TestReporter())
 
-    def test_configuration_without_a_file(self, tmpdir: py.path.local):
-        config_yml = tmpdir / 'config.yml'
+    def test_configuration_without_a_file(self, temppath: pathlib.Path):
+        config_yml = temppath / 'config.yml'
 
         with pytest.raises(utils.UsageError) as excinfo:
             syncing.validate_config(pathlib.Path(config_yml), reporter.TestReporter())
         assert str(excinfo.value) == f'Could not find the file {config_yml}'
 
-    def test_configuration_with_an_empty_file(self, tmpdir: py.path.local):
-        config_yml = tmpdir / 'config.yml'
-        config_yml.ensure()
+    def test_configuration_with_an_empty_file(self, temppath: pathlib.Path):
+        config_yml = temppath / 'config.yml'
+        config_yml.touch()
         assert self._get_config_errors(config_yml) == ["None is not of type 'object'"]
 
-    def test_configuration_with_missing_root_dir(self, tmpdir: py.path.local):
-        config_yml = tmpdir / 'config.yml'
+    def test_configuration_with_missing_root_dir(self, temppath: pathlib.Path):
+        config_yml = temppath / 'config.yml'
         config_yml.write_text("""
         connections: []
         subjects: []
         """, encoding='utf-8')
         assert self._get_config_errors(config_yml) == ["'root-dir' is a required property"]
 
-    def test_configuration_with_missing_subjects(self, tmpdir: py.path.local):
-        config_yml = tmpdir / 'config.yml'
+    def test_configuration_with_missing_subjects(self, temppath: pathlib.Path):
+        config_yml = temppath / 'config.yml'
         config_yml.write_text("""
         root-dir: some-dir
         connections: []
         """, encoding='utf-8')
         assert self._get_config_errors(config_yml) == ["'subjects' is a required property"]
 
-    def test_configuration_with_missing_connections(self, tmpdir: py.path.local):
-        config_yml = tmpdir / 'config.yml'
+    def test_configuration_with_missing_connections(self, temppath: pathlib.Path):
+        config_yml = temppath / 'config.yml'
         config_yml.write_text("""
         root-dir: some-dir
         subjects: []
         """, encoding='utf-8')
         assert self._get_config_errors(config_yml) == ["'connections' is a required property"]
 
-    def test_configuration_with_invalid_subjects(self, tmpdir: py.path.local):
-        config_yml = tmpdir / 'config.yml'
+    def test_configuration_with_invalid_subjects(self, temppath: pathlib.Path):
+        config_yml = temppath / 'config.yml'
         config_yml.write_text("""
         root-dir: ./asdf
         connections:
@@ -205,13 +204,13 @@ class TestConfigError:
             "Additional properties are not allowed ('unexpected_prop' was unexpected)",
         ]
 
-    def test_configuration_with_invalid_connections(self, mocker, tmpdir: py.path.local, dummy_plugin):
+    def test_configuration_with_invalid_connections(self, mocker, temppath: pathlib.Path, dummy_plugin):
         manager = mocker.patch('stevedore.driver.DriverManager', autospec=True)
         instance = manager(namespace='kitovu.sync.plugin', name='test',
                            invoke_on_load=True)
         instance.driver = dummy_plugin
 
-        config_yml = tmpdir / 'config.yml'
+        config_yml = temppath / 'config.yml'
         config_yml.write_text("""
         root-dir: ./asdf
         connections:
@@ -230,8 +229,8 @@ class TestConfigError:
             "'username' is a required property",
         ]
 
-    def test_configuration_with_an_empty_connection(self, mocker, tmpdir: py.path.local):
-        config_yml = tmpdir / 'config.yml'
+    def test_configuration_with_an_empty_connection(self, mocker, temppath: pathlib.Path):
+        config_yml = temppath / 'config.yml'
         config_yml.write_text("""
         root-dir: ./asdf
         connections:
@@ -249,8 +248,8 @@ class TestConfigError:
             "'name' is a required property",
         ]
 
-    def test_configuration_with_an_empty_subject(self, mocker, tmpdir: py.path.local):
-        config_yml = tmpdir / 'config.yml'
+    def test_configuration_with_an_empty_subject(self, mocker, temppath: pathlib.Path):
+        config_yml = temppath / 'config.yml'
         config_yml.write_text("""
         root-dir: ./asdf
         connections:
