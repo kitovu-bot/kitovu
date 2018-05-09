@@ -90,6 +90,10 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
         default_port = 445 if self._info.is_direct_tcp else 139
         self._info.port = info.get('port', default_port)
 
+        if not info.get('debug', False):
+            # PySMB has too verbose logging, we don't want to see that.
+            logging.getLogger('SMB.SMBConnection').propagate = False
+
         logger.debug(f'Configured: {self._info}')
 
     def connect(self) -> None:
@@ -170,6 +174,7 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
                 },
                 'use_ntlm_v2': {'type': 'boolean'},
                 'is_direct_tcp': {'type': 'boolean'},
+                'debug': {'type': 'boolean'},
             },
             'required': [
                 'username',
