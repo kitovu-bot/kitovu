@@ -8,7 +8,7 @@ from kitovu import utils
 from kitovu.sync import syncing
 from kitovu.sync.plugin import smb
 from kitovu.sync.settings import ConnectionSettings
-from helpers import dummyplugin, reporter
+from helpers import dummyplugin
 
 
 @pytest.fixture(autouse=True)
@@ -32,7 +32,7 @@ def dummy_plugin(temppath):
 class TestFindPlugin:
 
     def test_load_plugin_builtin(self):
-        plugin = syncing._load_plugin(self._get_settings('smb', connection={'username': 'test'}), reporter.TestReporter())
+        plugin = syncing._load_plugin(self._get_settings('smb', connection={'username': 'test'}))
         assert isinstance(plugin, smb.SmbPlugin)
 
     def test_load_plugin_missing_external(self, mocker):
@@ -40,7 +40,7 @@ class TestFindPlugin:
                      side_effect=stevedore.exception.NoMatches)
 
         with pytest.raises(utils.NoPluginError, match='The plugin doesnotexist was not found'):
-            syncing._load_plugin(self._get_settings('doesnotexist'), reporter.TestReporter())
+            syncing._load_plugin(self._get_settings('doesnotexist'))
 
     def test_load_plugin_external(self, mocker, dummy_plugin):
         manager = mocker.patch('stevedore.driver.DriverManager', autospec=True)
@@ -49,7 +49,7 @@ class TestFindPlugin:
         instance.driver = dummy_plugin
 
         settings = self._get_settings('test', connection={'some-required-prop': 'test'})
-        plugin = syncing._load_plugin(settings, reporter.TestReporter())
+        plugin = syncing._load_plugin(settings)
         assert plugin is dummy_plugin
 
     def _get_settings(self, plugin_name, connection={}, subjects=[]):
@@ -102,7 +102,7 @@ class TestSyncAll:
               - connection: another-plugin
                 remote-dir: Another/Test/Dir2
         """, encoding='utf-8')
-        syncing.start_all(config_yml, reporter.TestReporter())
+        syncing.start_all(config_yml)
 
         assert sorted(pathlib.Path(temppath).glob("syncs/**/*")) == [
             pathlib.Path(f'{temppath}/syncs/sync-1'),
@@ -147,13 +147,13 @@ class TestConfigError:
                 remote-dir: Another/Test/Dir2
         """, encoding='utf-8')
 
-        syncing.validate_config(config_yml, reporter.TestReporter())
+        syncing.validate_config(config_yml)
 
     def test_configuration_without_a_file(self, temppath: pathlib.Path):
         config_yml = temppath / 'config.yml'
 
         with pytest.raises(utils.UsageError) as excinfo:
-            syncing.validate_config(pathlib.Path(config_yml), reporter.TestReporter())
+            syncing.validate_config(pathlib.Path(config_yml))
         assert str(excinfo.value) == f'Could not find the file {config_yml}'
 
     def test_configuration_with_an_empty_file(self, temppath: pathlib.Path):
@@ -268,5 +268,5 @@ class TestConfigError:
 
     def _get_config_errors(self, config_yml):
         with pytest.raises(utils.InvalidSettingsError) as excinfo:
-            syncing.validate_config(config_yml, reporter.TestReporter())
+            syncing.validate_config(config_yml)
         return [error.message for error in excinfo.value.errors]

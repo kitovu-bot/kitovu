@@ -49,8 +49,7 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
 
     NAME: str = "smb"
 
-    def __init__(self, reporter: utils.AbstractReporter) -> None:
-        super().__init__(reporter)
+    def __init__(self) -> None:
         self._connection: SMBConnection = None
         self._info = _ConnectionInfo()
         self._attributes: typing.Dict[pathlib.PurePath, SharedFile] = {}

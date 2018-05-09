@@ -52,16 +52,19 @@ User Output
 Errors
 ~~~~~~
 
-If there occurs an error which should cancel the entire execution of the plugin you can throw a :class:`kitovu.utils.UsageError`.
-The command line tool or the user interface will print those messages.
+For errors happening in your plugin, you can raise :class:`kitovu.utils.PluginOperationError`.
+If raised during ``configure``, ``connect`` or ``list_path``, the GUI/CLI shows
+an error and plugin is skipped entirely.
 
-This is used for example if the server rejects a request or is not available.
+When raised in ``create_remote_digest``, ``create_local_digest`` or
+``retrieve_file``, only the affected file is skipped.
 
 Any other exception will lead to the kitovu application to terminate.
 
 Warnings
 ~~~~~~~~
 
-If there occurs something that the user should be informed about, but other files can still be synced, you can print warnings. This is done with the reporter instance variable on the plugin class. You can use :code:`self.reporter.warn("My Message for the user")`.
+To print warnings to the user without aborting the current operation, use Python's `logging framework`_.
+It's recommended to use ``logger = logging.getLogger(__name__)`` to get an unique logger for your plugin.
 
-This is used for example if a file disappeard between listing all files and retrieving a file.
+.. _logging framework: https://docs.python.org/3/library/logging.html

@@ -30,13 +30,6 @@ from kitovu import utils
 from kitovu.sync import syncing, settings
 
 
-class CliReporter(utils.AbstractReporter):
-    """A reporter for printing to the console."""
-
-    def warn(self, message: str) -> None:
-        print(message, file=sys.stderr)
-
-
 @click.group()
 @click.option('--loglevel',
               type=click.Choice(['debug', 'info', 'warning', 'error', 'critical']),
@@ -63,7 +56,7 @@ def gui() -> None:
 def sync(config: typing.Optional[pathlib.Path] = None) -> None:
     """Synchronize with the given configuration file."""
     try:
-        syncing.start_all(config, CliReporter())
+        syncing.start_all(config)
     except utils.UsageError as ex:
         raise click.ClickException(str(ex))
 
@@ -73,7 +66,7 @@ def sync(config: typing.Optional[pathlib.Path] = None) -> None:
 def validate(config: typing.Optional[pathlib.Path] = None) -> None:
     """Validates the specified configuration file."""
     try:
-        syncing.validate_config(config, CliReporter())
+        syncing.validate_config(config)
     except utils.UsageError as ex:
         raise click.ClickException(str(ex))
 
