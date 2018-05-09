@@ -1,10 +1,12 @@
 import functools
 import pathlib
 
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTextEdit, QDialogButtonBox, QPushButton
+from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QTextEdit, QDialogButtonBox, QPushButton,
+                             QMessageBox)
 from PyQt5.QtCore import pyqtSignal
 
-from kitovu.sync import settings
+from kitovu import utils
+from kitovu.sync import settings, syncing
 
 
 class ConfScreen(QWidget):
@@ -41,7 +43,13 @@ class ConfScreen(QWidget):
 
     def save(self, close: bool) -> None:
         text: str = self._edit.toPlainText()
-        # FIXME validate config and show errors
         self._conf_file.write_text(text, encoding='utf-8')
+
+        try:
+            syncing.validate_config(self._conf_file)
+        except utils.InvalidSettingsError as ex:
+            QMessageBox.critical(self, "Failed to validate config", str(ex))
+            return
+
         if close:
             self.close_requested.emit()
