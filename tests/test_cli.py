@@ -7,22 +7,8 @@ from kitovu import cli
 
 
 @pytest.fixture
-def reporter():
-    return cli.CliReporter()
-
-
-@pytest.fixture
 def runner():
     return CliRunner()
-
-
-def test_reporter(capsys, reporter):
-    reporter.warn("my test")
-    reporter.warn("another test")
-
-    captured = capsys.readouterr()
-    assert captured.out == ""
-    assert captured.err == "my test\nanother test\n"
 
 
 def test_docs(runner, mocker):

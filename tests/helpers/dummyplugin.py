@@ -7,7 +7,6 @@ import attr
 
 from kitovu.sync import syncplugin
 from kitovu import utils
-from helpers import reporter
 
 
 @attr.s
@@ -23,11 +22,9 @@ class DummyPlugin(syncplugin.AbstractSyncPlugin):
 
     def __init__(self,
                  temppath: pathlib.Path,
-                 reporter: utils.AbstractReporter = reporter.TestReporter(),
                  local_digests: typing.Dict[pathlib.Path, str] = None,
                  remote_digests: typing.Dict[pathlib.PurePath, str] = None,
                  connection_schema=None):
-        super().__init__(reporter)
         self._temppath = temppath
         self.local_digests = local_digests if local_digests else {
             temppath / "local_dir/test/example1.txt": "1",

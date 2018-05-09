@@ -2,7 +2,6 @@
 
 import typing
 import getpass
-import abc
 import logging
 import pathlib
 
@@ -98,11 +97,3 @@ class InvalidSettingsError(UsageError):
     def __init__(self, validator: SchemaValidator) -> None:
         super().__init__(validator.error_message)
         self.errors: typing.List[str] = validator.errors
-
-
-class AbstractReporter(metaclass=abc.ABCMeta):
-    """A class that handles the reporting of warnings to the UI or CLI."""
-    @abc.abstractmethod
-    def warn(self, message: str) -> None:
-        """Print the warning according to the current interface."""
-        raise NotImplementedError
