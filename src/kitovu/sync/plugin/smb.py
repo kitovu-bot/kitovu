@@ -84,7 +84,8 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
         self._info.share = info.get('share', 'skripte')
         self._info.hostname = info.get('hostname', 'svm-c213.hsr.ch')
 
-        self._info.password = utils.get_password('smb', self._password_identifier())
+        prompt = f'{self._info.username}@{self._info.hostname}'
+        self._info.password = utils.get_password('smb', self._password_identifier(), prompt)
 
         default_port = 445 if self._info.is_direct_tcp else 139
         self._info.port = info.get('port', default_port)
