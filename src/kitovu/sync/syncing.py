@@ -114,7 +114,7 @@ def _sync_path(remote_full_path: pathlib.PurePath,
     # remote_full_path: /Informatik/Fachbereich/EPJ/Dokumente/Anleitung.pdf
     #   with relative_to: Dokumente/Anleitung.pdf
     # -> local_full_path: /home/leonie/HSR/EPJ/Dokumente/Anleitung.pdf
-    filename: pathlib.Path = utils.sanitize_filename(remote_full_path.relative_to(remote_dir))
+    filename: pathlib.PurePath = utils.sanitize_filename(remote_full_path.relative_to(remote_dir))
     local_full_path: pathlib.Path = local_dir / filename
 
     # When both files changed, we currently override the local file, but this can and should
