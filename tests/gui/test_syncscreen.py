@@ -1,4 +1,5 @@
-import py.path
+import pathlib
+
 import pytest
 from PyQt5.QtCore import QProcess
 
@@ -7,19 +8,19 @@ from kitovu.gui import syncscreen
 
 class ProcessPatcher:
 
-    def __init__(self, monkeypatch, tmpdir):
+    def __init__(self, monkeypatch, temppath: pathlib.Path):
         self._monkeypatch = monkeypatch
-        self._tmpdir = tmpdir
+        self._temppath = temppath
 
     def patch(self, *code):
-        script: py.path.local = self._tmpdir / 'script.py'
+        script: pathlib.Path = self._temppath / 'script.py'
         script.write_text('\n'.join(code), encoding='utf-8')
         self._monkeypatch.setattr(syncscreen.SyncScreen, 'PYTHON_ARGS', [str(script)])
 
 
 @pytest.fixture
-def patcher(monkeypatch, tmpdir):
-    return ProcessPatcher(monkeypatch=monkeypatch, tmpdir=tmpdir)
+def patcher(monkeypatch, temppath):
+    return ProcessPatcher(monkeypatch=monkeypatch, temppath=temppath)
 
 
 @pytest.fixture

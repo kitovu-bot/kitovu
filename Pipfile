@@ -14,9 +14,6 @@ appdirs = "*"
 requests = "*"
 jsonschema = "*"
 "pyqt5" = "*"
-pytest-qt = "*"
-pytest-xvfb = "*"
-pytest-faulthandler = "*"
 
 [dev-packages]
 pytest = "*"
@@ -28,6 +25,9 @@ pylint = "*"
 "flake8" = "*"
 mypy = "*"
 pytest-mock = "*"
+pytest-qt = "*"
+pytest-xvfb = "*"
+pytest-faulthandler = "*"
 
 [requires]
 python_version = "3.6"

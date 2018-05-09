@@ -1,7 +1,6 @@
 import pathlib
 
 import pytest
-import py.path
 import attr
 import keyring
 from smb.SMBConnection import SMBConnection
@@ -172,8 +171,8 @@ class TestWithConnectedPlugin:
 
 class TestValidations:
 
-    def test_configuration_with_the_minimum_required_fields(self, mocker, tmpdir: py.path.local):
-        config_yml = tmpdir / 'config.yml'
+    def test_configuration_with_the_minimum_required_fields(self, mocker, temppath: pathlib.Path):
+        config_yml = temppath / 'config.yml'
         config_yml.write_text("""
         root-dir: ./asdf
         connections:
@@ -189,8 +188,8 @@ class TestValidations:
 
         syncing.validate_config(config_yml)
 
-    def test_configuration_with_the_all_available_fields(self, mocker, tmpdir: py.path.local):
-        config_yml = tmpdir / 'config.yml'
+    def test_configuration_with_the_all_available_fields(self, mocker, temppath: pathlib.Path):
+        config_yml = temppath / 'config.yml'
         config_yml.write_text("""
         root-dir: ./asdf
         connections:
@@ -213,8 +212,8 @@ class TestValidations:
 
         syncing.validate_config(config_yml)
 
-    def test_configuration_with_unexpected_fields(self, mocker, tmpdir: py.path.local):
-        config_yml = tmpdir / 'config.yml'
+    def test_configuration_with_unexpected_fields(self, mocker, temppath: pathlib.Path):
+        config_yml = temppath / 'config.yml'
         config_yml.write_text("""
         root-dir: ./asdf
         connections:
