@@ -3,6 +3,7 @@
 import pathlib
 import typing
 import os.path
+import logging
 
 import appdirs
 import yaml
@@ -11,6 +12,7 @@ import attr
 from kitovu import utils
 
 
+logger: logging.Logger = logging.getLogger(__name__)
 SimpleDict = typing.Dict[str, typing.Any]
 
 
@@ -66,6 +68,8 @@ class Settings:
         """Load the settings from the specified yaml file"""
         if path is None:
             path = get_config_file_path()
+        logger.debug(f"Loading from {path}")
+
         try:
             with path.open('r') as stream:
                 return cls.from_yaml_stream(stream, validator)

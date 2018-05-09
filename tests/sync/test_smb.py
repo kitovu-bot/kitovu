@@ -1,7 +1,6 @@
 import pathlib
 
 import pytest
-import py.path
 import attr
 import keyring
 from smb.SMBConnection import SMBConnection
@@ -9,7 +8,6 @@ from smb.SMBConnection import SMBConnection
 from kitovu.sync import syncing
 from kitovu import utils
 from kitovu.sync.plugin import smb
-from helpers import reporter
 
 
 @pytest.fixture(autouse=True)
@@ -71,7 +69,7 @@ class TestConnect:
 
     @pytest.fixture
     def plugin(self):
-        return smb.SmbPlugin(reporter.TestReporter())
+        return smb.SmbPlugin()
 
     @pytest.fixture
     def info(self):
@@ -146,7 +144,7 @@ class TestWithConnectedPlugin:
 
     @pytest.fixture
     def plugin(self):
-        plugin = smb.SmbPlugin(reporter.TestReporter())
+        plugin = smb.SmbPlugin()
         keyring.set_password('kitovu-smb', 'myusername\nHSR\nsvm-c213.hsr.ch', 'some_password')
         plugin.configure({'username': 'myusername'})
         plugin.connect()
@@ -173,8 +171,8 @@ class TestWithConnectedPlugin:
 
 class TestValidations:
 
-    def test_configuration_with_the_minimum_required_fields(self, mocker, tmpdir: py.path.local):
-        config_yml = tmpdir / 'config.yml'
+    def test_configuration_with_the_minimum_required_fields(self, mocker, temppath: pathlib.Path):
+        config_yml = temppath / 'config.yml'
         config_yml.write_text("""
         root-dir: ./asdf
         connections:
@@ -188,10 +186,10 @@ class TestValidations:
                 remote-dir: /test/dir
         """, encoding='utf-8')
 
-        syncing.validate_config(config_yml, reporter.TestReporter())
+        syncing.validate_config(config_yml)
 
-    def test_configuration_with_the_all_available_fields(self, mocker, tmpdir: py.path.local):
-        config_yml = tmpdir / 'config.yml'
+    def test_configuration_with_the_all_available_fields(self, mocker, temppath: pathlib.Path):
+        config_yml = temppath / 'config.yml'
         config_yml.write_text("""
         root-dir: ./asdf
         connections:
@@ -212,10 +210,10 @@ class TestValidations:
                 remote-dir: /test/dir
         """, encoding='utf-8')
 
-        syncing.validate_config(config_yml, reporter.TestReporter())
+        syncing.validate_config(config_yml)
 
-    def test_configuration_with_unexpected_fields(self, mocker, tmpdir: py.path.local):
-        config_yml = tmpdir / 'config.yml'
+    def test_configuration_with_unexpected_fields(self, mocker, temppath: pathlib.Path):
+        config_yml = temppath / 'config.yml'
         config_yml.write_text("""
         root-dir: ./asdf
         connections:
@@ -238,5 +236,5 @@ class TestValidations:
 
     def _get_config_errors(self, config_yml):
         with pytest.raises(utils.InvalidSettingsError) as excinfo:
-            syncing.validate_config(config_yml, reporter.TestReporter())
+            syncing.validate_config(config_yml)
         return [error.message for error in excinfo.value.errors]

@@ -18,6 +18,7 @@ Why does this file exist, and why not put this in __main__?
 import pathlib
 import typing
 import sys
+import logging
 from distutils import spawn
 import subprocess
 import os
@@ -27,24 +28,26 @@ import click
 
 from kitovu import utils
 from kitovu.sync import syncing, settings
-from kitovu.gui import app as guiapp
-
-
-class CliReporter(utils.AbstractReporter):
-    """A reporter for printing to the console."""
-
-    def warn(self, message: str) -> None:
-        print(message, file=sys.stderr)
 
 
 @click.group()
-def cli() -> None:
-    pass
+@click.option('--loglevel',
+              type=click.Choice(['debug', 'info', 'warning', 'error', 'critical']),
+              default='info')
+def cli(loglevel: str) -> None:
+    level: int = getattr(logging, loglevel.upper())
+    if level == logging.DEBUG:
+        logformat = '%(asctime)s [%(levelname)5s] %(name)25s %(message)s'
+    else:
+        logformat = '%(message)s'
+
+    logging.basicConfig(level=level, format=logformat)
 
 
 @cli.command()
 def gui() -> None:
     """Start the kitovu GUI."""
+    from kitovu.gui import app as guiapp
     sys.exit(guiapp.run())
 
 
@@ -53,7 +56,7 @@ def gui() -> None:
 def sync(config: typing.Optional[pathlib.Path] = None) -> None:
     """Synchronize with the given configuration file."""
     try:
-        syncing.start_all(config, CliReporter())
+        syncing.start_all(config)
     except utils.UsageError as ex:
         raise click.ClickException(str(ex))
 
@@ -63,7 +66,7 @@ def sync(config: typing.Optional[pathlib.Path] = None) -> None:
 def validate(config: typing.Optional[pathlib.Path] = None) -> None:
     """Validates the specified configuration file."""
     try:
-        syncing.validate_config(config, CliReporter())
+        syncing.validate_config(config)
     except utils.UsageError as ex:
         raise click.ClickException(str(ex))
 
