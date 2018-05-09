@@ -143,7 +143,12 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
         return self._create_digest(size=info.st_size, mtime=info.st_mtime)
 
     def create_remote_digest(self, path: pathlib.PurePath) -> str:
-        attributes = self._connection.getAttributes(self._info.share, str(path))
+        try:
+            attributes = self._connection.getAttributes(self._info.share, str(path))
+        except OperationFailure:
+            # FIXME: change to plugin error
+            raise utils.UsageError(f'Could not find remote file {path} in share "{self._info.share}"')
+
         self._attributes[path] = attributes
         return self._create_digest(size=attributes.file_size,
                                    mtime=attributes.last_write_time)
@@ -167,7 +172,12 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
                       path: pathlib.PurePath,
                       fileobj: typing.IO[bytes]) -> typing.Optional[int]:
         logger.debug(f'Retrieving file {path}')
-        self._connection.retrieveFile(self._info.share, str(path), fileobj)
+        try:
+            self._connection.retrieveFile(self._info.share, str(path), fileobj)
+        except OperationFailure:
+            # FIXME: change to plugin error
+            raise utils.UsageError(f'Could not download {path} from share "{self._info.share}"')
+
         mtime: int = self._attributes[path].last_write_time
         return mtime
 
