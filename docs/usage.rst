@@ -19,7 +19,7 @@ Die Kommandozeile bietet folgende Optionen:
     * ``kitovu sync`` startet die Synchronisation mit der von dir gewählten Konfiguration.
     * ``kitovu validate`` prüft, ob deine gewählte Konfiguration korrekt ist.
     * ``kitovu fileinfo`` sagt dir, wo kitovu zwei wichtige Dateien speichert, die Konfigurationsdatei und der FileCache.
-    * ``kitovu edit`` öffnet die Konfigurationsdatei in einem Editor. Dieser kann mit ``--editor [EDITOR_NAME]`` oder über die Umgebungsvariable ``EDITOR`` angegeben werden. Ansonsten versucht er gängige Editoren zu finden.
+    * ``kitovu edit`` öffnet die Konfigurationsdatei in einem Editor. Dieser kann mit ``--editor [EDITOR_NAME]`` oder über die Umgebungsvariable ``EDITOR`` angegeben werden. Ansonsten wird nach einem gängigen Editoren gesucht.
     * ``kitovu docs`` öffnet die Dokumentation von Kitovu in einem Webbrowser.
 
 Verwendung der grafischen Oberfläche
