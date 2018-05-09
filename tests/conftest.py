@@ -22,3 +22,8 @@ def temppath(tmpdir):
 @pytest.fixture
 def plugin(temppath) -> dummyplugin.DummyPlugin:
     return dummyplugin.DummyPlugin(temppath)
+
+
+@pytest.fixture
+def assets_dir() -> pathlib.Path:
+    return pathlib.Path(__file__).parent / "assets"

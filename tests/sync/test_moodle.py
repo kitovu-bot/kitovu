@@ -7,26 +7,12 @@ import keyring
 import pytest
 
 from helpers import reporter
-from kitovu.sync import syncing
-from kitovu import utils
 from kitovu.sync.plugin import moodle
 
 
 @pytest.fixture
 def plugin() -> moodle.MoodlePlugin:
     return moodle.MoodlePlugin(reporter.TestReporter())
-
-
-@pytest.fixture
-def assets_dir() -> pathlib.Path:
-    # FIXME find this in a better way
-    return pathlib.Path('./tests/assets')
-
-
-@pytest.fixture
-def patch_get_site_info(responses, assets_dir):
-    body: str = (assets_dir / 'siteinfo.json').read_text()
-    _patch_request(responses, 'core_webservice_get_site_info', body=body)
 
 
 @pytest.fixture
@@ -47,6 +33,23 @@ def _patch_request(responses, wsfunction: str, body: str, **kwargs: str) -> None
     responses.add(responses.GET, f'{url}?{querystring}', body=body, match_querystring=True)
 
 
+@pytest.fixture
+def patch_get_site_info(responses, assets_dir):
+    body: str = (assets_dir / 'get_site_info.json').read_text()
+    _patch_request(responses, 'core_webservice_get_site_info', body=body)
+
+
+@pytest.fixture
+def patch_get_users_courses(responses, assets_dir):
+    body: str = (assets_dir / 'get_users_courses.json').read_text()
+    _patch_request(responses, 'core_enrol_get_users_courses', body=body, userid=4322)
+
+
+@pytest.fixture
+def course_get_contents(responses, assets_dir, filename: str):
+    body: str = (assets_dir / filename).read_text()
+
+
 class TestConnect:
 
     def test_connect(self, plugin, patch_get_site_info, credentials):
@@ -54,11 +57,10 @@ class TestConnect:
         plugin.connect()
         assert plugin._user_id == 4322
 
-    def test_connect_with_custom_options(self):
+    def test_connect_with_wrong_token(self):
+        #check what comes back with http
         pass
 
-    def test_connect_with_hsr_config(self):
-        pass
 
 
 class TestValidations:
@@ -85,4 +87,7 @@ class TestWithConnectedPlugin:
         pass
 
     def test_list_path(self):
+        pass
+
+    def test_retrieve_file(self):
         pass
