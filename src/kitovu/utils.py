@@ -92,6 +92,11 @@ class NoPluginError(UsageError):
     pass
 
 
+class AuthenticationError(UsageError):
+    """Thrown when the authentication could not be completed."""
+    pass
+
+
 class InvalidSettingsError(UsageError):
     """Thrown when the settings file is invalid."""
 
