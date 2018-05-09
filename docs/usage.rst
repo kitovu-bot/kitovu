@@ -15,6 +15,7 @@ Du kannst kitovu sowohl mit einer grafischen Oberfläche verwenden als auch übe
 Die Kommandozeile bietet folgende Optionen:
     
     * ``kitovu --help`` zeigt alle verfügbaren Optionen an
+    * ``kitovu [command] --help`` zeigt die für den spezifischen Befehl alle verfügbaren Optionen an
     * ``kitovu gui`` startet die grafische Oberfläche
     * ``kitovu sync`` startet die Synchronisation mit der von dir gewählten Konfiguration.
     * ``kitovu validate`` prüft, ob deine gewählte Konfiguration korrekt ist.
