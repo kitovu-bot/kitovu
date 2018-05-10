@@ -56,6 +56,8 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
 
     def _check_json_answer(self, data: JsonType) -> None:
         if 'exception' in data:
+            # FIXME test for content in "errorcode",
+            # if invalidtoken => raise AuthenticationError
             raise utils.PluginOperationError(data['message'])
         assert 'error' not in data, data
 
