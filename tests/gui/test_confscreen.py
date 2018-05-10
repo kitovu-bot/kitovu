@@ -5,10 +5,17 @@ import pytest
 from kitovu.gui import confscreen
 
 
+INITIAL_CONFIG = '\n'.join([
+    'root-dir: ~/hsr',
+    'connections: []',
+    'subjects: []',
+])
+
+
 @pytest.fixture(autouse=True)
 def kitovu_yaml(monkeypatch, temppath):
     config = temppath / 'kitovu.yaml'
-    config.write_text('root-dir: ~/hsr', encoding='utf-8')
+    config.write_text(INITIAL_CONFIG, encoding='utf-8')
     monkeypatch.setattr(confscreen.settings, 'get_config_file_path',
                         lambda: pathlib.Path(config))
     return config
@@ -22,7 +29,7 @@ def screen(qtbot):
 
 
 def test_reading_config(screen):
-    assert screen._edit.toPlainText() == 'root-dir: ~/hsr'
+    assert screen._edit.toPlainText() == INITIAL_CONFIG
 
 
 @pytest.mark.parametrize('close', [True, False])
@@ -37,7 +44,7 @@ def test_writing_config(screen, kitovu_yaml, qtbot, close):
             screen._save_button.click()
 
     expected = '\n'.join([
-        'root-dir: ~/hsr',
+        INITIAL_CONFIG,
         'global-ignore: ["Thumbs.db"]',
     ])
     assert kitovu_yaml.read_text('utf-8') == expected
@@ -48,4 +55,4 @@ def test_cancel(screen, kitovu_yaml, qtbot):
     with qtbot.wait_signal(screen.close_requested):
         screen._cancel_button.click()
 
-    assert kitovu_yaml.read_text('utf-8') == 'root-dir: ~/hsr'
+    assert kitovu_yaml.read_text('utf-8') == INITIAL_CONFIG
