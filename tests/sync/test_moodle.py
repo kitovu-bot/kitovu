@@ -46,19 +46,19 @@ def _patch_request(responses, wsfunction: str, body: str, **kwargs: str) -> None
 
 @pytest.fixture
 def patch_get_site_info(responses, assets_dir):
-    body: str = (assets_dir / 'get_site_info.json').read_text()
+    body: str = (assets_dir / 'get_site_info.json').read_text(encoding='utf-8')
     _patch_request(responses, 'core_webservice_get_site_info', body=body)
 
 
 @pytest.fixture
 def patch_get_users_courses(responses, assets_dir):
-    body: str = (assets_dir / 'get_users_courses.json').read_text()
+    body: str = (assets_dir / 'get_users_courses.json').read_text(encoding='utf-8')
     _patch_request(responses, 'core_enrol_get_users_courses', body=body, userid=4322)
 
 
 @pytest.fixture
 def patch_course_get_contents(responses, assets_dir):
-    body: str = (assets_dir / 'course_wi2.json').read_text()
+    body: str = (assets_dir / 'course_wi2.json').read_text(encoding='utf-8')
     _patch_request(responses, 'core_course_get_contents', body=body, courseid=1172)
 
 
