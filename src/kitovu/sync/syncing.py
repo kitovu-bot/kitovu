@@ -91,7 +91,12 @@ def _sync_subject(subject: typing.Dict[str, str],
     remote_dir = pathlib.PurePath(subject['remote-dir'])  # /Informatik/Fachbereich/EPJ/
     local_dir = pathlib.Path(subject['local-dir'])  # /home/leonie/HSR/EPJ/
 
+    ignore = subject['ignore']
+
     for remote_full_path in plugin.list_path(remote_dir):
+        if remote_full_path.parts[-1] in ignore:
+            logger.debug(f'Ignoring file {remote_full_path}')
+            continue
         try:
             _sync_path(remote_full_path, local_dir, remote_dir, plugin, cache)
         except utils.PluginOperationError as ex:

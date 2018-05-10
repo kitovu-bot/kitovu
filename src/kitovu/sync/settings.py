@@ -30,7 +30,6 @@ class Settings:
     """A class representing the settings of all connections"""
 
     root_dir: pathlib.Path = attr.ib()
-    global_ignore: typing.List[str] = attr.ib()
     connections: typing.Dict[str, ConnectionSettings] = attr.ib()
 
     SETTINGS_SCHEMA: utils.JsonSchemaType = {
@@ -95,19 +94,20 @@ class Settings:
             validator=validator,
             raw_connections=data.pop('connections'),
             raw_subjects=data.pop('subjects'),
+            global_ignore=global_ignore,
             root_dir=root_dir,
         )
 
         return Settings(
             root_dir=root_dir,
-            global_ignore=global_ignore,
             connections=connections,
         )
 
-    @classmethod
-    def _get_connection_settings(cls, validator: utils.SchemaValidator,
+    @staticmethod
+    def _get_connection_settings(validator: utils.SchemaValidator,
                                  raw_connections: typing.List[SimpleDict],
                                  raw_subjects: typing.List[SimpleDict],
+                                 global_ignore: typing.List[str],
                                  root_dir: pathlib.Path) -> typing.Dict[str, ConnectionSettings]:
         """Create the ConnectionSettings for the specified connections and subjects."""
         connections = {}
@@ -166,6 +166,7 @@ class Settings:
                 connection_usage['local-dir'] = pathlib.Path(
                     connection_usage.get('local-dir', root_dir / name))
                 connection_usage['remote-dir'] = pathlib.PurePath(connection_usage['remote-dir'])
+                connection_usage['ignore'] = global_ignore + connection_usage.get('ignore', [])
                 connections[connection_usage.pop('connection')].subjects.append(connection_usage)
 
         return connections
