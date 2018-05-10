@@ -31,7 +31,8 @@ def _patch_request(responses, wsfunction: str, body: str, **kwargs: str) -> None
     }
     req_data.update(**kwargs)
     querystring = urllib.parse.urlencode(req_data)
-    responses.add(responses.GET, f'{url}?{querystring}', body=body, match_querystring=True)
+    responses.add(responses.GET, f'{url}?{querystring}',
+                  content_type="application/json", body=body, match_querystring=True)
 
 
 @pytest.fixture
@@ -143,18 +144,18 @@ class TestWithConnectedPlugin:
     def test_list_remote_dir_of_course_files(self, plugin, patch_connect_and_configure_plugin, patch_get_users_courses, patch_course_get_contents):
         course_contents: typing.Iterable[pathlib.PurePath] = list(plugin.list_path(pathlib.PurePath("Wirtschaftsinformatik 2 FS2018")))
         expected_contents = [
-            pathlib.PurePath('Wirtschaftsinformatik 2 FS2018/02 - GeschÃ¤ftsprozessmanagement/'
-                             'GeschÃ¤ftsprozessmanagement/GeschÃ¤ftsprozessmanagement.pdf'),
-            pathlib.PurePath('Wirtschaftsinformatik 2 FS2018/02 - GeschÃ¤ftsprozessmanagement/'
-                             'Vielerlei Konzepte im GeschÃ¤ftsprozessmanagement/index.html'),
-            pathlib.PurePath('Wirtschaftsinformatik 2 FS2018/02 - GeschÃ¤ftsprozessmanagement/'
-                             'LÃ¶sung Aufgabe 1/index.html'),
+            pathlib.PurePath('Wirtschaftsinformatik 2 FS2018/02 - Geschäftsprozessmanagement/'
+                             'Geschäftsprozessmanagement/Geschäftsprozessmanagement.pdf'),
+            pathlib.PurePath('Wirtschaftsinformatik 2 FS2018/02 - Geschäftsprozessmanagement/'
+                             'Vielerlei Konzepte im Geschäftsprozessmanagement/index.html'),
+            pathlib.PurePath('Wirtschaftsinformatik 2 FS2018/02 - Geschäftsprozessmanagement/'
+                             'Lösung Aufgabe 1/index.html'),
             pathlib.PurePath('Wirtschaftsinformatik 2 FS2018/03 - BPMN1 - Introduction to Business Process Management/'
                              '1. Introduction to Business Process Management/'
                              '1. Introduction to Business Process Management.pdf'),
             pathlib.PurePath('Wirtschaftsinformatik 2 FS2018/03 - BPMN1 - Introduction to Business Process Management/'
                              'Solution Modeling Task 1 - Loan application at Wall Street Oasis (WSO) bank/'
-                             'Modeling Task 1 - Loan application at Wall Street Oasis (WSO) bank.PNG'),
+                             'Modeling Task 1 - Loan application at Wall Street Oasis (WSO) bank.PNG')
         ]
         assert course_contents == expected_contents
 
