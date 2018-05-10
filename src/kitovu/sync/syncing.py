@@ -94,7 +94,7 @@ def _sync_subject(subject: utils.JsonSchemaType,
     ignore: typing.List[str] = subject['ignore']
 
     for remote_full_path in plugin.list_path(remote_dir):
-        if remote_full_path.parts[-1] in ignore:
+        if remote_full_path.name in ignore:
             logger.debug(f'Ignoring file {remote_full_path}')
             continue
         try:
