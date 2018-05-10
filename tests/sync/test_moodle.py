@@ -142,7 +142,8 @@ class TestWithConnectedPlugin:
         assert courses == expected_courses
 
     def test_list_remote_dir_of_course_files(self, plugin, patch_connect_and_configure_plugin, patch_get_users_courses, patch_course_get_contents):
-        course_contents: typing.Iterable[pathlib.PurePath] = list(plugin.list_path(pathlib.PurePath("Wirtschaftsinformatik 2 FS2018")))
+        course_contents: typing.Iterable[pathlib.PurePath] = \
+            list(plugin.list_path(pathlib.PurePath("Wirtschaftsinformatik 2 FS2018")))
         expected_contents = [
             pathlib.PurePath('Wirtschaftsinformatik 2 FS2018/02 - Geschäftsprozessmanagement/'
                              'Geschäftsprozessmanagement/Geschäftsprozessmanagement.pdf'),
@@ -159,8 +160,20 @@ class TestWithConnectedPlugin:
         ]
         assert course_contents == expected_contents
 
-    def test_create_remote_digest(self, plugin, patch_course_get_contents):
-        pass
+    def test_create_remote_digest(self, plugin, patch_connect_and_configure_plugin, patch_get_users_courses, patch_course_get_contents):
+        course_contents: typing.Iterable[pathlib.PurePath] = \
+            list(plugin.list_path(pathlib.PurePath("Wirtschaftsinformatik 2 FS2018")))
+        remote_digests = []
+        check_digests = [
+            '4267895-1520803270',
+            '0-1487838705',
+            '0-1520427130',
+            '2119487-1490374823',
+            '44733-1396277827'
+        ]
+        for item in course_contents:
+            remote_digests.append(plugin.create_remote_digest(item))
+        assert remote_digests == check_digests
 
     def list_path_with_wrong_remote_dir(self, temppath):
         """Checks if configuration has been written with correct remote-dir.
