@@ -1,5 +1,8 @@
 import pathlib
 
+import pytest
+
+from kitovu import utils
 from kitovu.sync.settings import Settings, ConnectionSettings
 
 
@@ -34,3 +37,27 @@ def test_load_a_sample_yaml_file():
         global_ignore=expected_global_ignore,
         connections=expected_connections,
     )
+
+
+def test_invalid_yaml_files(temppath: pathlib.Path):
+    config_yml = temppath / 'config.yml'
+    config_yml.write_text(f"""
+    root-dir: ./asdf
+    connections:
+      - name: mytest-plugin
+         plugin: smb
+       username: myuser
+    subjects:
+      - name: sync-1
+        sources:
+          - connection: mytest-plugin
+            remote-dir: Some/Test/Dir1
+          - connection: another-plugin
+            remote-dir: Another/Test/Dir1
+    """, encoding='utf-8')
+
+    with pytest.raises(utils.UsageError) as excinfo:
+        Settings.from_yaml_file(config_yml)
+    assert str(excinfo.value) == f"""Invalid Configuration:
+mapping values are not allowed here
+  in "{config_yml}", line 5, column 16"""
