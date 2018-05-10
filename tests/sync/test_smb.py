@@ -1,9 +1,11 @@
 import pathlib
+import socket
 
 import pytest
 import attr
 import keyring
 from smb.SMBConnection import SMBConnection
+from smb.smb_structs import OperationFailure
 
 from kitovu.sync import syncing
 from kitovu import utils
@@ -37,6 +39,10 @@ class SMBConnectionMock:
         self.connected_port = None
 
     def connect(self, ip_address, port):
+        if self.init_args['username'] == 'invalid-user':
+            return False
+        if ip_address == "1.1.1.1":
+            raise ConnectionRefusedError()
         self.connected_ip = ip_address
         self.connected_port = port
         assert self.is_connected()
@@ -48,9 +54,13 @@ class SMBConnectionMock:
         self.connected_port = None
 
     def getAttributes(self, share, path):
+        if str(path).endswith('missing'):
+            raise OperationFailure('msg1', 'msg2')
         return self.AttributesMock(1024, 988824605.56)
 
     def listPath(self, share, path):
+        if str(path).endswith('missing'):
+            raise OperationFailure('msg1', 'msg2')
         if str(path).endswith('example_dir') or str(path).endswith('sub'):
             return [self.SharedFileMock('sub_file', False)]
         return [
@@ -139,6 +149,40 @@ class TestConnect:
         assert plugin._connection.connected_ip == '123.123.123.123'
         assert plugin._connection.connected_port == 445
 
+    def test_handles_an_inaccessible_server_correctly(self, plugin, info, monkeypatch):
+        def raise_error(_host):
+            raise socket.gaierror()
+        monkeypatch.setattr('socket.gethostbyname', raise_error)
+
+        plugin.configure(info)
+
+        with pytest.raises(utils.PluginOperationError) as excinfo:
+            plugin.connect()
+
+        msg = "Could not find server example.com. Maybe you need to open a VPN connection or the server is not available."
+        assert str(excinfo.value) == msg
+
+    def test_handles_a_refused_connection(self, plugin, info, monkeypatch):
+        monkeypatch.setattr('socket.gethostbyname', lambda _host: '1.1.1.1')
+
+        plugin.configure(info)
+
+        with pytest.raises(utils.PluginOperationError) as excinfo:
+            plugin.connect()
+
+        assert str(excinfo.value) == "Could not connect to 1.1.1.1:445"
+
+    def test_handles_invalid_credentials_correctly(self, plugin, info):
+        keyring.set_password('kitovu-smb', 'invalid-user\nmyauthdomain\nexample.com', 'some_password')
+
+        info['username'] = 'invalid-user'
+        plugin.configure(info)
+
+        with pytest.raises(utils.PluginOperationError) as excinfo:
+            plugin.connect()
+
+        assert str(excinfo.value) == "Authentication failed for 123.123.123.123:445"
+
 
 class TestWithConnectedPlugin:
 
@@ -158,6 +202,12 @@ class TestWithConnectedPlugin:
     def test_create_remote_digest(self, plugin):
         assert plugin.create_remote_digest(pathlib.PurePath('/test')) == '1024-988824605'
 
+    def test_create_remote_digest_with_an_error(self, plugin):
+        with pytest.raises(utils.PluginOperationError) as excinfo:
+            plugin.create_remote_digest(pathlib.PurePath('/test/missing'))
+
+        assert str(excinfo.value) == 'Could not find remote file /test/missing in share "skripte"'
+
     def test_list_path(self, plugin):
         paths = list(plugin.list_path(pathlib.PurePath('/some/test/dir')))
         assert paths == [
@@ -167,6 +217,12 @@ class TestWithConnectedPlugin:
             pathlib.PurePath('/some/test/dir/sub/sub_file'),
             pathlib.PurePath('/some/test/dir/last_file'),
         ]
+
+    def test_list_path_with_an_error(self, plugin):
+        with pytest.raises(utils.PluginOperationError) as excinfo:
+            list(plugin.list_path(pathlib.PurePath('/test/missing')))
+
+        assert str(excinfo.value) == 'Folder "/test/missing" not found'
 
 
 class TestValidations:
