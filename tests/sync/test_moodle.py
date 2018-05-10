@@ -78,6 +78,8 @@ def patch_get_site_info_wrong_token(responses):
 def connect_and_configure_plugin(plugin, patch_get_site_info, credentials):
     plugin.configure({})
     plugin.connect()
+    yield
+    plugin.disconnect()
 
 
 @pytest.fixture
