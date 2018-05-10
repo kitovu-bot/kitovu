@@ -140,6 +140,7 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
     def retrieve_file(self,
                       path: pathlib.PurePath,
                       fileobj: typing.IO[bytes]) -> typing.Optional[int]:
+        assert self._files, "list_path was never called, no files available."
         moodle_file: _MoodleFile = self._files[path]
         logger.debug(f'Getting {moodle_file.url}')
 
