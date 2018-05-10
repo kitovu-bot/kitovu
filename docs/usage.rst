@@ -20,7 +20,7 @@ Die Kommandozeile bietet folgende Optionen:
     * ``kitovu sync`` startet die Synchronisation mit der von dir gewählten Konfiguration.
     * ``kitovu validate`` prüft, ob deine gewählte Konfiguration korrekt ist.
     * ``kitovu fileinfo`` sagt dir, wo kitovu zwei wichtige Dateien speichert, die Konfigurationsdatei und der FileCache.
-    * ``kitovu edit`` öffnet die Konfigurationsdatei in einem Editor. Dieser kann mit ``--editor [EDITOR_NAME]`` oder über die Umgebungsvariable ``EDITOR`` angegeben werden. Ansonsten wird nach einem gängigen Editoren gesucht.
+    * ``kitovu edit`` öffnet die Konfigurationsdatei in einem Editor. Dieser kann mit ``--editor [EDITOR_NAME]`` oder über die Umgebungsvariable ``EDITOR`` angegeben werden. Ansonsten sucht kitovu nach einem gängigen Editor.
     * ``kitovu docs`` öffnet die Dokumentation von Kitovu in einem Webbrowser.
 
 Verwendung der grafischen Oberfläche
@@ -32,7 +32,7 @@ Mit einem Klick auf "Dateien synchronisieren" lädst du alle benötigten Dateien
 
 .. important::
 
-    Dateien die sich zwischen zwei Synchronisationszeitpunkten geändert haben - etwa, weil du sie selber bearbeitet hast -, werden beim derzeitigen Entwicklungsstandpunkt von kitovu überschrieben.
+    Dateien können sich zwischen zwei Synchronisationszeitpunkten ändern, etwa, weil du noch selber Notizen hinzugefügt hast. In diesem Fall werden sie beim derzeitigen Entwicklungsstandpunkt von kitovu mit der Server-Version überschrieben.
 
 Konfiguration von kitovu
 ------------------------
@@ -65,7 +65,7 @@ So sieht eine Beispielkonfiguration aus:
           - connection: moodleskripte
             remote-dir: "Betriebssysteme 2 FS2016"
 
-Es sind keine Leerzeichen in Namen erlaubt. Möchtest du Leerzeichen verwenden, etwa für ``name``, musst du es in Gänsefüsschen setzen: ``Betriebssysteme2`` oder ``"Betriebssysteme 2"``.
+Es sind keine Leerzeichen in Namen erlaubt. Möchtest du Leerzeichen verwenden, etwa für ``name``, musst du den Namen in Gänsefüsschen setzen: ``Betriebssysteme2`` oder ``"Betriebssysteme 2"``.
 
 Aufbau der Konfigurationsdatei
 ##############################
@@ -79,9 +79,9 @@ Abschnitt ``connections``
 
 ``name``: Ein von dir frei wählbarer Name für die jeweilige Plattform.
 
-``plugin``: Der Name der Plattform, der kitovu intern verwendet, damit eine Verbindung zustande kommt. Derzeit gibt es die fixe Bezeichnungen ``smb`` oder ``moodle``.
+``plugin``: Der Name der Plattform, der kitovu intern verwendet, damit eine Verbindung zustande kommt. Derzeit gibt es die fixen Bezeichnungen ``smb`` oder ``moodle``.
 
-``username``: Dein Login-Name, womit du dich auch andernorts an der Schule einloggst, bestehend aus Vor- und Nachname. Moodle verlangt keinen Usernamen, dafür nach einem Sicherheitsschlüssel (s. weiter unten).
+``username``: Dein Login-Name, womit du dich auch andernorts an der Schule einloggst, bestehend aus Vor- und Nachname. Moodle benötigt keinen Usernamen.
 
 Abschnitt ``subjects``
 **********************
@@ -113,4 +113,4 @@ Moodle hingegen ist ein Spezialfall. Um dich erfolgreich mit Moodle verbinden zu
 Der FileCache
 -------------
 
-Wenn du Dateien synchronisierst, hält kitovu das in einem Log fest. Nach Ende eines Semesters bzw. nach Prüfungsende kannst du diese Datei wieder löschen - also wenn keines der Unterrichtsmodule des vergangenen Semesters mehr synchronisiert werden sollte. Du siehst, wo diese Datei gespeichert ist, indem du ``kitovu fileinfo`` auf der Kommandozeile eingibst.
+Wenn du Dateien synchronisierst, hält kitovu das in einer Datei fest. Nach Ende eines Semesters bzw. nach Prüfungsende kannst du diese Datei wieder löschen - also wenn keines der Unterrichtsmodule des vergangenen Semesters mehr synchronisiert werden sollte. Du siehst, wo diese Datei gespeichert ist, indem du ``kitovu fileinfo`` auf der Kommandozeile eingibst.
