@@ -28,6 +28,7 @@ pytest-mock = "*"
 pytest-qt = "*"
 pytest-xvfb = "*"
 pytest-faulthandler = "*"
+pytest-responses = "*"
 
 [requires]
 python_version = "3.6"
