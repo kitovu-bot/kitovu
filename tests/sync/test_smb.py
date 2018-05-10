@@ -203,10 +203,11 @@ class TestWithConnectedPlugin:
         assert plugin.create_remote_digest(pathlib.PurePath('/test')) == '1024-988824605'
 
     def test_create_remote_digest_with_an_error(self, plugin):
+        path = pathlib.PurePath('/test/missing')
         with pytest.raises(utils.PluginOperationError) as excinfo:
-            plugin.create_remote_digest(pathlib.PurePath('/test/missing'))
+            plugin.create_remote_digest(path)
 
-        assert str(excinfo.value) == 'Could not find remote file /test/missing in share "skripte"'
+        assert str(excinfo.value) == f'Could not find remote file {path} in share "skripte"'
 
     def test_list_path(self, plugin):
         paths = list(plugin.list_path(pathlib.PurePath('/some/test/dir')))
@@ -219,10 +220,11 @@ class TestWithConnectedPlugin:
         ]
 
     def test_list_path_with_an_error(self, plugin):
+        path = pathlib.PurePath('/test/missing')
         with pytest.raises(utils.PluginOperationError) as excinfo:
-            list(plugin.list_path(pathlib.PurePath('/test/missing')))
+            list(plugin.list_path(path))
 
-        assert str(excinfo.value) == 'Folder "/test/missing" not found'
+        assert str(excinfo.value) == f'Folder "{path}" not found'
 
 
 class TestValidations:
