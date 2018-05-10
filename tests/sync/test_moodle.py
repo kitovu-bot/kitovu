@@ -6,7 +6,7 @@ import keyring
 import pytest
 
 
-import kitovu.utils
+from kitovu import utils
 from kitovu.sync.plugin import moodle
 from kitovu.sync import syncing
 
@@ -80,7 +80,7 @@ class TestConnect:
     def test_connect_with_wrong_token(self, plugin, patch_get_site_info_wrong_token):
         keyring.set_password("kitovu-moodle", "https://moodle.hsr.ch/", "wrong_token")
         plugin.configure({})
-        with pytest.raises(AssertionError):
+        with pytest.raises(utils.PluginOperationError):
             plugin.connect()
 
 
@@ -104,7 +104,7 @@ class TestValidations:
     def test_with_empty_config(self, temppath):
         config_yml = temppath / 'config.yml'
         config_yml.write_text("")
-        with pytest.raises(kitovu.utils.InvalidSettingsError):
+        with pytest.raises(utils.InvalidSettingsError):
             syncing.validate_config(config_yml)
 
     def test_config_with_unexpected_connection_fields(self, temppath):
@@ -122,7 +122,7 @@ class TestValidations:
                         - connection: mytest-moodle
                           remote-dir: "Wirtschaftsinformatik 2 FS2018"
                 """)
-        with pytest.raises(kitovu.utils.InvalidSettingsError):
+        with pytest.raises(utils.InvalidSettingsError):
             syncing.validate_config(config_yml)
 
 

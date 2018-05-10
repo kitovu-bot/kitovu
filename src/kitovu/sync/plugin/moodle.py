@@ -51,10 +51,13 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         assert req.status_code == 200, req  # FIXME
         data: JsonType = req.json()
         logger.debug(f'Got data: {data}')
-
-        assert 'exception' not in data, data # FIXME not assertion error, but plugin error
-        assert 'error' not in data, data
+        self._check_json_answer(data)
         return data
+
+    def _check_json_answer(self, data: JsonType) -> None:
+        if 'exception' in data:
+            raise utils.PluginOperationError(data['message'])
+        assert 'error' not in data, data
 
     def configure(self, info: JsonType) -> None:
         self._url: str = info.get('url', 'https://moodle.hsr.ch/')
@@ -142,8 +145,7 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         assert req.status_code == 200, req  # FIXME
         if 'json' in req.headers['content-type']:
             data: JsonType = req.json()
-            assert 'exception' not in data, data # FIXME not assertion error, but plugin error
-            assert 'error' not in data, data
+            self._check_json_answer(data)
         for chunk in req:
             fileobj.write(chunk)
 
