@@ -87,7 +87,7 @@ class Settings:
         try:
             data = yaml.load(stream)
         except yaml.scanner.ScannerError as error:
-            raise utils.UsageError(f"Invalid Configuration:\n{str(error)}")
+            raise utils.UsageError(f"Invalid Configuration:\n{error}")
 
         validator.validate(data, cls.SETTINGS_SCHEMA)
 
