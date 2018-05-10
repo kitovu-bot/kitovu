@@ -74,7 +74,7 @@ def connect_and_configure_plugin(plugin, patch_get_site_info, credentials):
 
 @pytest.fixture
 def patch_retrieve_file(responses) -> None:
-    url = ("https://moodle.hsr.ch/webservice/pluginfile.php/75099/mod_resource/content/7/" 
+    url = ("https://moodle.hsr.ch/webservice/pluginfile.php/75099/mod_resource/content/7/"
            "Gesch%C3%A4ftsprozessmanagement.pdf?forcedownload=1&token=some_token")
     responses.add(responses.GET, url, content_type="application/octet-stream",
                   body="HELLO KITOVU", match_querystring=True)
