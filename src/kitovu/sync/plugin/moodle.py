@@ -85,7 +85,8 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         stats: os.stat_result = path.stat()
         # unfortunately html files have a size of 0
         size: int = 0 if path.suffix == '.html' else stats.st_size
-        return self._create_digest(size, int(stats.st_mtime))
+        mtime = int(stats.st_mtime)
+        return self._create_digest(size, mtime)
 
     def create_remote_digest(self, path: pathlib.PurePath) -> str:
         moodle_file: _MoodleFile = self._files[path]

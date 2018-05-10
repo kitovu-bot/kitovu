@@ -3,12 +3,20 @@ import typing
 import urllib.parse
 import pathlib
 
+import attr
 import keyring
 import pytest
 
 from kitovu import utils
 from kitovu.sync.plugin import moodle
 from kitovu.sync import syncing
+
+
+@attr.s
+class FakeStatResult:
+
+    st_size: int = attr.ib()
+    st_mtime: float = attr.ib()
 
 
 @pytest.fixture
@@ -190,6 +198,21 @@ class TestWithConnectedPlugin:
                              'Modeling Task 1 - Loan application at Wall Street Oasis (WSO) bank.PNG')
         ]
         assert course_contents == expected_contents
+
+    @pytest.mark.parametrize('filename', ['foo', 'foo.png', 'foo.html'])
+    def test_create_local_digest(self, plugin, monkeypatch, filename, temppath):
+        testfile = temppath / filename
+        text = 'hello kitovu'
+        testfile.write_text(text)
+
+        mtime = 13371337.4242
+        monkeypatch.setattr(pathlib.Path, 'stat', lambda _self:
+                            FakeStatResult(st_size=len(text), st_mtime=mtime))
+
+        plugin.create_local_digest(testfile)
+        expected_size = 0 if filename == 'foo.html' else len(text)
+
+        assert plugin.create_local_digest(testfile) == f'{expected_size}-13371337'
 
     def test_create_remote_digest(self, plugin, connect_and_configure_plugin,
                                   patch_get_users_courses, patch_course_get_contents):
