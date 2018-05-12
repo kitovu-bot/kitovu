@@ -75,6 +75,30 @@ def patch_get_site_info_wrong_token(responses):
 
 
 @pytest.fixture
+def patch_get_wrong_wstoken(responses):
+    body: str = """
+    {
+        "errorcode": "invalidrecord",
+        "exception": "dml_missing_record_exception",
+        "message": "Datensatz kann nicht in der Datenbanktabelle external_functions gefunden werden"
+    }
+    """
+    _patch_request(responses, 'mistake_webservice_get_site_info', body=body, wstoken="some_token")
+
+
+@pytest.fixture
+def patch_get_wrong_courseid(responses):
+    body: str = """
+        {
+        "errorcode": "invalidrecord",
+        "exception": "dml_missing_record_exception",
+        "message": "Datensatz kann nicht in der Datenbanktabelle external_functions gefunden werden"
+    }
+    """
+    _patch_request(responses, 'core_course_get_contents', body=body, courseid=424242)
+
+
+@pytest.fixture
 def connect_and_configure_plugin(plugin, patch_get_site_info, credentials):
     plugin.configure({})
     plugin.connect()
@@ -111,7 +135,7 @@ class TestConnect:
     def test_connect_with_wrong_token(self, plugin, patch_get_site_info_wrong_token):
         keyring.set_password("kitovu-moodle", "https://moodle.hsr.ch/", "wrong_token")
         plugin.configure({})
-        with pytest.raises(utils.PluginOperationError):
+        with pytest.raises(utils.AuthenticationError):
             plugin.connect()
 
 
@@ -168,6 +192,11 @@ class TestValidations:
 
 
 class TestWithConnectedPlugin:
+
+    def test_with_wrong_wstoken_or_coursid(self, plugin, connect_and_configure_plugin,
+                                           patch_get_wrong_courseide_or_wstoken):
+
+        pass
 
     def test_list_remote_dir_of_courses(self, plugin, connect_and_configure_plugin, patch_get_users_courses):
         courses: typing.Iterable[pathlib.PurePath] = list(plugin.list_path(pathlib.PurePath("/")))
@@ -232,7 +261,7 @@ class TestWithConnectedPlugin:
             remote_digests.append(plugin.create_remote_digest(item))
         assert remote_digests == check_digests
 
-    def list_path_with_wrong_remote_dir(self, temppath):
+    def test_list_path_with_wrong_remote_dir(self, temppath):
         """Checks if configuration has been written with correct remote-dir.
 
         There's a short name and a full name for each course, students need to choose the full name for the config.
