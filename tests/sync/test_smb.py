@@ -54,12 +54,12 @@ class SMBConnectionMock:
         self.connected_port = None
 
     def getAttributes(self, share, path):
-        if path.basename == 'missing':
+        if path.endswith('missing'):
             raise OperationFailure('msg1', 'msg2')
         return self.AttributesMock(1024, 988824605.56)
 
     def listPath(self, share, path):
-        if path.basename == 'missing':
+        if path.endswith('missing'):
             raise OperationFailure('msg1', 'msg2')
         if str(path).endswith('example_dir') or str(path).endswith('sub'):
             return [self.SharedFileMock('sub_file', False)]
