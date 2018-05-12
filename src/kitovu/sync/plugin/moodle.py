@@ -55,11 +55,13 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         return data
 
     def _check_json_answer(self, data: JsonType) -> None:
-        if 'exception' in data:
-            # FIXME test for content in "errorcode",
-            # if invalidtoken => raise AuthenticationError
+        if data["errorcode"] == "invalidtoken":
+            raise utils.AuthenticationError(data['message'])
+        elif data["errorcode"] == "invalidrecord":  # e.g. invalid ws_function, invalid course ID
+            # the given error message is hard to understand, writing a better to understand one instead
+            raise utils.PluginOperationError("You requested something from Moddle which it couldn't get.")
+        elif 'exception' in data:  # base case for errors
             raise utils.PluginOperationError(data['message'])
-        assert 'error' not in data, data
 
     def configure(self, info: JsonType) -> None:
         self._url: str = info.get('url', 'https://moodle.hsr.ch/')

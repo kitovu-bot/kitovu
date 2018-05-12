@@ -101,3 +101,7 @@ class InvalidSettingsError(UsageError):
 
 class PluginOperationError(Error):
     pass
+
+
+class AuthenticationError(Error):
+    pass
