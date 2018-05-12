@@ -267,7 +267,7 @@ class TestWithConnectedPlugin:
             remote_digests.append(plugin.create_remote_digest(item))
         assert remote_digests == check_digests
 
-    def test_list_path_with_wrong_remote_dir(self, temppath):
+    def test_list_path_with_wrong_remote_dir(self, plugin, connect_and_configure_plugin, temppath):
         """Checks if configuration has been written with correct remote-dir.
 
         There's a short name and a full name for each course, students need to choose the full name for the config.
@@ -286,7 +286,7 @@ class TestWithConnectedPlugin:
                   remote-dir: "M_WI2_FS2018"
         """)
         with pytest.raises(KeyError):
-            plugin.list_path()
+            plugin.list_path(pathlib.PurePath("Wirtschaftsinformatik 2 FS2018"))
 
     def test_retrieve_file(self, plugin, connect_and_configure_plugin,
                            patch_get_users_courses, patch_course_get_contents, patch_retrieve_file):
