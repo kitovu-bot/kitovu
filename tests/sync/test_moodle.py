@@ -75,7 +75,7 @@ def patch_get_site_info_wrong_token(responses):
 
 
 @pytest.fixture
-def patch_get_wrong_wstoken(responses):
+def patch_get_wrong_wsfunction(responses):
     body: str = """
     {
         "errorcode": "invalidrecord",
@@ -138,6 +138,12 @@ class TestConnect:
         with pytest.raises(utils.AuthenticationError):
             plugin.connect()
 
+    def test_with_wrong_wsfunction(self, plugin, credentials, patch_get_wrong_wsfunction):
+        keyring.set_password("kitovu-moodle", "https://moodle.hsr.ch/", "some_token")
+        plugin.configure({})
+        with pytest.raises(utils.PluginOperationError):
+            plugin.connect()
+
 
 class TestValidations:
 
@@ -193,10 +199,10 @@ class TestValidations:
 
 class TestWithConnectedPlugin:
 
-    def test_with_wrong_wstoken_or_coursid(self, plugin, connect_and_configure_plugin,
-                                           patch_get_wrong_courseide_or_wstoken):
-
-        pass
+    def test_with_wrong_courseid(self, plugin, connect_and_configure_plugin, patch_get_users_courses,
+                                 patch_get_wrong_courseid):
+        course_contents: typing.Iterable[pathlib.PurePath] = \
+            list(plugin.list_path(pathlib.PurePath("Wirtschaftsinformatik 2 FS2018")))
 
     def test_list_remote_dir_of_courses(self, plugin, connect_and_configure_plugin, patch_get_users_courses):
         courses: typing.Iterable[pathlib.PurePath] = list(plugin.list_path(pathlib.PurePath("/")))
