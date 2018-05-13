@@ -9,7 +9,7 @@ import logging
 import attr
 from smb.SMBConnection import SMBConnection
 from smb.base import SharedFile
-from smb.smb_structs import OperationFailure
+from smb.smb_structs import OperationFailure, ProtocolError
 
 from kitovu import utils
 from kitovu.sync import syncplugin
@@ -119,6 +119,9 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
             success = self._connection.connect(server_ip, self._info.port)
         except ConnectionRefusedError:
             raise utils.PluginOperationError(f'Could not connect to {server_ip}:{self._info.port}')
+        # FIXME Can be removed once https://github.com/miketeo/pysmb/issues/108 is fixed
+        except ProtocolError:
+            success = False
         if not success:
             raise utils.AuthenticationError(
                 f'Authentication failed for {server_ip}:{self._info.port}')
