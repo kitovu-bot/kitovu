@@ -13,7 +13,7 @@ Verwendung über die Kommandozeile
 Du kannst kitovu sowohl mit einer grafischen Oberfläche verwenden als auch über die Kommandozeile. Bevor du kitovu verwenden kannst, musst du jedoch die Konfigurationsdatei erstellen, siehe weiter unten.
 
 Die Kommandozeile bietet folgende Optionen:
-    
+
     * ``kitovu --help`` zeigt alle verfügbaren Optionen an
     * ``kitovu [command] --help`` zeigt die für den spezifischen Befehl alle verfügbaren Optionen an
     * ``kitovu gui`` startet die grafische Oberfläche
@@ -40,7 +40,7 @@ Konfiguration von kitovu
 Um überhaupt Dateien synchronisieren zu können, musst du zuerst festlegen, über welche Verbindungen das geschieht. Dies legst du in der Konfigurationsdatei fest. Je nach Betriebssystem liegt diese an einem anderen Ort. Du kannst diese Datei direkt mit ``kitovu edit`` bearbeiten. Alternativ siehst du, wo diese Datei gespeichert ist, indem du ``kitovu fileinfo`` auf der Kommandozeile eingibst. Die Datei kannst du in jedem beliebigen Texteditor konfigurieren.
 
 .. important::
-    
+
     Achte auf die korrekten Einrückungen, ansonsten ist die Konfiguration fehlerhaft!
 
 So sieht eine Beispielkonfiguration aus:
