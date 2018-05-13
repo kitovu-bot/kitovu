@@ -30,7 +30,10 @@ from kitovu import utils
 from kitovu.sync import syncing, settings
 
 
-@click.group()
+CLICK_SETTINGS = dict(help_option_names=['-h', '--help'])
+
+
+@click.group(context_settings=CLICK_SETTINGS)
 @click.option('--loglevel',
               type=click.Choice(['debug', 'info', 'warning', 'error', 'critical']),
               default='info')
