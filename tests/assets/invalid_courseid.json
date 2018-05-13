@@ -1,20 +1,5 @@
-HTTP/1.1 200 OK
-Accept-Ranges: none
-Access-Control-Allow-Origin: *
-Cache-Control: private, must-revalidate, pre-check=0, post-check=0, max-age=0
-Connection: Keep-Alive
-Content-Length: 164
-Content-Type: application/json
-Date: Sat, 12 May 2018 05:53:02 GMT
-Expires: Thu, 01 Jan 1970 00:00:00 GMT
-Keep-Alive: timeout=5, max=100
-Pragma: no-cache
-Server: Apache
-Strict-Transport-Security: max-age=15768000
-X-Frame-Options: sameorigin
-
 {
-    "errorcode": "invalidrecord", 
-    "exception": "dml_missing_record_exception", 
+    "errorcode": "invalidrecord",
+    "exception": "dml_missing_record_exception",
     "message": "Datensatz kann nicht in der Datenbanktabelle external_functions gefunden werden"
 }
