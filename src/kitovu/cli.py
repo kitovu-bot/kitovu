@@ -99,6 +99,13 @@ def edit(config: typing.Optional[pathlib.Path] = None, editor: typing.Optional[s
 
     if config is None:
         config = settings.get_config_file_path()
+        if not config.exists():
+            if not config.parent.exists():
+                config.parent.mkdir()
+            config.touch()
+    elif not config.exists():
+        raise click.ClickException(f"Could not find the configuration file {config}")
+
     subprocess.call([editor_path, config])
 
 
