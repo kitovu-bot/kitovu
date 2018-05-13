@@ -83,7 +83,7 @@ def start(connection_name: str, connection_settings: ConnectionSettings) -> None
     plugin.disconnect()
 
 
-def _sync_subject(subject: utils.JsonSchemaType,
+def _sync_subject(subject: utils.JsonType,
                   plugin: AbstractSyncPlugin,
                   cache: filecache.FileCache) -> None:
     logger.info(f'Syncing subject {subject["name"]}')

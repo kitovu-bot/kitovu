@@ -32,7 +32,7 @@ class Settings:
     root_dir: pathlib.Path = attr.ib()
     connections: typing.Dict[str, ConnectionSettings] = attr.ib()
 
-    SETTINGS_SCHEMA: utils.JsonSchemaType = {
+    SETTINGS_SCHEMA: utils.JsonType = {
         'type': 'object',
         'properties': {
             'root-dir': {'type': 'string'},
@@ -122,7 +122,7 @@ class Settings:
                 connection=raw_connection,
             )
 
-        subject_schema: utils.JsonSchemaType = {
+        subject_schema: utils.JsonType = {
             'type': 'array',
             'items': {
                 'type': 'object',

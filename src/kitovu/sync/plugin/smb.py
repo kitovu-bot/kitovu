@@ -185,7 +185,7 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
         mtime: int = self._attributes[path].last_write_time
         return mtime
 
-    def connection_schema(self) -> utils.JsonSchemaType:
+    def connection_schema(self) -> utils.JsonType:
         return {
             'type': 'object',
             'properties': {
