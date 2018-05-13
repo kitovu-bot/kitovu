@@ -100,4 +100,10 @@ class InvalidSettingsError(UsageError):
 
 
 class PluginOperationError(Error):
+    """Thrown when something in a plugin fails."""
+    pass
+
+
+class AuthenticationError(PluginOperationError):
+    """Thrown when the authentication could not be completed."""
     pass

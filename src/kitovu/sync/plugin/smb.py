@@ -9,6 +9,7 @@ import logging
 import attr
 from smb.SMBConnection import SMBConnection
 from smb.base import SharedFile
+from smb.smb_structs import OperationFailure, ProtocolError
 
 from kitovu import utils
 from kitovu.sync import syncplugin
@@ -105,14 +106,25 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
                                          sign_options=self._info.sign_options,
                                          is_direct_tcp=self._info.is_direct_tcp)
 
-        # FIXME: Handle OSError (not in HSR net)
-        server_ip: str = socket.gethostbyname(self._info.hostname)
+        try:
+            server_ip: str = socket.gethostbyname(self._info.hostname)
+        except socket.gaierror:
+            raise utils.PluginOperationError(
+                f'Could not find server {self._info.hostname}. '
+                'Maybe you need to open a VPN connection or the server is not available.')
+
         logger.debug(f'Connecting to {server_ip} ({self._info.hostname}) port {self._info.port}')
 
-        # FIXME: Handle smb.smb_structs.ProtocolError (wrong password)
-        success = self._connection.connect(server_ip, self._info.port)
+        try:
+            success = self._connection.connect(server_ip, self._info.port)
+        except (ConnectionRefusedError, socket.timeout):
+            raise utils.PluginOperationError(f'Could not connect to {server_ip}:{self._info.port}')
+        # FIXME Can be removed once https://github.com/miketeo/pysmb/issues/108 is fixed
+        except ProtocolError:
+            success = False
         if not success:
-            raise OSError(f'Connection failed to {server_ip}:{self._info.port}')
+            raise utils.AuthenticationError(
+                f'Authentication failed for {server_ip}:{self._info.port}')
 
     def disconnect(self) -> None:
         self._connection.close()
@@ -135,14 +147,24 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
         return self._create_digest(size=info.st_size, mtime=info.st_mtime)
 
     def create_remote_digest(self, path: pathlib.PurePath) -> str:
-        attributes = self._connection.getAttributes(self._info.share, str(path))
+        try:
+            attributes = self._connection.getAttributes(self._info.share, str(path))
+        except OperationFailure:
+            raise utils.PluginOperationError(
+                f'Could not find remote file {path} in share "{self._info.share}"')
+
         self._attributes[path] = attributes
         return self._create_digest(size=attributes.file_size,
                                    mtime=attributes.last_write_time)
 
     def list_path(self, path: pathlib.PurePath) -> typing.Iterable[pathlib.PurePath]:
         # FIXME: detect recursion
-        for entry in self._connection.listPath(self._info.share, str(path)):
+        try:
+            entries = self._connection.listPath(self._info.share, str(path))
+        except OperationFailure:
+            raise utils.PluginOperationError(f'Folder "{path}" not found')
+
+        for entry in entries:
             if entry.isDirectory:
                 if entry.filename not in [".", ".."]:
                     yield from self.list_path(pathlib.PurePath(path / entry.filename))
@@ -154,7 +176,12 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
                       path: pathlib.PurePath,
                       fileobj: typing.IO[bytes]) -> typing.Optional[int]:
         logger.debug(f'Retrieving file {path}')
-        self._connection.retrieveFile(self._info.share, str(path), fileobj)
+        try:
+            self._connection.retrieveFile(self._info.share, str(path), fileobj)
+        except OperationFailure:
+            raise utils.PluginOperationError(
+                f'Could not download {path} from share "{self._info.share}"')
+
         mtime: int = self._attributes[path].last_write_time
         return mtime
 
