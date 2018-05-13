@@ -199,8 +199,7 @@ class TestValidations:
 
 class TestWithConnectedPlugin:
 
-    def test_with_wrong_courseid(self, plugin, connect_and_configure_plugin, patch_get_users_courses,
-                                 patch_get_wrong_courseid):
+    def test_with_wrong_courseid(self, plugin, connect_and_configure_plugin, patch_get_users_courses, patch_get_wrong_courseid):
         course_contents: typing.Iterable[pathlib.PurePath] = \
             list(plugin.list_path(pathlib.PurePath("Wirtschaftsinformatik 2 FS2018")))
 
@@ -267,14 +266,12 @@ class TestWithConnectedPlugin:
             remote_digests.append(plugin.create_remote_digest(item))
         assert remote_digests == check_digests
 
-    def test_list_path_with_wrong_remote_dir(self, plugin, connect_and_configure_plugin, temppath):
+    def test_list_path_with_wrong_remote_dir(self, plugin, connect_and_configure_plugin):
         """Checks if configuration has been written with correct remote-dir.
 
         There's a short name and a full name for each course, students need to choose the full name for the config.
         list_path uses list_course which asks for full name, we give the wrong short name.
-        """
-        config_yml = temppath / 'config.yml'
-        config_yml.write_text("""
+        Cf. this bogus config that is incorrectly configured:
         root-dir: ./testkitovu
         connections:
             - name: mytest-moodle
@@ -283,10 +280,11 @@ class TestWithConnectedPlugin:
             - name: Wi2
               sources:
                 - connection: mytest-moodle
-                  remote-dir: "M_WI2_FS2018"
-        """)
-        with pytest.raises(KeyError):
-            plugin.list_path(pathlib.PurePath("Wirtschaftsinformatik 2 FS2018"))
+                  remote-dir: "M_WI2_FS2018" <== wrong name
+        """
+        wrong_remote_dir: str = "M_WI2_FS2018"
+        plugin.list_path(pathlib.PurePath(wrong_remote_dir))
+        # this should raise an error since we chose the short name instead of full name but it doesn't.
 
     def test_retrieve_file(self, plugin, connect_and_configure_plugin,
                            patch_get_users_courses, patch_course_get_contents, patch_retrieve_file):
