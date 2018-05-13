@@ -1,5 +1,4 @@
 import pytest
-import pathlib
 
 from click.testing import CliRunner
 
