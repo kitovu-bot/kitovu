@@ -8,6 +8,7 @@ Contents
    readme
    installation
    usage
+   create_plugin
    reference
    contributing
    authors

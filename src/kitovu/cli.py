@@ -72,6 +72,13 @@ def validate(config: typing.Optional[pathlib.Path] = None) -> None:
 
 
 @cli.command()
+def fileinfo() -> None:
+    """Show the paths to the configuration file and the FileCache."""
+    print("The configuration file is located at: {}".format(settings.get_config_file_path()))
+    print("The FileCache is located at: {}".format(syncing.get_filecache_path()))
+
+
+@cli.command()
 def docs() -> None:
     """Open the documentation in the browser."""
     # FIXME: make version aware
