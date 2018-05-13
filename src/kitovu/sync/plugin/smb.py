@@ -117,7 +117,7 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
 
         try:
             success = self._connection.connect(server_ip, self._info.port)
-        except ConnectionRefusedError:
+        except (ConnectionRefusedError, socket.timeout):
             raise utils.PluginOperationError(f'Could not connect to {server_ip}:{self._info.port}')
         # FIXME Can be removed once https://github.com/miketeo/pysmb/issues/108 is fixed
         except ProtocolError:
