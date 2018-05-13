@@ -86,7 +86,7 @@ Abschnitt ``connections``
 Abschnitt ``subjects``
 **********************
 
-``subjects`` bezeichnet ein Unterrichtsmodul, das du an der Schule belegst, beispielsweise "Betriebssysteme 1" oder "Objektorientierte Programmierung in Java".
+``subjects`` bezeichnet die Unterrichtsmodule, die du an der Schule belegst, beispielsweise "Betriebssysteme 1" oder "Objektorientierte Programmierung in Java".
 
 ``name``: Ein von dir frei wählbarer Name für das jeweilige Unterrichtsmodul.
 
