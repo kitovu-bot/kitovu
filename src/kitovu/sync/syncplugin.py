@@ -63,6 +63,6 @@ class AbstractSyncPlugin(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def connection_schema(self) -> utils.JsonSchemaType:
+    def connection_schema(self) -> utils.JsonType:
         """Returns a jsonschema to check for required properties passed to the configure method."""
         raise NotImplementedError
