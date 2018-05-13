@@ -87,18 +87,6 @@ def patch_get_wrong_wsfunction(responses):
 
 
 @pytest.fixture
-def patch_get_wrong_courseid(responses):
-    body: str = """
-        {
-        "errorcode": "invalidrecord",
-        "exception": "dml_missing_record_exception",
-        "message": "Datensatz kann nicht in der Datenbanktabelle external_functions gefunden werden"
-    }
-    """
-    _patch_request(responses, 'core_course_get_contents', body=body, courseid=424242)
-
-
-@pytest.fixture
 def connect_and_configure_plugin(plugin, patch_get_site_info, credentials):
     plugin.configure({})
     plugin.connect()
@@ -199,10 +187,6 @@ class TestValidations:
 
 class TestWithConnectedPlugin:
 
-    def test_with_wrong_courseid(self, plugin, connect_and_configure_plugin, patch_get_users_courses, patch_get_wrong_courseid):
-        course_contents: typing.Iterable[pathlib.PurePath] = \
-            list(plugin.list_path(pathlib.PurePath("Wirtschaftsinformatik 2 FS2018")))
-
     def test_list_remote_dir_of_courses(self, plugin, connect_and_configure_plugin, patch_get_users_courses):
         courses: typing.Iterable[pathlib.PurePath] = list(plugin.list_path(pathlib.PurePath("/")))
         expected_courses = [
@@ -266,11 +250,11 @@ class TestWithConnectedPlugin:
             remote_digests.append(plugin.create_remote_digest(item))
         assert remote_digests == check_digests
 
-    def test_list_path_with_wrong_remote_dir(self, plugin, connect_and_configure_plugin):
+    def test_list_path_with_wrong_remote_dir(self, plugin, connect_and_configure_plugin, patch_get_users_courses):
         """Checks if configuration has been written with correct remote-dir.
 
         There's a short name and a full name for each course, students need to choose the full name for the config.
-        list_path uses list_course which asks for full name, we give the wrong short name.
+        list_path uses list_course which asks for full name, we give the wrong short name. This test covers issue EPJ-92.
         Cf. this bogus config that is incorrectly configured:
         root-dir: ./testkitovu
         connections:
@@ -282,9 +266,10 @@ class TestWithConnectedPlugin:
                 - connection: mytest-moodle
                   remote-dir: "M_WI2_FS2018" <== wrong name
         """
+
         wrong_remote_dir: str = "M_WI2_FS2018"
-        plugin.list_path(pathlib.PurePath(wrong_remote_dir))
-        # this should raise an error since we chose the short name instead of full name but it doesn't.
+        with pytest.raises(utils.PluginOperationError):
+            plugin.list_path(pathlib.PurePath(wrong_remote_dir))
 
     def test_retrieve_file(self, plugin, connect_and_configure_plugin,
                            patch_get_users_courses, patch_course_get_contents, patch_retrieve_file):
@@ -294,3 +279,6 @@ class TestWithConnectedPlugin:
         fileobj = io.BytesIO()
         assert plugin.retrieve_file(remote_full_path, fileobj) == 1520803270
         assert fileobj.getvalue() == b"HELLO KITOVU"
+
+    def test_with_wrong_wsfunction(self, plugin, connect_and_configure_plugin):
+        raise NotImplementedError
