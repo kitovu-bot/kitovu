@@ -23,10 +23,6 @@ class ConfScreen(QWidget):
         self._vbox.addWidget(self._edit)
 
         self._conf_file: pathlib.Path = settings.get_config_file_path()
-        try:
-            self._edit.setPlainText(self._conf_file.read_text('utf-8'))
-        except FileNotFoundError:
-            pass
 
         self._buttons = QDialogButtonBox()
         self._cancel_button: QPushButton = self._buttons.addButton(
@@ -40,6 +36,12 @@ class ConfScreen(QWidget):
         self._cancel_button.clicked.connect(self.close_requested)
         self._save_button.clicked.connect(functools.partial(self.save, close=False))
         self._back_button.clicked.connect(functools.partial(self.save, close=True))
+
+    def load_file(self):
+        try:
+            self._edit.setPlainText(self._conf_file.read_text('utf-8'))
+        except FileNotFoundError:
+            pass
 
     def save(self, close: bool) -> None:
         text: str = self._edit.toPlainText()
