@@ -19,10 +19,10 @@ import pathlib
 import typing
 import sys
 import logging
-from distutils import spawn
 import subprocess
 import os
 import webbrowser
+from distutils import spawn
 
 import click
 
