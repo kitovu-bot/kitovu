@@ -23,6 +23,9 @@ good-names=f,i,ex
 [design]
 max-attributes = 10
 
+[format]
+ignore-long-lines=https?://
+
 [typecheck]
 # _CountingAttr: Needed for attrs
 # pathlib.PurePath: Detected when we actually have a pathlib.Path
