@@ -54,7 +54,7 @@ def gui() -> None:
 @cli.command()
 @click.option('--config', type=pathlib.Path, help="The configuration file to use")
 def sync(config: typing.Optional[pathlib.Path] = None) -> None:
-    """Synchronize with the given configuration file."""
+    """Synchronize new files."""
     try:
         syncing.start_all(config)
     except utils.UsageError as ex:
@@ -64,7 +64,7 @@ def sync(config: typing.Optional[pathlib.Path] = None) -> None:
 @cli.command()
 @click.option('--config', type=pathlib.Path, help="The configuration file to validate")
 def validate(config: typing.Optional[pathlib.Path] = None) -> None:
-    """Validates the specified configuration file."""
+    """Validate the configuration file."""
     try:
         syncing.validate_config(config)
     except utils.UsageError as ex:
@@ -73,9 +73,9 @@ def validate(config: typing.Optional[pathlib.Path] = None) -> None:
 
 @cli.command()
 def fileinfo() -> None:
-    """Show the paths to the configuration file and the FileCache."""
+    """Show the paths to files kitovu uses."""
     print("The configuration file is located at: {}".format(settings.get_config_file_path()))
-    print("The FileCache is located at: {}".format(syncing.get_filecache_path()))
+    print("The file cache is located at: {}".format(syncing.get_filecache_path()))
 
 
 @cli.command()
