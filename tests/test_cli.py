@@ -1,5 +1,4 @@
 import pytest
-import pathlib
 
 from click.testing import CliRunner
 
@@ -72,37 +71,51 @@ class TestEdit:
             self.subprocess_calls = []
             monkeypatch.setattr('subprocess.call', lambda args: self.subprocess_calls.append(args))
 
-        def test_with_an_available_editor(self, runner, monkeypatch):
-            result = runner.invoke(cli.edit, ['--config', 'test.yml'])
+        def test_with_a_missing_config(self, runner, monkeypatch, temppath):
+            config = temppath / 'test.yml'
+            result = runner.invoke(cli.edit, ['--config', config])
+
+            assert result.exit_code == 1
+
+            assert result.output == f'Error: Could not find the configuration file {config}\n'
+
+        def test_with_an_available_editor(self, runner, monkeypatch, temppath):
+            config = temppath / 'test.yml'
+            config.touch()
+            result = runner.invoke(cli.edit, ['--config', config])
 
             assert result.exception is None
             assert result.exit_code == 0
 
             assert self.checked_editors == ['vim']
             assert result.output == ''
-            assert self.subprocess_calls == [['/some/example/path/vim', pathlib.Path('test.yml')]]
+            assert self.subprocess_calls == [['/some/example/path/vim', config]]
 
-        def test_with_an_available_editor_from_the_args(self, runner, monkeypatch):
-            result = runner.invoke(cli.edit, ['--editor', 'myeditor', '--config', 'test.yml'])
+        def test_with_an_available_editor_from_the_args(self, runner, monkeypatch, temppath):
+            config = temppath / 'test.yml'
+            config.touch()
+            result = runner.invoke(cli.edit, ['--editor', 'myeditor', '--config', config])
 
             assert result.exception is None
             assert result.exit_code == 0
 
             assert self.checked_editors == ['myeditor']
             assert result.output == ''
-            assert self.subprocess_calls == [['/some/example/path/myeditor', pathlib.Path('test.yml')]]
+            assert self.subprocess_calls == [['/some/example/path/myeditor', config]]
 
-        def test_with_an_available_editor_from_the_env(self, runner, monkeypatch):
+        def test_with_an_available_editor_from_the_env(self, runner, monkeypatch, temppath):
             monkeypatch.setenv('EDITOR', 'editor_from_env')
 
-            result = runner.invoke(cli.edit, ['--config', 'test.yml'])
+            config = temppath / 'test.yml'
+            config.touch()
+            result = runner.invoke(cli.edit, ['--config', config])
 
             assert result.exception is None
             assert result.exit_code == 0
 
             assert self.checked_editors == ['editor_from_env']
             assert result.output == ''
-            assert self.subprocess_calls == [['/some/example/path/editor_from_env', pathlib.Path('test.yml')]]
+            assert self.subprocess_calls == [['/some/example/path/editor_from_env', config]]
 
         def _find_executable_patch(self, editor):
             self.checked_editors.append(editor)
