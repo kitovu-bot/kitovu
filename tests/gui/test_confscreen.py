@@ -24,6 +24,7 @@ def kitovu_yaml(monkeypatch, temppath):
 @pytest.fixture
 def screen(qtbot):
     cs = confscreen.ConfScreen()
+    cs.load_file()
     qtbot.add_widget(cs)
     return cs
 

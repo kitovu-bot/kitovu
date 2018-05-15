@@ -37,7 +37,7 @@ class ConfScreen(QWidget):
         self._save_button.clicked.connect(functools.partial(self.save, close=False))
         self._back_button.clicked.connect(functools.partial(self.save, close=True))
 
-    def load_file(self):
+    def load_file(self) -> None:
         try:
             self._edit.setPlainText(self._conf_file.read_text('utf-8'))
         except FileNotFoundError:
