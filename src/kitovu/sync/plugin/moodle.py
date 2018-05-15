@@ -48,7 +48,11 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         logger.debug(f'Getting {url} with data {req_data}')
 
         req: requests.Response = requests.get(url, req_data)
-        assert req.status_code == 200, req  # FIXME
+        try:
+            req.raise_for_status()
+        except requests.exceptions.HTTPError as ex:
+            raise utils.PluginOperationError(f"HTTP error: {ex}.")
+
         data: JsonType = req.json()
         logger.debug(f'Got data: {data}')
         self._check_json_answer(data)
@@ -154,7 +158,11 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         logger.debug(f'Getting {moodle_file.url}')
 
         req: requests.Response = requests.get(moodle_file.url, {'token': self._token})
-        assert req.status_code == 200, req  # FIXME
+        try:
+            req.raise_for_status()
+        except requests.exceptions.HTTPError as ex:
+            raise utils.PluginOperationError(f"HTTP error: {ex}.")
+
         if 'json' in req.headers['content-type']:
             data: JsonType = req.json()
             self._check_json_answer(data)

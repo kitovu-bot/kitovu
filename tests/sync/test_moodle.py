@@ -36,7 +36,7 @@ def credentials():
     keyring.set_password("kitovu-moodle", "https://example.com/", "some_token")
 
 
-def _patch_request(responses, wsfunction: str, body: str, **kwargs: str) -> None:
+def _patch_request(responses, wsfunction: str, body: str, status: int = 200, **kwargs: str) -> None:
     url = 'https://moodle.hsr.ch/webservice/rest/server.php'
     req_data: typing.Dict[str, str] = {
         'wstoken': 'some_token',
@@ -46,13 +46,18 @@ def _patch_request(responses, wsfunction: str, body: str, **kwargs: str) -> None
     req_data.update(**kwargs)
     querystring = urllib.parse.urlencode(req_data)
     responses.add(responses.GET, f'{url}?{querystring}',
-                  content_type="application/json", body=body, match_querystring=True)
+                  content_type="application/json", body=body, match_querystring=True, status=status)
 
 
 @pytest.fixture
 def patch_get_site_info(responses, moodle_assets_dir):
     body: str = (moodle_assets_dir / 'get_site_info.json').read_text(encoding='utf-8')
     _patch_request(responses, 'core_webservice_get_site_info', body=body)
+
+
+@pytest.fixture
+def patch_get_site_info_server_error(responses):
+    _patch_request(responses, 'core_webservice_get_site_info', body="Kitovu-Error", status=500)
 
 
 @pytest.fixture
@@ -132,6 +137,11 @@ class TestConnect:
             plugin.connect()
 
     def test_with_wrong_wsfunction(self, plugin, credentials, patch_get_wrong_wsfunction):
+        plugin.configure({})
+        with pytest.raises(utils.PluginOperationError):
+            plugin.connect()
+
+    def test_for_http_error_statuscode(self, plugin, credentials, patch_get_site_info_server_error):
         plugin.configure({})
         with pytest.raises(utils.PluginOperationError):
             plugin.connect()
