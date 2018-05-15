@@ -1,0 +1,223 @@
+[
+    {
+        "hiddenbynumsections": 0,
+        "id": 16123,
+        "modules": [
+            {
+                "id": 41330,
+                "indent": 0,
+                "instance": 2052,
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/forum/1519906000/icon",
+                "modname": "forum",
+                "modplural": "Foren",
+                "name": "Nachrichtenforum",
+                "url": "https://moodle.hsr.ch/mod/forum/view.php?id=41330",
+                "uservisible": true,
+                "visible": 1,
+                "visibleoncoursepage": 1
+            }
+        ],
+        "name": "Organisatorisches ",
+        "section": 0,
+        "summary": "",
+        "summaryformat": 1,
+        "uservisible": true,
+        "visible": 1
+    },
+    {
+        "hiddenbynumsections": 0,
+        "id": 16125,
+        "modules": [
+            {
+                "contents": [
+                    {
+                        "author": "Frank Koch",
+                        "filename": "Geschäftsprozessmanagement.pdf",
+                        "filepath": "/",
+                        "filesize": 4267895,
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/75099/mod_resource/content/7/Gesch%C3%A4ftsprozessmanagement.pdf?forcedownload=1",
+                        "isexternalfile": false,
+                        "license": "allrightsreserved",
+                        "mimetype": "application/pdf",
+                        "sortorder": 1,
+                        "timecreated": 1520803268,
+                        "timemodified": 1520803270,
+                        "type": "file",
+                        "userid": 1054
+                    }
+                ],
+                "id": 41345,
+                "indent": 0,
+                "instance": 19700,
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/core/1519906000/f/pdf-24",
+                "modname": "resource",
+                "modplural": "Dateien",
+                "name": "Geschäftsprozessmanagement",
+                "url": "https://moodle.hsr.ch/mod/resource/view.php?id=41345",
+                "uservisible": true,
+                "visible": 1,
+                "visibleoncoursepage": 1
+            },
+            {
+                "contents": [
+                    {
+                        "author": null,
+                        "filename": "index.html",
+                        "filepath": "/",
+                        "filesize": 0,
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/75100/mod_page/content/index.html?forcedownload=1",
+                        "license": null,
+                        "sortorder": 1,
+                        "timecreated": null,
+                        "timemodified": 1487838705,
+                        "type": "file",
+                        "userid": null
+                    }
+                ],
+                "id": 41346,
+                "indent": 0,
+                "instance": 1875,
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/page/1519906000/icon",
+                "modname": "page",
+                "modplural": "Textseiten",
+                "name": "Vielerlei Konzepte im Geschäftsprozessmanagement",
+                "url": "https://moodle.hsr.ch/mod/page/view.php?id=41346",
+                "uservisible": true,
+                "visible": 1,
+                "visibleoncoursepage": 1
+            },
+            {
+                "contents": [
+                    {
+                        "author": null,
+                        "filename": "index.html",
+                        "filepath": "/",
+                        "filesize": 0,
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/75101/mod_page/content/index.html?forcedownload=1",
+                        "license": null,
+                        "sortorder": 1,
+                        "timecreated": null,
+                        "timemodified": 1520427130,
+                        "type": "file",
+                        "userid": null
+                    }
+                ],
+                "id": 41347,
+                "indent": 0,
+                "instance": 1876,
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/page/1519906000/icon",
+                "modname": "page",
+                "modplural": "Textseiten",
+                "name": "Lösung Aufgabe 1",
+                "url": "https://moodle.hsr.ch/mod/page/view.php?id=41347",
+                "uservisible": true,
+                "visible": 1,
+                "visibleoncoursepage": 1
+            }
+        ],
+        "name": "Geschäftsprozessmanagement",
+        "section": 2,
+        "summary": "<p><img src=\"https://moodle.hsr.ch/webservice/pluginfile.php/75078/course/section/16125/Unbenannt.JPG\" alt=\"\" width=\"500\" height=\"151\" role=\"presentation\" class=\"img-responsive atto_image_button_text-bottom\"><br></p>",
+        "summaryformat": 1,
+        "uservisible": true,
+        "visible": 1
+    },
+    {
+        "hiddenbynumsections": 0,
+        "id": 16126,
+        "modules": [
+            {
+                "contents": [
+                    {
+                        "author": "Frank Koch",
+                        "filename": "1. Introduction to Business Process Management.pdf",
+                        "filepath": "/",
+                        "filesize": 2119487,
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/75122/mod_resource/content/7/1.%20Introduction%20to%20Business%20Process%20Management.pdf?forcedownload=1",
+                        "isexternalfile": false,
+                        "license": "allrightsreserved",
+                        "mimetype": "application/pdf",
+                        "sortorder": 1,
+                        "timecreated": 1490374821,
+                        "timemodified": 1490374823,
+                        "type": "file",
+                        "userid": 1054
+                    }
+                ],
+                "id": 41368,
+                "indent": 0,
+                "instance": 19708,
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/core/1519906000/f/pdf-24",
+                "modname": "resource",
+                "modplural": "Dateien",
+                "name": "1. Introduction to Business Process Management",
+                "url": "https://moodle.hsr.ch/mod/resource/view.php?id=41368",
+                "uservisible": true,
+                "visible": 1,
+                "visibleoncoursepage": 1
+            },
+            {
+                "description": "<div class=\"no-overflow\"><p>Die Quiz-Fragen zu diesem Kursabschnitt finden Sie unter dem Tag <b>BPMN1 </b>im <a href=\"https://moodle.hsr.ch/mod/studentquiz/view.php?id=47130\" target=\"_blank\">StudentQuiz</a>.</p></div>",
+                "id": 49720,
+                "indent": 0,
+                "instance": 3467,
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/label/1519906000/icon",
+                "modname": "label",
+                "modplural": "Textfelder",
+                "name": "Die Quiz-Fragen zu diesem Kursabschnitt finden Sie...",
+                "uservisible": true,
+                "visible": 1,
+                "visibleoncoursepage": 1
+            },
+            {
+                "id": 41376,
+                "indent": 0,
+                "instance": 1388,
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/assign/1519906000/icon",
+                "modname": "assign",
+                "modplural": "Aufgaben",
+                "name": "Modeling Task 1 - Loan application at Wall Street Oasis (WSO) bank",
+                "url": "https://moodle.hsr.ch/mod/assign/view.php?id=41376",
+                "uservisible": true,
+                "visible": 1,
+                "visibleoncoursepage": 1
+            },
+            {
+                "contents": [
+                    {
+                        "author": "Frank Koch",
+                        "filename": "Modeling Task 1 - Loan application at Wall Street Oasis (WSO) bank.PNG",
+                        "filepath": "/",
+                        "filesize": 44733,
+                        "fileurl": "https://moodle.hsr.ch/webservice/pluginfile.php/75131/mod_resource/content/7/Modeling%20Task%201%20-%20Loan%20application%20at%20Wall%20Street%20Oasis%20%28WSO%29%20bank.PNG?forcedownload=1",
+                        "isexternalfile": false,
+                        "license": "allrightsreserved",
+                        "mimetype": "image/png",
+                        "sortorder": 1,
+                        "timecreated": 1396277814,
+                        "timemodified": 1396277827,
+                        "type": "file",
+                        "userid": 1054
+                    }
+                ],
+                "id": 41377,
+                "indent": 1,
+                "instance": 19709,
+                "modicon": "https://moodle.hsr.ch/theme/image.php/boost/core/1519906000/f/png-24",
+                "modname": "resource",
+                "modplural": "Dateien",
+                "name": "Solution Modeling Task 1 - Loan application at Wall Street Oasis (WSO) bank",
+                "url": "https://moodle.hsr.ch/mod/resource/view.php?id=41377",
+                "uservisible": true,
+                "visible": 1,
+                "visibleoncoursepage": 1
+            }
+        ],
+        "name": "BPMN1 - Introduction to Business Process Management",
+        "section": 3,
+        "summary": "<p><img src=\"https://moodle.hsr.ch/webservice/pluginfile.php/75078/course/section/16126/Unbenannt.JPG\" alt=\"\" width=\"400\" height=\"176\" role=\"presentation\" class=\"img-responsive atto_image_button_text-bottom\"><br></p>",
+        "summaryformat": 1,
+        "uservisible": true,
+        "visible": 1
+    }
+]

@@ -47,13 +47,29 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         logger.debug(f'Getting {url} with data {req_data}')
 
         req: requests.Response = requests.get(url, req_data)
-        assert req.status_code == 200, req  # FIXME
+        try:
+            req.raise_for_status()
+        except requests.exceptions.HTTPError as ex:
+            raise utils.PluginOperationError(f"HTTP error: {ex}.")
+
         data: utils.JsonType = req.json()
         logger.debug(f'Got data: {data}')
-
-        assert 'exception' not in data, data
-        assert 'error' not in data, data
+        self._check_json_answer(data)
         return data
+
+    def _check_json_answer(self, data: utils.JsonType) -> None:
+        if not isinstance(data, dict):
+            return
+        errorcode: str = data.get("errorcode", None)
+        if errorcode == "invalidtoken":
+            raise utils.AuthenticationError(data['message'])
+        elif errorcode == "invalidrecord":  # e.g. invalid ws_function, invalid course ID
+            # given error message is hard to understand,
+            # writing a better to understand one instead
+            raise utils.PluginOperationError(
+                "You requested something from Moodle which it couldn't get.")
+        elif "exception" in data:  # base case for errors
+            raise utils.PluginOperationError(data["message"])
 
     def configure(self, info: utils.JsonType) -> None:
         self._url: str = info.get('url', 'https://moodle.hsr.ch/')
@@ -78,7 +94,8 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         stats: os.stat_result = path.stat()
         # unfortunately html files have a size of 0
         size: int = 0 if path.suffix == '.html' else stats.st_size
-        return self._create_digest(size, int(stats.st_mtime))
+        mtime = int(stats.st_mtime)
+        return self._create_digest(size, mtime)
 
     def create_remote_digest(self, path: pathlib.PurePath) -> str:
         moodle_file: _MoodleFile = self._files[path]
@@ -98,7 +115,10 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         if not self._courses:
             self._list_courses()
 
+        if course not in self._courses:
+            raise utils.PluginOperationError(f"The remote-dir '{course}' was not found.")
         course_id: int = self._courses[course]
+
         lessons: typing.List[utils.JsonType] = self._request('core_course_get_contents',
                                                              courseid=str(course_id))
 
@@ -133,15 +153,21 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
     def retrieve_file(self,
                       path: pathlib.PurePath,
                       fileobj: typing.IO[bytes]) -> typing.Optional[int]:
+        assert self._files, "list_path was never called, no files available."
         moodle_file: _MoodleFile = self._files[path]
         logger.debug(f'Getting {moodle_file.url}')
 
         req: requests.Response = requests.get(moodle_file.url, {'token': self._token})
-        assert req.status_code == 200, req  # FIXME
+        try:
+            req.raise_for_status()
+        except requests.exceptions.HTTPError as ex:
+            raise utils.PluginOperationError(f"HTTP error: {ex}.")
+
+        # Errors from Moodle are delivered as json.
         if 'json' in req.headers['content-type']:
             data: utils.JsonType = req.json()
-            assert 'exception' not in data, data
-            assert 'error' not in data, data
+            self._check_json_answer(data)
+
         for chunk in req:
             fileobj.write(chunk)
 
