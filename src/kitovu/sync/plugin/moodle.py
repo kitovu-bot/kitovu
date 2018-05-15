@@ -57,7 +57,12 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
 
     def _check_json_answer(self, data: utils.JsonType) -> None:
         if not isinstance(data, dict):
+            # For some requests, Moodle responds with an JSON array (list) and
+            # not a JSON object (dict). However, in case of an error, we always
+            # get a dict - so we bail out early and assume a correct answer if
+            # we get something else.
             return
+
         errorcode: str = data.get("errorcode", None)
         if errorcode == "invalidtoken":
             raise utils.AuthenticationError(data['message'])
