@@ -273,7 +273,7 @@ class TestWithConnectedPlugin:
 
         wrong_remote_dir: str = "M_WI2_FS2018"
         with pytest.raises(utils.PluginOperationError):
-            plugin.list_path(pathlib.PurePath(wrong_remote_dir))
+            list(plugin.list_path(pathlib.PurePath(wrong_remote_dir)))
 
     def test_retrieve_file(self, plugin, connect_and_configure_plugin,
                            patch_get_users_courses, patch_course_get_contents, patch_retrieve_file):
