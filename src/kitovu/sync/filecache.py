@@ -51,6 +51,7 @@ import pathlib
 import typing
 import logging
 
+import appdirs
 import attr
 
 from kitovu.sync import syncplugin
@@ -67,6 +68,10 @@ class FileState(enum.Enum):
     NO_CHANGES = 5
     LOCAL_CHANGED = 6
     BOTH_CHANGED = 7
+
+
+def get_path() -> pathlib.Path:
+    return pathlib.Path(appdirs.user_data_dir('kitovu')) / 'filecache.json'
 
 
 @attr.s

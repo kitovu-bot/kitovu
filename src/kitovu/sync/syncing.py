@@ -5,7 +5,6 @@ import pathlib
 import typing
 import logging
 
-import appdirs
 import stevedore
 import stevedore.driver
 import stevedore.exception
@@ -64,7 +63,7 @@ def start(connection_name: str, connection_settings: ConnectionSettings) -> None
         logger.error(f'Error from {plugin.NAME} plugin: {ex}, skipping this plugin')
         return
 
-    filecache_path: pathlib.Path = get_filecache_path()
+    filecache_path: pathlib.Path = filecache.get_path()
     cache: filecache.FileCache = filecache.FileCache(filecache_path)
     cache.load()
 
@@ -156,7 +155,3 @@ def validate_config(config_file: typing.Optional[pathlib.Path]) -> None:
         _load_plugin(connection_settings, validator)
     if not validator.is_valid:
         validator.raise_error()
-
-
-def get_filecache_path() -> pathlib.Path:
-    return pathlib.Path(appdirs.user_data_dir('kitovu')) / 'filecache.json'
