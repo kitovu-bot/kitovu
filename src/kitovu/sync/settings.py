@@ -16,6 +16,14 @@ logger: logging.Logger = logging.getLogger(__name__)
 SimpleDict = typing.Dict[str, typing.Any]
 
 
+def get_config_dir_path() -> pathlib.Path:
+    return pathlib.Path(appdirs.user_config_dir('kitovu'))
+
+
+def get_config_file_path() -> pathlib.Path:
+    return get_config_dir_path() / 'kitovu.yaml'
+
+
 @attr.s
 class ConnectionSettings:
     """The settings of a single connection."""
@@ -172,11 +180,3 @@ class Settings:
                 connections[connection_usage.pop('connection')].subjects.append(connection_usage)
 
         return connections
-
-
-def get_config_dir_path() -> pathlib.Path:
-    return pathlib.Path(appdirs.user_config_dir('kitovu'))
-
-
-def get_config_file_path() -> pathlib.Path:
-    return get_config_dir_path() / 'kitovu.yaml'
