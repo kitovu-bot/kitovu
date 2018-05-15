@@ -108,7 +108,10 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         if not self._courses:
             self._list_courses()
 
+        if course not in self._courses:
+            raise utils.PluginOperationError(f"The remote-dir '{course}' was not found.")
         course_id: int = self._courses[course]
+
         lessons: typing.List[JsonType] = self._request('core_course_get_contents',
                                                        courseid=str(course_id))
 
