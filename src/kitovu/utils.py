@@ -107,7 +107,3 @@ class PluginOperationError(Error):
 class AuthenticationError(PluginOperationError):
     """Thrown when the authentication could not be completed."""
     pass
-
-
-class AuthenticationError(Error):
-    pass
