@@ -82,11 +82,10 @@ class Settings:
         if validator is None:
             validator = utils.SchemaValidator()
 
-        # FIXME handle OSError and UnicodeDecodeError
         try:
             data = yaml.load(stream)
-        except yaml.YAMLError as error:
-            raise utils.UsageError(f"Invalid Configuration:\n{error}")
+        except (yaml.YAMLError, OSError, UnicodeDecodeError) as error:
+            raise utils.UsageError(f"Failed to load configuration:\n{error}")
 
         validator.validate(data, cls.SETTINGS_SCHEMA)
 
