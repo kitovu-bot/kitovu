@@ -88,7 +88,7 @@ def patch_get_wrong_wsfunction(responses):
         "message": "Datensatz kann nicht in der Datenbanktabelle external_functions gefunden werden"
     }
     """
-    _patch_request(responses, 'mistake_webservice_get_site_info', body=body, wstoken="some_token")
+    _patch_request(responses, 'core_webservice_get_site_info', body=body, wstoken="some_token")
 
 
 @pytest.fixture
@@ -132,7 +132,6 @@ class TestConnect:
             plugin.connect()
 
     def test_with_wrong_wsfunction(self, plugin, credentials, patch_get_wrong_wsfunction):
-        keyring.set_password("kitovu-moodle", "https://moodle.hsr.ch/", "some_token")
         plugin.configure({})
         with pytest.raises(utils.PluginOperationError):
             plugin.connect()
@@ -284,6 +283,3 @@ class TestWithConnectedPlugin:
         fileobj = io.BytesIO()
         assert plugin.retrieve_file(remote_full_path, fileobj) == 1520803270
         assert fileobj.getvalue() == b"HELLO KITOVU"
-
-    def test_with_wrong_wsfunction(self, plugin, connect_and_configure_plugin):
-        raise NotImplementedError
