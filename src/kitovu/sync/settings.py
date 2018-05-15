@@ -4,6 +4,8 @@ import pathlib
 import typing
 import os.path
 import logging
+import subprocess
+from distutils import spawn
 
 import appdirs
 import yaml
@@ -18,6 +20,48 @@ SimpleDict = typing.Dict[str, typing.Any]
 
 def get_config_file_path() -> pathlib.Path:
     return pathlib.Path(appdirs.user_config_dir('kitovu')) / 'kitovu.yaml'
+
+
+class EditorSpawner:
+
+    DEFAULT_EDITORS = [
+        'vim',
+        'emacs',
+        'nano',
+        'editor',
+        'notepad',
+    ]
+    DEFAULT_EDITORS_STR = ', '.join(DEFAULT_EDITORS)
+
+    def edit(self,
+             config: typing.Optional[pathlib.Path] = None,
+             editor: typing.Optional[str] = None) -> None:
+        if editor is None and 'EDITOR' in os.environ:
+            editor = os.environ['EDITOR']
+        editor_path: str = self._get_editor_path(editor)
+
+        if config is None:
+            config = get_config_file_path()
+            config.parent.mkdir(exist_ok=True)
+            config.touch(exist_ok=True)
+        elif not config.exists():
+            raise utils.UsageError(f"Could not find the configuration file {config}")
+
+        subprocess.call([editor_path, config])
+
+    def _get_editor_path(self, editor: typing.Optional[str]) -> str:
+        if editor is not None:
+            path = spawn.find_executable(editor)
+            if path is None:
+                raise utils.UsageError(f"Could not find the editor {editor}")
+            return path
+
+        for default_editor in self.DEFAULT_EDITORS:
+            path = spawn.find_executable(default_editor)
+            if path is not None:
+                return path
+
+        raise utils.UsageError('Could not find a valid editor')
 
 
 @attr.s
