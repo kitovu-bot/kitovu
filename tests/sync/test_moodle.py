@@ -97,19 +97,19 @@ def patch_get_wrong_wsfunction(responses):
 
 
 @pytest.fixture
-def connect_and_configure_plugin(plugin, patch_get_site_info, credentials):
-    plugin.configure({})
-    plugin.connect()
-    yield
-    plugin.disconnect()
-
-
-@pytest.fixture
 def patch_retrieve_file(responses) -> None:
     url = ("https://moodle.hsr.ch/webservice/pluginfile.php/75099/mod_resource/content/7/"
            "Gesch%C3%A4ftsprozessmanagement.pdf?forcedownload=1&token=some_token")
     responses.add(responses.GET, url, content_type="application/octet-stream",
                   body="HELLO KITOVU", match_querystring=True)
+
+
+@pytest.fixture
+def connect_and_configure_plugin(plugin, patch_get_site_info, credentials):
+    plugin.configure({})
+    plugin.connect()
+    yield
+    plugin.disconnect()
 
 
 @pytest.mark.parametrize("info, expected", [
