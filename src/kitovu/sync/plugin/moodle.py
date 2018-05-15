@@ -56,7 +56,7 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         logger.debug(f'Got data: {data}')
         self._check_json_answer(data)
         return data
-      
+
     def _check_json_answer(self, data: utils.JsonType) -> None:
         if not isinstance(data, dict):
             return
@@ -118,7 +118,7 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         if course not in self._courses:
             raise utils.PluginOperationError(f"The remote-dir '{course}' was not found.")
         course_id: int = self._courses[course]
- 
+
         lessons: typing.List[utils.JsonType] = self._request('core_course_get_contents',
                                                              courseid=str(course_id))
 
