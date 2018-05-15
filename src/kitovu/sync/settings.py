@@ -74,6 +74,8 @@ class Settings:
                 return cls.from_yaml_stream(stream, validator)
         except FileNotFoundError as error:
             raise utils.UsageError(f'Could not find the file {error.filename}')
+        except OSError as error:
+            raise utils.UsageError(f'Failed to open config file: {error}')
 
     @classmethod
     def from_yaml_stream(cls, stream: typing.IO,
