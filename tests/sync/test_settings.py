@@ -55,6 +55,6 @@ def test_invalid_yaml_files(temppath: pathlib.Path):
 
     with pytest.raises(utils.UsageError) as excinfo:
         Settings.from_yaml_file(config_yml)
-    assert str(excinfo.value) == f"""Invalid Configuration:
+    assert str(excinfo.value) == f"""Failed to load configuration:
 mapping values are not allowed here
   in "{config_yml}", line 5, column 16"""
