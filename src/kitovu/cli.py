@@ -24,7 +24,7 @@ import webbrowser
 import click
 
 from kitovu import utils
-from kitovu.sync import syncing, settings
+from kitovu.sync import syncing, settings, filecache
 
 
 @click.group(context_settings={'help_option_names': ['-h', '--help']})
@@ -72,7 +72,7 @@ def validate(config: typing.Optional[pathlib.Path] = None) -> None:
 def fileinfo() -> None:
     """Show the paths to files kitovu uses."""
     print("The configuration file is located at: {}".format(settings.get_config_file_path()))
-    print("The file cache is located at: {}".format(syncing.get_filecache_path()))
+    print("The file cache is located at: {}".format(filecache.get_path()))
 
 
 @cli.command()
