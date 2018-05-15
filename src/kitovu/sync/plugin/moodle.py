@@ -13,7 +13,6 @@ from kitovu.sync import syncplugin
 
 
 logger: logging.Logger = logging.getLogger(__name__)
-JsonType = typing.Dict[str, typing.Any]
 
 
 @attr.s
@@ -53,12 +52,12 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         except requests.exceptions.HTTPError as ex:
             raise utils.PluginOperationError(f"HTTP error: {ex}.")
 
-        data: JsonType = req.json()
+        data: utils.JsonType = req.json()
         logger.debug(f'Got data: {data}')
         self._check_json_answer(data)
         return data
-
-    def _check_json_answer(self, data: JsonType) -> None:
+      
+    def _check_json_answer(self, data: utils.JsonType) -> None:
         if not isinstance(data, dict):
             return
         errorcode: str = data.get("errorcode", None)
@@ -72,18 +71,17 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         elif "exception" in data:  # base case for errors
             raise utils.PluginOperationError(data["message"])
 
-    def configure(self, info: JsonType) -> None:
+    def configure(self, info: utils.JsonType) -> None:
         self._url: str = info.get('url', 'https://moodle.hsr.ch/')
         if not self._url.endswith('/'):
             self._url += '/'
 
-        prompt = ("Enter token from https://moodle.hsr.ch/user/preferences.php -> "
-                  "Sicherheitsschlüssel")
+        prompt = f"Enter token from {self._url}user/preferences.php -> Sicherheitsschlüssel"
         self._token = utils.get_password('moodle', self._url, prompt)
 
     def connect(self) -> None:
         # Get our own user ID
-        site_info: JsonType = self._request('core_webservice_get_site_info')
+        site_info: utils.JsonType = self._request('core_webservice_get_site_info')
         self._user_id: int = site_info['userid']
 
     def disconnect(self) -> None:
@@ -104,8 +102,8 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         return self._create_digest(moodle_file.size, moodle_file.changed_at)
 
     def _list_courses(self) -> typing.Iterable[str]:
-        courses: typing.List[JsonType] = self._request('core_enrol_get_users_courses',
-                                                       userid=str(self._user_id))
+        courses: typing.List[utils.JsonType] = self._request('core_enrol_get_users_courses',
+                                                             userid=str(self._user_id))
         for course in courses:
             self._courses[course['fullname']] = int(course['id'])
         logger.debug(f'Got courses: {self._courses}')
@@ -120,9 +118,9 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         if course not in self._courses:
             raise utils.PluginOperationError(f"The remote-dir '{course}' was not found.")
         course_id: int = self._courses[course]
-
-        lessons: typing.List[JsonType] = self._request('core_course_get_contents',
-                                                       courseid=str(course_id))
+ 
+        lessons: typing.List[utils.JsonType] = self._request('core_course_get_contents',
+                                                             courseid=str(course_id))
 
         for section in lessons:
             section_nr = "{:02d}".format(section['section'])
@@ -167,7 +165,7 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
 
         # Errors from Moodle are delivered as json.
         if 'json' in req.headers['content-type']:
-            data: JsonType = req.json()
+            data: utils.JsonType = req.json()
             self._check_json_answer(data)
 
         for chunk in req:
@@ -175,7 +173,7 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
 
         return moodle_file.changed_at
 
-    def connection_schema(self) -> utils.JsonSchemaType:
+    def connection_schema(self) -> utils.JsonType:
         return {
             'type': 'object',
             'properties': {

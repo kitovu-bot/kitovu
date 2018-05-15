@@ -44,7 +44,7 @@ def sanitize_filename(name: pathlib.PurePath) -> pathlib.PurePath:
     return pathlib.PurePath(name_str)
 
 
-JsonSchemaType = typing.Dict[str, typing.Any]
+JsonType = typing.Dict[str, typing.Any]
 
 
 class SchemaValidator:
@@ -54,7 +54,7 @@ class SchemaValidator:
         self.errors: typing.List[jsonschema.exceptions.ValidationError] = []
         self._abort: bool = abort
 
-    def validate(self, data: typing.Any, schema: JsonSchemaType) -> None:
+    def validate(self, data: typing.Any, schema: JsonType) -> None:
         """Validates the given data with the schema."""
         validator_type = jsonschema.validators.validator_for(schema)
         self.errors.extend(validator_type(schema).iter_errors(data))
@@ -100,6 +100,12 @@ class InvalidSettingsError(UsageError):
 
 
 class PluginOperationError(Error):
+    """Thrown when something in a plugin fails."""
+    pass
+
+
+class AuthenticationError(PluginOperationError):
+    """Thrown when the authentication could not be completed."""
     pass
 
 

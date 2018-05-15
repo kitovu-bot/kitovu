@@ -30,7 +30,7 @@ from kitovu import utils
 from kitovu.sync import syncing, settings
 
 
-@click.group()
+@click.group(context_settings={'help_option_names': ['-h', '--help']})
 @click.option('--loglevel',
               type=click.Choice(['debug', 'info', 'warning', 'error', 'critical']),
               default='info')
@@ -72,6 +72,13 @@ def validate(config: typing.Optional[pathlib.Path] = None) -> None:
 
 
 @cli.command()
+def fileinfo() -> None:
+    """Show the paths to the configuration file and the FileCache."""
+    print("The configuration file is located at: {}".format(settings.get_config_file_path()))
+    print("The FileCache is located at: {}".format(syncing.get_filecache_path()))
+
+
+@cli.command()
 def docs() -> None:
     """Open the documentation in the browser."""
     # FIXME: make version aware
@@ -99,6 +106,11 @@ def edit(config: typing.Optional[pathlib.Path] = None, editor: typing.Optional[s
 
     if config is None:
         config = settings.get_config_file_path()
+        config.parent.mkdir(exist_ok=True)
+        config.touch(exist_ok=True)
+    elif not config.exists():
+        raise click.ClickException(f"Could not find the configuration file {config}")
+
     subprocess.call([editor_path, config])
 
 

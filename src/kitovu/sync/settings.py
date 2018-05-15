@@ -30,10 +30,9 @@ class Settings:
     """A class representing the settings of all connections"""
 
     root_dir: pathlib.Path = attr.ib()
-    global_ignore: typing.List[str] = attr.ib()
     connections: typing.Dict[str, ConnectionSettings] = attr.ib()
 
-    SETTINGS_SCHEMA: utils.JsonSchemaType = {
+    SETTINGS_SCHEMA: utils.JsonType = {
         'type': 'object',
         'properties': {
             'root-dir': {'type': 'string'},
@@ -75,6 +74,8 @@ class Settings:
                 return cls.from_yaml_stream(stream, validator)
         except FileNotFoundError as error:
             raise utils.UsageError(f'Could not find the file {error.filename}')
+        except OSError as error:
+            raise utils.UsageError(f'Failed to open config file: {error}')
 
     @classmethod
     def from_yaml_stream(cls, stream: typing.IO,
@@ -83,8 +84,10 @@ class Settings:
         if validator is None:
             validator = utils.SchemaValidator()
 
-        # FIXME handle OSError and UnicodeDecodeError
-        data = yaml.load(stream)
+        try:
+            data = yaml.load(stream)
+        except (yaml.YAMLError, OSError, UnicodeDecodeError) as error:
+            raise utils.UsageError(f"Failed to load configuration:\n{error}")
 
         validator.validate(data, cls.SETTINGS_SCHEMA)
 
@@ -95,19 +98,20 @@ class Settings:
             validator=validator,
             raw_connections=data.pop('connections'),
             raw_subjects=data.pop('subjects'),
+            global_ignore=global_ignore,
             root_dir=root_dir,
         )
 
         return Settings(
             root_dir=root_dir,
-            global_ignore=global_ignore,
             connections=connections,
         )
 
-    @classmethod
-    def _get_connection_settings(cls, validator: utils.SchemaValidator,
+    @staticmethod
+    def _get_connection_settings(validator: utils.SchemaValidator,
                                  raw_connections: typing.List[SimpleDict],
                                  raw_subjects: typing.List[SimpleDict],
+                                 global_ignore: typing.List[str],
                                  root_dir: pathlib.Path) -> typing.Dict[str, ConnectionSettings]:
         """Create the ConnectionSettings for the specified connections and subjects."""
         connections = {}
@@ -119,7 +123,7 @@ class Settings:
                 connection=raw_connection,
             )
 
-        subject_schema: utils.JsonSchemaType = {
+        subject_schema: utils.JsonType = {
             'type': 'array',
             'items': {
                 'type': 'object',
@@ -166,6 +170,7 @@ class Settings:
                 connection_usage['local-dir'] = pathlib.Path(
                     connection_usage.get('local-dir', root_dir / name))
                 connection_usage['remote-dir'] = pathlib.PurePath(connection_usage['remote-dir'])
+                connection_usage['ignore'] = global_ignore + connection_usage.get('ignore', [])
                 connections[connection_usage.pop('connection')].subjects.append(connection_usage)
 
         return connections

@@ -1,10 +1,14 @@
 import functools
 import pathlib
 
-from PyQt5.QtWidgets import QWidget, QVBoxLayout, QTextEdit, QDialogButtonBox, QPushButton
+import yaml
+
+from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QTextEdit, QDialogButtonBox, QPushButton,
+                             QMessageBox)
 from PyQt5.QtCore import pyqtSignal
 
-from kitovu.sync import settings
+from kitovu import utils
+from kitovu.sync import settings, syncing
 
 
 class ConfScreen(QWidget):
@@ -21,10 +25,6 @@ class ConfScreen(QWidget):
         self._vbox.addWidget(self._edit)
 
         self._conf_file: pathlib.Path = settings.get_config_file_path()
-        try:
-            self._edit.setPlainText(self._conf_file.read_text('utf-8'))
-        except FileNotFoundError:
-            pass
 
         self._buttons = QDialogButtonBox()
         self._cancel_button: QPushButton = self._buttons.addButton(
@@ -39,9 +39,21 @@ class ConfScreen(QWidget):
         self._save_button.clicked.connect(functools.partial(self.save, close=False))
         self._back_button.clicked.connect(functools.partial(self.save, close=True))
 
+    def load_file(self) -> None:
+        try:
+            self._edit.setPlainText(self._conf_file.read_text('utf-8'))
+        except FileNotFoundError:
+            pass
+
     def save(self, close: bool) -> None:
         text: str = self._edit.toPlainText()
-        # FIXME validate config and show errors
         self._conf_file.write_text(text, encoding='utf-8')
+
+        try:
+            syncing.validate_config(self._conf_file)
+        except (utils.InvalidSettingsError, yaml.YAMLError) as ex:
+            QMessageBox.critical(self, "Failed to validate config", str(ex))
+            return
+
         if close:
             self.close_requested.emit()

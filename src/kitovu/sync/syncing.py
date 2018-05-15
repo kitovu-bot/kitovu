@@ -67,7 +67,7 @@ def start(connection_name: str, connection_settings: ConnectionSettings) -> None
         logger.error(f'Error from {plugin.NAME} plugin: {ex}, skipping this plugin')
         return
 
-    filecache_path: pathlib.Path = pathlib.Path(appdirs.user_data_dir('kitovu')) / 'filecache.json'
+    filecache_path: pathlib.Path = get_filecache_path()
     cache: filecache.FileCache = filecache.FileCache(filecache_path)
     cache.load()
 
@@ -83,7 +83,7 @@ def start(connection_name: str, connection_settings: ConnectionSettings) -> None
     plugin.disconnect()
 
 
-def _sync_subject(subject: typing.Dict[str, str],
+def _sync_subject(subject: utils.JsonType,
                   plugin: AbstractSyncPlugin,
                   cache: filecache.FileCache) -> None:
     logger.info(f'Syncing subject {subject["name"]}')
@@ -91,7 +91,12 @@ def _sync_subject(subject: typing.Dict[str, str],
     remote_dir = pathlib.PurePath(subject['remote-dir'])  # /Informatik/Fachbereich/EPJ/
     local_dir = pathlib.Path(subject['local-dir'])  # /home/leonie/HSR/EPJ/
 
+    ignore: typing.List[str] = subject['ignore']
+
     for remote_full_path in plugin.list_path(remote_dir):
+        if remote_full_path.name in ignore:
+            logger.debug(f'Ignoring file {remote_full_path}')
+            continue
         try:
             _sync_path(remote_full_path, local_dir, remote_dir, plugin, cache)
         except utils.PluginOperationError as ex:
@@ -154,3 +159,7 @@ def validate_config(config_file: typing.Optional[pathlib.Path]) -> None:
         _load_plugin(connection_settings, validator)
     if not validator.is_valid:
         validator.raise_error()
+
+
+def get_filecache_path() -> pathlib.Path:
+    return pathlib.Path(appdirs.user_data_dir('kitovu')) / 'filecache.json'

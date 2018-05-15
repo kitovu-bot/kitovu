@@ -83,6 +83,8 @@ class TestSyncAll:
         config_yml = temppath / 'config.yml'
         config_yml.write_text(f"""
         root-dir: {temppath}/syncs
+        global-ignore:
+            - group3-file1.txt
         connections:
           - name: mytest-plugin
             plugin: dummy
@@ -112,7 +114,6 @@ class TestSyncAll:
             pathlib.Path(f'{temppath}/syncs/sync-1/group2-file1.txt'),
             pathlib.Path(f'{temppath}/syncs/sync-1/group2-file2.txt'),
             pathlib.Path(f'{temppath}/syncs/sync-2'),
-            pathlib.Path(f'{temppath}/syncs/sync-2/group3-file1.txt'),
             pathlib.Path(f'{temppath}/syncs/sync-2/group3-file2.txt'),
             pathlib.Path(f'{temppath}/syncs/sync-2/group4-file1.txt'),
             pathlib.Path(f'{temppath}/syncs/sync-2/group4-file2.txt'),
