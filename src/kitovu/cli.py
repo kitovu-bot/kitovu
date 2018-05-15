@@ -81,7 +81,7 @@ def fileinfo() -> None:
 @cli.command()
 def docs() -> None:
     """Open the documentation in the browser."""
-    # FIXME: make version aware
+    # FIXME: Load version-aware documentation once we have a first versioned release.
     webbrowser.open_new_tab('https://kitovu.readthedocs.io/en/latest')
 
 

@@ -10,6 +10,8 @@ class LogoWidget(QLabel):
     def __init__(self, parent: QWidget = None) -> None:
         super().__init__(parent)
         # FIXME how to load this properly?
+        # This will work for now, but once we package kitovu as a Python
+        # package, we'll need to use e.g. pkg_resources
         logo_path = pathlib.Path(__file__).parent / 'kitovu.png'
         self._pixmap: QPixmap = QPixmap(str(logo_path)).scaledToWidth(500)
         self.setPixmap(self._pixmap)
