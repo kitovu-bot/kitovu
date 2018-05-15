@@ -48,10 +48,10 @@ def _load_plugin(plugin_settings: ConnectionSettings,
 def start_all(config_file: typing.Optional[pathlib.Path]) -> None:
     settings = Settings.from_yaml_file(config_file)
     for connection_name, connection_settings in sorted(settings.connections.items()):
-        start(connection_name, connection_settings)
+        _start(connection_name, connection_settings)
 
 
-def start(connection_name: str, connection_settings: ConnectionSettings) -> None:
+def _start(connection_name: str, connection_settings: ConnectionSettings) -> None:
     logger.info(f'Syncing connection {connection_name}')
 
     plugin = _load_plugin(connection_settings)
