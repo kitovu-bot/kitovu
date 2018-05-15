@@ -18,7 +18,7 @@ SimpleDict = typing.Dict[str, typing.Any]
 
 @attr.s
 class ConnectionSettings:
-    """A class representing the settings of a single connection"""
+    """The settings of a single connection."""
 
     plugin_name: str = attr.ib()
     connection: SimpleDict = attr.ib()
@@ -27,7 +27,7 @@ class ConnectionSettings:
 
 @attr.s
 class Settings:
-    """A class representing the settings of all connections"""
+    """The settings of all connections."""
 
     root_dir: pathlib.Path = attr.ib()
     connections: typing.Dict[str, ConnectionSettings] = attr.ib()
@@ -64,7 +64,6 @@ class Settings:
     @classmethod
     def from_yaml_file(cls, path: typing.Optional[pathlib.Path] = None,
                        validator: typing.Optional[utils.SchemaValidator] = None) -> 'Settings':
-        """Load the settings from the specified yaml file"""
         if path is None:
             path = get_config_file_path()
         logger.debug(f"Loading from {path}")
@@ -80,7 +79,6 @@ class Settings:
     @classmethod
     def from_yaml_stream(cls, stream: typing.IO,
                          validator: typing.Optional[utils.SchemaValidator] = None) -> 'Settings':
-        """Load the settings from the specified stream"""
         if validator is None:
             validator = utils.SchemaValidator()
 

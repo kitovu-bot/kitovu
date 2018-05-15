@@ -22,7 +22,6 @@ logger: logging.Logger = logging.getLogger(__name__)
 
 def _load_plugin(plugin_settings: ConnectionSettings,
                  validator: typing.Optional[utils.SchemaValidator] = None) -> AbstractSyncPlugin:
-    """Find and load an appropriate sync plugin with the given settings."""
     if validator is None:
         validator = utils.SchemaValidator()
 
@@ -48,14 +47,12 @@ def _load_plugin(plugin_settings: ConnectionSettings,
 
 
 def start_all(config_file: typing.Optional[pathlib.Path]) -> None:
-    """Sync all files with the given configuration file."""
     settings = Settings.from_yaml_file(config_file)
     for connection_name, connection_settings in sorted(settings.connections.items()):
         start(connection_name, connection_settings)
 
 
 def start(connection_name: str, connection_settings: ConnectionSettings) -> None:
-    """Sync files with the given plugin and username."""
     logger.info(f'Syncing connection {connection_name}')
 
     plugin = _load_plugin(connection_settings)
@@ -149,9 +146,9 @@ def _sync_path(remote_full_path: pathlib.PurePath,
 
 
 def validate_config(config_file: typing.Optional[pathlib.Path]) -> None:
-    """Validates the given configuration file.
+    """Validate the given configuration file.
 
-    Raises an UsageError if the configuration is not valid.
+    Raise an UsageError if the configuration is not valid.
     """
     settings = Settings.from_yaml_file(config_file)
     validator = utils.SchemaValidator(abort=False)

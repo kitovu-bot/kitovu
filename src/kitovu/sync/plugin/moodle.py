@@ -1,4 +1,4 @@
-"""Plugin to talk to Moodle instances."""
+"""A plugin which talks to Moodle using its Web Services."""
 
 import os
 import typing
@@ -24,8 +24,6 @@ class _MoodleFile:
 
 
 class MoodlePlugin(syncplugin.AbstractSyncPlugin):
-
-    """A plugin which talks to Moodle using its Web Services."""
 
     NAME = 'moodle'
 
@@ -80,7 +78,7 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         self._token = utils.get_password('moodle', self._url, prompt)
 
     def connect(self) -> None:
-        # Get our own user ID
+        """Get the user ID associated with the token entered by the user."""
         site_info: utils.JsonType = self._request('core_webservice_get_site_info')
         self._user_id: int = site_info['userid']
 
@@ -92,7 +90,7 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
 
     def create_local_digest(self, path: pathlib.Path) -> str:
         stats: os.stat_result = path.stat()
-        # unfortunately html files have a size of 0
+        # Unfortunately, Moodle returns a size of 0 for HTML files in its API.
         size: int = 0 if path.suffix == '.html' else stats.st_size
         mtime = int(stats.st_mtime)
         return self._create_digest(size, mtime)
@@ -130,7 +128,8 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
                 for elem in module.get('contents', []):
                     filename: str = elem['filename']
                     if 'mimetype' not in elem:
-                        # unfortunately html files have a size of 0
+                        # Unfortunately, Moodle returns a size of 0 for HTML files in its API.
+                        # Also, HTML files are the only entries without a mimetype set.
                         assert elem['filesize'] == 0, elem
                         if not filename.endswith('.html'):
                             filename += '.html'
