@@ -21,7 +21,7 @@ class CentralWidget(QStackedWidget):
         self.addWidget(self._start_screen)
 
         self._start_screen.sync_pressed.connect(self.on_sync_pressed)
-        self._start_screen.conf_pressed.connect(self.open_conf_screen)
+        self._start_screen.conf_pressed.connect(self.on_conf_pressed)
 
         self._conf_screen.close_requested.connect(
             lambda: self.setCurrentWidget(self._start_screen))
@@ -38,7 +38,7 @@ class CentralWidget(QStackedWidget):
         self._sync_screen.start_sync()
 
     @pyqtSlot()
-    def open_conf_screen(self) -> None:
+    def on_conf_pressed(self) -> None:
         self._conf_screen.load_file()
         self.setCurrentWidget(self._conf_screen)
 
