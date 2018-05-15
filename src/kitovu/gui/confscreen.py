@@ -1,6 +1,8 @@
 import functools
 import pathlib
 
+import yaml
+
 from PyQt5.QtWidgets import (QWidget, QVBoxLayout, QTextEdit, QDialogButtonBox, QPushButton,
                              QMessageBox)
 from PyQt5.QtCore import pyqtSignal
@@ -49,7 +51,7 @@ class ConfScreen(QWidget):
 
         try:
             syncing.validate_config(self._conf_file)
-        except utils.InvalidSettingsError as ex:
+        except (utils.InvalidSettingsError, yaml.YAMLError) as ex:
             QMessageBox.critical(self, "Failed to validate config", str(ex))
             return
 

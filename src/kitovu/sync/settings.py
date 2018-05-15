@@ -74,6 +74,8 @@ class Settings:
                 return cls.from_yaml_stream(stream, validator)
         except FileNotFoundError as error:
             raise utils.UsageError(f'Could not find the file {error.filename}')
+        except OSError as error:
+            raise utils.UsageError(f'Failed to open config file: {error}')
 
     @classmethod
     def from_yaml_stream(cls, stream: typing.IO,
@@ -82,11 +84,10 @@ class Settings:
         if validator is None:
             validator = utils.SchemaValidator()
 
-        # FIXME handle OSError and UnicodeDecodeError
         try:
             data = yaml.load(stream)
-        except yaml.scanner.ScannerError as error:
-            raise utils.UsageError(f"Invalid Configuration:\n{error}")
+        except (yaml.YAMLError, OSError, UnicodeDecodeError) as error:
+            raise utils.UsageError(f"Failed to load configuration:\n{error}")
 
         validator.validate(data, cls.SETTINGS_SCHEMA)
 
