@@ -97,19 +97,19 @@ def patch_get_wrong_wsfunction(responses):
 
 
 @pytest.fixture
-def connect_and_configure_plugin(plugin, patch_get_site_info, credentials):
-    plugin.configure({})
-    plugin.connect()
-    yield
-    plugin.disconnect()
-
-
-@pytest.fixture
 def patch_retrieve_file(responses) -> None:
     url = ("https://moodle.hsr.ch/webservice/pluginfile.php/75099/mod_resource/content/7/"
            "Gesch%C3%A4ftsprozessmanagement.pdf?forcedownload=1&token=some_token")
     responses.add(responses.GET, url, content_type="application/octet-stream",
                   body="HELLO KITOVU", match_querystring=True)
+
+
+@pytest.fixture
+def connect_and_configure_plugin(plugin, patch_get_site_info, credentials):
+    plugin.configure({})
+    plugin.connect()
+    yield
+    plugin.disconnect()
 
 
 @pytest.mark.parametrize("info, expected", [
@@ -215,8 +215,8 @@ class TestWithConnectedPlugin:
 
     def test_list_remote_dir_of_course_files(self, plugin, connect_and_configure_plugin,
                                              patch_get_users_courses, patch_course_get_contents):
-        course_contents: typing.Iterable[pathlib.PurePath] = \
-            list(plugin.list_path(pathlib.PurePath("Wirtschaftsinformatik 2 FS2018")))
+        course_contents: typing.Iterable[pathlib.PurePath] = list(
+            plugin.list_path(pathlib.PurePath("Wirtschaftsinformatik 2 FS2018")))
         expected_contents = [
             pathlib.PurePath('Wirtschaftsinformatik 2 FS2018/02 - Geschäftsprozessmanagement/'
                              'Geschäftsprozessmanagement/Geschäftsprozessmanagement.pdf'),
@@ -265,11 +265,13 @@ class TestWithConnectedPlugin:
         assert remote_digests == check_digests
 
     def test_list_path_with_wrong_remote_dir(self, plugin, connect_and_configure_plugin, patch_get_users_courses):
-        """Checks if configuration has been written with correct remote-dir.
+        """Check if configuration has been written with correct remote-dir.
 
         There's a short name and a full name for each course, students need to choose the full name for the config.
         list_path uses list_course which asks for full name, we give the wrong short name. This test covers issue EPJ-92.
+
         Cf. this bogus config that is incorrectly configured:
+
         root-dir: ./testkitovu
         connections:
             - name: mytest-moodle
@@ -280,7 +282,6 @@ class TestWithConnectedPlugin:
                 - connection: mytest-moodle
                   remote-dir: "M_WI2_FS2018" <== wrong name
         """
-
         wrong_remote_dir: str = "M_WI2_FS2018"
         with pytest.raises(utils.PluginOperationError):
             list(plugin.list_path(pathlib.PurePath(wrong_remote_dir)))

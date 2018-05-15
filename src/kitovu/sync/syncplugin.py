@@ -1,4 +1,4 @@
-"""Loading and handling of sychronization plugins."""
+"""Abstract base class for a synchronization plugin."""
 
 import abc
 import pathlib

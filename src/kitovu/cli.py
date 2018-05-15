@@ -19,15 +19,12 @@ import pathlib
 import typing
 import sys
 import logging
-from distutils import spawn
-import subprocess
-import os
 import webbrowser
 
 import click
 
 from kitovu import utils
-from kitovu.sync import syncing, settings
+from kitovu.sync import syncing, settings, filecache
 
 
 @click.group(context_settings={'help_option_names': ['-h', '--help']})
@@ -54,7 +51,7 @@ def gui() -> None:
 @cli.command()
 @click.option('--config', type=pathlib.Path, help="The configuration file to use")
 def sync(config: typing.Optional[pathlib.Path] = None) -> None:
-    """Synchronize with the given configuration file."""
+    """Synchronize new files."""
     try:
         syncing.start_all(config)
     except utils.UsageError as ex:
@@ -64,7 +61,7 @@ def sync(config: typing.Optional[pathlib.Path] = None) -> None:
 @cli.command()
 @click.option('--config', type=pathlib.Path, help="The configuration file to validate")
 def validate(config: typing.Optional[pathlib.Path] = None) -> None:
-    """Validates the specified configuration file."""
+    """Validate the configuration file."""
     try:
         syncing.validate_config(config)
     except utils.UsageError as ex:
@@ -73,57 +70,27 @@ def validate(config: typing.Optional[pathlib.Path] = None) -> None:
 
 @cli.command()
 def fileinfo() -> None:
-    """Show the paths to the configuration file and the FileCache."""
+    """Show the paths to files kitovu uses."""
     print("The configuration file is located at: {}".format(settings.get_config_file_path()))
-    print("The FileCache is located at: {}".format(syncing.get_filecache_path()))
+    print("The file cache is located at: {}".format(filecache.get_path()))
 
 
 @cli.command()
 def docs() -> None:
     """Open the documentation in the browser."""
-    # FIXME: make version aware
+    # FIXME: Load version-aware documentation once we have a first versioned release.
     webbrowser.open_new_tab('https://kitovu.readthedocs.io/en/latest')
-
-
-DEFAULT_EDITORS = [
-    'vim',
-    'emacs',
-    'nano',
-    'editor',
-    'notepad',
-]
 
 
 @cli.command()
 @click.option('--config', type=pathlib.Path, help="The configuration file to edit")
 @click.option('--editor', type=str, help="The command of the editor to use. "
-              f"Default: $EDITOR or the first existing out of {', '.join(DEFAULT_EDITORS)}")
+              f"Default: $EDITOR or the first existing out of "
+              f"{settings.EditorSpawner.DEFAULT_EDITORS_STR}")
 def edit(config: typing.Optional[pathlib.Path] = None, editor: typing.Optional[str] = None) -> None:
-    """Edit the specified configuration file."""
-    if editor is None and 'EDITOR' in os.environ:
-        editor = os.environ['EDITOR']
-    editor_path: str = _get_editor_path(editor)
-
-    if config is None:
-        config = settings.get_config_file_path()
-        config.parent.mkdir(exist_ok=True)
-        config.touch(exist_ok=True)
-    elif not config.exists():
-        raise click.ClickException(f"Could not find the configuration file {config}")
-
-    subprocess.call([editor_path, config])
-
-
-def _get_editor_path(editor: typing.Optional[str]) -> str:
-    if editor is not None:
-        path = spawn.find_executable(editor)
-        if path is None:
-            raise click.ClickException(f"Could not find the editor {editor}")
-        return path
-
-    for default_editor in DEFAULT_EDITORS:
-        path = spawn.find_executable(default_editor)
-        if path is not None:
-            return path
-
-    raise click.ClickException('Could not find a valid editor')
+    """Edit the configuration file."""
+    spawner = settings.EditorSpawner()
+    try:
+        spawner.edit(config, editor)
+    except utils.UsageError as ex:
+        raise click.ClickException(str(ex))

@@ -4,6 +4,8 @@ import pathlib
 import typing
 import os.path
 import logging
+import subprocess
+from distutils import spawn
 
 import appdirs
 import yaml
@@ -16,9 +18,55 @@ logger: logging.Logger = logging.getLogger(__name__)
 SimpleDict = typing.Dict[str, typing.Any]
 
 
+def get_config_file_path() -> pathlib.Path:
+    return pathlib.Path(appdirs.user_config_dir('kitovu')) / 'kitovu.yaml'
+
+
+class EditorSpawner:
+
+    DEFAULT_EDITORS = [
+        'vim',
+        'emacs',
+        'nano',
+        'editor',
+        'notepad',
+    ]
+    DEFAULT_EDITORS_STR = ', '.join(DEFAULT_EDITORS)
+
+    def edit(self,
+             config: typing.Optional[pathlib.Path] = None,
+             editor: typing.Optional[str] = None) -> None:
+        if editor is None and 'EDITOR' in os.environ:
+            editor = os.environ['EDITOR']
+        editor_path: str = self._get_editor_path(editor)
+
+        if config is None:
+            config = get_config_file_path()
+            config.parent.mkdir(exist_ok=True)
+            config.touch(exist_ok=True)
+        elif not config.exists():
+            raise utils.UsageError(f"Could not find the configuration file {config}")
+
+        subprocess.call([editor_path, config])
+
+    def _get_editor_path(self, editor: typing.Optional[str]) -> str:
+        if editor is not None:
+            path = spawn.find_executable(editor)
+            if path is None:
+                raise utils.UsageError(f"Could not find the editor {editor}")
+            return path
+
+        for default_editor in self.DEFAULT_EDITORS:
+            path = spawn.find_executable(default_editor)
+            if path is not None:
+                return path
+
+        raise utils.UsageError('Could not find a valid editor')
+
+
 @attr.s
 class ConnectionSettings:
-    """A class representing the settings of a single connection"""
+    """The settings of a single connection."""
 
     plugin_name: str = attr.ib()
     connection: SimpleDict = attr.ib()
@@ -27,7 +75,7 @@ class ConnectionSettings:
 
 @attr.s
 class Settings:
-    """A class representing the settings of all connections"""
+    """The settings of all connections."""
 
     root_dir: pathlib.Path = attr.ib()
     connections: typing.Dict[str, ConnectionSettings] = attr.ib()
@@ -64,7 +112,6 @@ class Settings:
     @classmethod
     def from_yaml_file(cls, path: typing.Optional[pathlib.Path] = None,
                        validator: typing.Optional[utils.SchemaValidator] = None) -> 'Settings':
-        """Load the settings from the specified yaml file"""
         if path is None:
             path = get_config_file_path()
         logger.debug(f"Loading from {path}")
@@ -80,7 +127,6 @@ class Settings:
     @classmethod
     def from_yaml_stream(cls, stream: typing.IO,
                          validator: typing.Optional[utils.SchemaValidator] = None) -> 'Settings':
-        """Load the settings from the specified stream"""
         if validator is None:
             validator = utils.SchemaValidator()
 
@@ -174,11 +220,3 @@ class Settings:
                 connections[connection_usage.pop('connection')].subjects.append(connection_usage)
 
         return connections
-
-
-def get_config_dir_path() -> pathlib.Path:
-    return pathlib.Path(appdirs.user_config_dir('kitovu'))
-
-
-def get_config_file_path() -> pathlib.Path:
-    return get_config_dir_path() / 'kitovu.yaml'

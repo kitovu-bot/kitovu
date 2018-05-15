@@ -1,4 +1,4 @@
-"""Plugin to synchronize SMB Windows fileshares."""
+"""A plugin to sync data via SMB/CIFS (Windows fileshares)."""
 
 import enum
 import socket
@@ -20,7 +20,11 @@ logger: logging.Logger = logging.getLogger(__name__)
 
 class _SignOptions(enum.IntEnum):
 
-    """Enum for possible signing options from PySMB."""
+    """Enum for possible signing options from PySMB.
+
+    See http://pysmb.readthedocs.io/en/latest/api/smb_SMBConnection.html?highlight=SIGN_NEVER#smb.SMBConnection.SMBConnection.__init__
+    (the sign_options parameter).
+    """
 
     never = SMBConnection.SIGN_NEVER
     when_supported = SMBConnection.SIGN_WHEN_SUPPORTED
@@ -29,8 +33,6 @@ class _SignOptions(enum.IntEnum):
 
 @attr.s
 class _ConnectionInfo:
-
-    """Connection information we got from the config."""
 
     username: str = attr.ib(None)
     password: str = attr.ib(None)
@@ -44,8 +46,6 @@ class _ConnectionInfo:
 
 
 class SmbPlugin(syncplugin.AbstractSyncPlugin):
-
-    """A plugin to sync data via SMB/CIFS (Windows fileshares)."""
 
     NAME: str = "smb"
 
@@ -122,6 +122,7 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
         # FIXME Can be removed once https://github.com/miketeo/pysmb/issues/108 is fixed
         except ProtocolError:
             success = False
+
         if not success:
             raise utils.AuthenticationError(
                 f'Authentication failed for {server_ip}:{self._info.port}')
@@ -158,7 +159,6 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
                                    mtime=attributes.last_write_time)
 
     def list_path(self, path: pathlib.PurePath) -> typing.Iterable[pathlib.PurePath]:
-        # FIXME: detect recursion
         try:
             entries = self._connection.listPath(self._info.share, str(path))
         except OperationFailure:
@@ -169,7 +169,6 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
                 if entry.filename not in [".", ".."]:
                     yield from self.list_path(pathlib.PurePath(path / entry.filename))
             else:
-                # only gives back the files in the current folder
                 yield pathlib.PurePath(path / entry.filename)
 
     def retrieve_file(self,
