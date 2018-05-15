@@ -215,8 +215,8 @@ class TestWithConnectedPlugin:
 
     def test_list_remote_dir_of_course_files(self, plugin, connect_and_configure_plugin,
                                              patch_get_users_courses, patch_course_get_contents):
-        course_contents: typing.Iterable[pathlib.PurePath] = \
-            list(plugin.list_path(pathlib.PurePath("Wirtschaftsinformatik 2 FS2018")))
+        course_contents: typing.Iterable[pathlib.PurePath] = list(
+            plugin.list_path(pathlib.PurePath("Wirtschaftsinformatik 2 FS2018")))
         expected_contents = [
             pathlib.PurePath('Wirtschaftsinformatik 2 FS2018/02 - Geschäftsprozessmanagement/'
                              'Geschäftsprozessmanagement/Geschäftsprozessmanagement.pdf'),
