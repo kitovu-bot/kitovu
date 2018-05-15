@@ -16,12 +16,8 @@ logger: logging.Logger = logging.getLogger(__name__)
 SimpleDict = typing.Dict[str, typing.Any]
 
 
-def get_config_dir_path() -> pathlib.Path:
-    return pathlib.Path(appdirs.user_config_dir('kitovu'))
-
-
 def get_config_file_path() -> pathlib.Path:
-    return get_config_dir_path() / 'kitovu.yaml'
+    return pathlib.Path(appdirs.user_config_dir('kitovu')) / 'kitovu.yaml'
 
 
 @attr.s
