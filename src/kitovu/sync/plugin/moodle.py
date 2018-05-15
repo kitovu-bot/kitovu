@@ -163,9 +163,11 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         except requests.exceptions.HTTPError as ex:
             raise utils.PluginOperationError(f"HTTP error: {ex}.")
 
+        # Errors from Moodle are delivered as json.
         if 'json' in req.headers['content-type']:
             data: JsonType = req.json()
             self._check_json_answer(data)
+
         for chunk in req:
             fileobj.write(chunk)
 
