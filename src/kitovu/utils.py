@@ -55,40 +55,33 @@ class SchemaValidator:
         self._abort: bool = abort
 
     def validate(self, data: typing.Any, schema: JsonType) -> None:
-        """Validates the given data with the schema."""
         validator_type = jsonschema.validators.validator_for(schema)
         self.errors.extend(validator_type(schema).iter_errors(data))
         if self._abort and not self.is_valid:
             self.raise_error()
 
     def raise_error(self) -> None:
-        """Raises itself as an InvalidSettingsError."""
         raise InvalidSettingsError(self)
 
     @property
     def is_valid(self) -> bool:
-        """Wether or not the already validated data is valid or not."""
         return not self.errors
 
     @property
     def error_message(self) -> str:
-        """A string representation of all errors."""
         return '\n\n'.join(str(e).replace('\n', '\n\t') for e in self.errors)
 
 
 class Error(Exception):
     """Base class for kitovu errors."""
-    pass
 
 
 class UsageError(Error):
     """Errors caused by the user."""
-    pass
 
 
 class NoPluginError(UsageError):
     """Thrown when there was no matching plugin found."""
-    pass
 
 
 class InvalidSettingsError(UsageError):
@@ -101,9 +94,7 @@ class InvalidSettingsError(UsageError):
 
 class PluginOperationError(Error):
     """Thrown when something in a plugin fails."""
-    pass
 
 
 class AuthenticationError(PluginOperationError):
     """Thrown when the authentication could not be completed."""
-    pass
