@@ -65,8 +65,10 @@ class MoodlePlugin(syncplugin.AbstractSyncPlugin):
         if errorcode == "invalidtoken":
             raise utils.AuthenticationError(data['message'])
         elif errorcode == "invalidrecord":  # e.g. invalid ws_function, invalid course ID
-            # the given error message is hard to understand, writing a better to understand one instead
-            raise utils.PluginOperationError("You requested something from Moodle which it couldn't get.")
+            # given error message is hard to understand,
+            # writing a better to understand one instead
+            raise utils.PluginOperationError(
+                "You requested something from Moodle which it couldn't get.")
         elif "exception" in data:  # base case for errors
             raise utils.PluginOperationError(data["message"])
 
