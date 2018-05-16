@@ -85,7 +85,7 @@ class TestSyncAll:
             pathlib.PurePath('Some/Test/Dir2/group3-file2.txt'): '32',
             pathlib.PurePath('Another/Test/Dir2/group4-file1.txt'): '41',
             pathlib.PurePath('Another/Test/Dir2/group4-file2.txt'): '42',
-        })
+        }, mtime=13371337)
 
     def test_complex_sync_all(self, temppath: pathlib.Path):
         config_yml = temppath / 'config.yml'
@@ -126,6 +126,8 @@ class TestSyncAll:
             pathlib.Path(f'{temppath}/syncs/sync-2/group4-file1.txt'),
             pathlib.Path(f'{temppath}/syncs/sync-2/group4-file2.txt'),
         ]
+        mtime: float = (temppath / 'syncs' / 'sync-1' / 'group1-file1.txt').stat().st_mtime
+        assert int(mtime) == 13371337
 
 
 class TestErrorHandling:
