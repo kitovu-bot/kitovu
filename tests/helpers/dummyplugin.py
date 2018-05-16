@@ -24,8 +24,7 @@ class DummyPlugin(syncplugin.AbstractSyncPlugin):
                  temppath: pathlib.Path,
                  local_digests: typing.Dict[pathlib.Path, str] = None,
                  remote_digests: typing.Dict[pathlib.PurePath, str] = None,
-                 connection_schema=None,
-                 mtime: typing.Optional[int] = None):
+                 connection_schema=None):
         self._temppath = temppath
         self.local_digests = local_digests if local_digests else {
             temppath / "local_dir/test/example1.txt": "1",
@@ -41,8 +40,8 @@ class DummyPlugin(syncplugin.AbstractSyncPlugin):
         }
         self.is_connected: bool = False
         self._connection_schema = connection_schema if connection_schema else {}
-        self._mtime = mtime
 
+        self.mtime = None
         self.error_connect = False
         self.error_list_path = False
         self.error_create_remote_digest = False
@@ -88,7 +87,7 @@ class DummyPlugin(syncplugin.AbstractSyncPlugin):
         remote_digest = self.remote_digests[path]
         fileobj.write(f"{path}\n{remote_digest}".encode("utf-8"))
         self.local_digests[pathlib.Path(fileobj.name)] = remote_digest
-        return self._mtime
+        return self.mtime
 
     def connection_schema(self) -> utils.JsonType:
         return self._connection_schema

@@ -71,7 +71,7 @@ class TestFindPlugin:
 class TestSyncAll:
 
     @pytest.fixture(autouse=True)
-    def include_dummy_plugin(self, mocker, temppath):
+    def configured_dummy_plugin(self, mocker, temppath):
         manager = mocker.patch('stevedore.driver.DriverManager', autospec=True)
         instance = manager(namespace='kitovu.sync.plugin', name='dummy',
                            invoke_on_load=True)
@@ -85,9 +85,13 @@ class TestSyncAll:
             pathlib.PurePath('Some/Test/Dir2/group3-file2.txt'): '32',
             pathlib.PurePath('Another/Test/Dir2/group4-file1.txt'): '41',
             pathlib.PurePath('Another/Test/Dir2/group4-file2.txt'): '42',
-        }, mtime=13371337)
+        })
+        return instance.driver
 
-    def test_complex_sync_all(self, temppath: pathlib.Path):
+    @pytest.mark.parametrize('mtime', [None, 13371337])
+    def test_complex_sync_all(self, mtime, temppath: pathlib.Path, configured_dummy_plugin):
+        configured_dummy_plugin.mtime = mtime
+
         config_yml = temppath / 'config.yml'
         config_yml.write_text(f"""
         root-dir: {temppath}/syncs
@@ -126,8 +130,10 @@ class TestSyncAll:
             pathlib.Path(f'{temppath}/syncs/sync-2/group4-file1.txt'),
             pathlib.Path(f'{temppath}/syncs/sync-2/group4-file2.txt'),
         ]
-        mtime: float = (temppath / 'syncs' / 'sync-1' / 'group1-file1.txt').stat().st_mtime
-        assert int(mtime) == 13371337
+
+        if mtime is not None:
+            mtime: float = (temppath / 'syncs' / 'sync-1' / 'group1-file1.txt').stat().st_mtime
+            assert int(mtime) == mtime
 
 
 class TestErrorHandling:
