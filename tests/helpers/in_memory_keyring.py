@@ -13,7 +13,10 @@ class InMemoryKeyring(keyring.backend.KeyringBackend):
         self._passwords[(servicename, username)] = password
 
     def get_password(self, servicename, username):
-        return self._passwords[(servicename, username)]
+        try:
+            return self._passwords[(servicename, username)]
+        except KeyError:
+            return None
 
     def delete_password(self, servicename, username):
         del self._passwords[(servicename, username)]
