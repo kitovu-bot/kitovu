@@ -19,7 +19,8 @@ class InMemoryKeyring(keyring.backend.KeyringBackend):
             return None
 
     def delete_password(self, servicename, username):
-        del self._passwords[(servicename, username)]
+        # Not used yet, but might be useful in the future
+        del self._passwords[(servicename, username)]  # pragma: no cover
 
     def clear(self):
         self._passwords.clear()
