@@ -251,8 +251,12 @@ class TestWithConnectedPlugin:
         ]
         assert courses == expected_courses
 
-    def test_list_remote_dir_of_course_files(self, plugin, connect_and_configure_plugin,
+    @pytest.mark.parametrize('list_courses_first', [True, False])
+    def test_list_remote_dir_of_course_files(self, list_courses_first, plugin, connect_and_configure_plugin,
                                              patch_get_users_courses, patch_course_get_contents):
+
+        if list_courses_first:
+            list(plugin.list_path(pathlib.PurePath("/")))
         course_contents: typing.Iterable[pathlib.PurePath] = list(
             plugin.list_path(pathlib.PurePath("Wirtschaftsinformatik 2 FS2018")))
         expected_contents = [
