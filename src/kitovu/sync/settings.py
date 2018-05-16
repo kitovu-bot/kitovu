@@ -110,25 +110,22 @@ class Settings:
     }
 
     @classmethod
-    def from_yaml_file(cls, path: typing.Optional[pathlib.Path] = None,
-                       validator: typing.Optional[utils.SchemaValidator] = None) -> 'Settings':
+    def from_yaml_file(cls, path: typing.Optional[pathlib.Path] = None) -> 'Settings':
         if path is None:
             path = get_config_file_path()
         logger.debug(f"Loading from {path}")
 
         try:
             with path.open('r') as stream:
-                return cls.from_yaml_stream(stream, validator)
+                return cls.from_yaml_stream(stream)
         except FileNotFoundError as error:
             raise utils.UsageError(f'Could not find the file {error.filename}')
         except OSError as error:
             raise utils.UsageError(f'Failed to open config file: {error}')
 
     @classmethod
-    def from_yaml_stream(cls, stream: typing.IO,
-                         validator: typing.Optional[utils.SchemaValidator] = None) -> 'Settings':
-        if validator is None:
-            validator = utils.SchemaValidator()
+    def from_yaml_stream(cls, stream: typing.IO) -> 'Settings':
+        validator = utils.SchemaValidator()
 
         try:
             data = yaml.load(stream)
