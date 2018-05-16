@@ -1,4 +1,5 @@
 import os
+import re
 import pathlib
 
 import pytest
@@ -64,7 +65,8 @@ def test_load_a_sample_yaml_file(assets_dir):
 
 
 def test_load_default_location(default_config):
-    with pytest.raises(utils.UsageError, match=f'Could not find the file {default_config}'):
+    with pytest.raises(utils.UsageError,
+                       match=re.escape(f'Could not find the file {default_config}')):
         Settings.from_yaml_file()
 
 
