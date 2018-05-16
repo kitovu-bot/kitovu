@@ -127,16 +127,16 @@ class TestSyncAll:
         syncing.start_all(config_yml)
 
         assert sorted(pathlib.Path(temppath).glob("syncs/**/*")) == [
-            pathlib.Path(f'{temppath}/syncs/sync-1'),
+            temppath / 'syncs/sync-1',
             group1_file1,
             group1_file2,
-            pathlib.Path(f'{temppath}/syncs/sync-1/group1-file3.txt'),
-            pathlib.Path(f'{temppath}/syncs/sync-1/group2-file1.txt'),
-            pathlib.Path(f'{temppath}/syncs/sync-1/group2-file2.txt'),
-            pathlib.Path(f'{temppath}/syncs/sync-2'),
-            pathlib.Path(f'{temppath}/syncs/sync-2/group3-file2.txt'),
-            pathlib.Path(f'{temppath}/syncs/sync-2/group4-file1.txt'),
-            pathlib.Path(f'{temppath}/syncs/sync-2/group4-file2.txt'),
+            temppath / 'syncs/sync-1/group1-file3.txt',
+            temppath / 'syncs/sync-1/group2-file1.txt',
+            temppath / 'syncs/sync-1/group2-file2.txt',
+            temppath / 'syncs/sync-2',
+            temppath / 'syncs/sync-2/group3-file2.txt',
+            temppath / 'syncs/sync-2/group4-file1.txt',
+            temppath / 'syncs/sync-2/group4-file2.txt',
         ]
 
         if mtime is not None:
