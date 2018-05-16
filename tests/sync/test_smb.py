@@ -1,3 +1,4 @@
+import io
 import pathlib
 import socket
 import logging
@@ -85,6 +86,11 @@ class SMBConnectionMock:
             self.SharedFileMock('sub', True),
             self.SharedFileMock('last_file', False),
         ]
+
+    def retrieveFile(self, share, path, fileobj):
+        if path.endswith('missing'):
+            raise OperationFailure('msg1', 'msg2')
+        fileobj.write(b'HELLO KITOVU')
 
     def is_connected(self):
         return self.connected_ip is not None and self.connected_port is not None
@@ -261,6 +267,19 @@ class TestWithConnectedPlugin:
             list(plugin.list_path(path))
 
         assert str(excinfo.value) == f'Folder "{path}" not found'
+
+    def test_retrieve_file(self, plugin):
+        fileobj = io.BytesIO()
+        path = pathlib.PurePath('foo.txt')
+        plugin.create_remote_digest(path)
+
+        mtime = 988824605.56
+        assert plugin.retrieve_file(path, fileobj) == mtime
+        assert fileobj.getvalue() == b"HELLO KITOVU"
+
+    def test_retrieve_file_error(self, plugin):
+        with pytest.raises(utils.PluginOperationError):
+            plugin.retrieve_file(pathlib.PurePath('foo.missing'), io.BytesIO())
 
 
 class TestValidations:
