@@ -192,7 +192,7 @@ class TestConnect:
         info['username'] = username
         plugin.configure(info)
 
-        with pytest.raises(utils.PluginOperationError) as excinfo:
+        with pytest.raises(utils.AuthenticationError) as excinfo:
             plugin.connect()
 
         assert str(excinfo.value) == "Authentication failed for 123.123.123.123:445"
