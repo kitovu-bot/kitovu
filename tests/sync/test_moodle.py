@@ -97,6 +97,16 @@ def patch_get_wrong_wsfunction(responses):
 
 
 @pytest.fixture
+def patch_generic_moodle_error(responses):
+    body: str = """
+    {
+        "errorcode": "alleskaputt",
+        "exception": "alles_kaputt_error",
+        "message": "Alles ist kaputt."
+    }
+    """
+    _patch_request(responses, 'core_webservice_get_site_info', body=body, wstoken="some_token")
+@pytest.fixture
 def patch_retrieve_file(responses) -> None:
     url = ("https://moodle.hsr.ch/webservice/pluginfile.php/75099/mod_resource/content/7/"
            "Gesch%C3%A4ftsprozessmanagement.pdf?forcedownload=1&token=some_token")
@@ -139,6 +149,11 @@ class TestConnect:
     def test_with_wrong_wsfunction(self, plugin, credentials, patch_get_wrong_wsfunction):
         plugin.configure({})
         with pytest.raises(utils.PluginOperationError):
+            plugin.connect()
+
+    def test_generic_moodle_exception(self, plugin, credentials, patch_generic_moodle_error):
+        plugin.configure({})
+        with pytest.raises(utils.PluginOperationError, match='Alles ist kaputt'):
             plugin.connect()
 
     def test_for_http_error_statuscode(self, plugin, credentials, patch_get_site_info_server_error):
