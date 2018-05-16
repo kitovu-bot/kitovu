@@ -29,6 +29,11 @@ def screen(qtbot):
     return cs
 
 
+def test_no_initial_config(screen, kitovu_yaml):
+    kitovu_yaml.unlink()
+    screen.load_file()
+
+
 def test_reading_config(screen):
     assert screen._edit.toPlainText() == INITIAL_CONFIG
 

@@ -18,6 +18,43 @@ def test_docs(runner, mocker):
     mock.assert_called_once_with('https://kitovu.readthedocs.io/en/latest')
 
 
+def test_fileinfo(runner):
+    result = runner.invoke(cli.fileinfo)
+    lines = result.output.splitlines()
+    assert lines[0].startswith("The configuration file is located at:")
+    assert lines[1].startswith("The file cache is located at:")
+
+
+def test_sync_invalid(runner, temppath):
+    config = temppath / 'does-not-exist'
+    result = runner.invoke(cli.sync, ['--config', str(config)])
+    assert result.output.strip() == f'Error: Could not find the file {config}'
+    assert result.exit_code == 1
+
+
+class TestValidate:
+
+    def test_valid(self, runner, temppath):
+        config = temppath / 'kitovu.yml'
+        config.write_text(f"""
+        root-dir: {temppath}
+        connections: []
+        subjects: []
+        """, encoding='utf-8')
+
+        result = runner.invoke(cli.validate, ['--config', str(config)])
+        assert result.output == ''
+        assert result.exit_code == 0
+
+    def test_invalid(self, runner, temppath):
+        config = temppath / 'kitovu.yml'
+        config.touch()
+
+        result = runner.invoke(cli.validate, ['--config', str(config)])
+        assert result.output.startswith("Error: None is not of type 'object'")
+        assert result.exit_code == 1
+
+
 class TestEdit:
 
     @pytest.fixture(autouse=True)

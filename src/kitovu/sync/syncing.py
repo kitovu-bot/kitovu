@@ -142,6 +142,8 @@ def _sync_path(remote_full_path: pathlib.PurePath,
 
         assert remote_digest == local_digest, local_full_path
         cache.modify(local_full_path, plugin, local_digest)
+    else:
+        raise AssertionError(f"Unhandled state {state_of_file} for {local_full_path}")
 
 
 def validate_config(config_file: typing.Optional[pathlib.Path]) -> None:

@@ -1,15 +1,24 @@
+import io
 import pathlib
 import socket
+import logging
 
 import pytest
 import attr
 import keyring
 from smb.SMBConnection import SMBConnection
-from smb.smb_structs import OperationFailure
+from smb.smb_structs import OperationFailure, ProtocolError
 
 from kitovu.sync import syncing
 from kitovu import utils
 from kitovu.sync.plugin import smb
+
+
+@attr.s
+class FakeStatResult:
+
+    st_size: int = attr.ib()
+    st_mtime: float = attr.ib()
 
 
 @pytest.fixture(autouse=True)
@@ -39,8 +48,13 @@ class SMBConnectionMock:
         self.connected_port = None
 
     def connect(self, ip_address, port):
-        if self.init_args['username'] == 'invalid-user':
+        username: str = self.init_args['username']
+        if username == 'invalid-user':
             return False
+        elif username == 'invalid-user-2':
+            # FIXME Can be removed once https://github.com/miketeo/pysmb/issues/108 is fixed
+            raise ProtocolError("PySMB bug")
+
         if ip_address == "1.1.1.1":
             raise ConnectionRefusedError()
         self.connected_ip = ip_address
@@ -64,12 +78,19 @@ class SMBConnectionMock:
         if str(path).endswith('example_dir') or str(path).endswith('sub'):
             return [self.SharedFileMock('sub_file', False)]
         return [
+            self.SharedFileMock('.', True),
+            self.SharedFileMock('..', True),
             self.SharedFileMock('example_dir', True),
             self.SharedFileMock('example.txt', False),
             self.SharedFileMock('other_example.txt', False),
             self.SharedFileMock('sub', True),
             self.SharedFileMock('last_file', False),
         ]
+
+    def retrieveFile(self, share, path, fileobj):
+        if path.endswith('missing'):
+            raise OperationFailure('msg1', 'msg2')
+        fileobj.write(b'HELLO KITOVU')
 
     def is_connected(self):
         return self.connected_ip is not None and self.connected_port is not None
@@ -91,6 +112,13 @@ class TestConnect:
             'hostname': 'example.com',
             'share': 'myshare',
         }
+
+    @pytest.mark.parametrize('debug', [True, False])
+    def test_debug_logging(self, plugin, info, debug):
+        if debug:
+            info['debug'] = True
+        plugin.configure(info)
+        assert logging.getLogger('SMB.SMBConnection').propagate == debug
 
     def test_connect_with_default_options(self, plugin, info):
         plugin.configure(info)
@@ -172,13 +200,14 @@ class TestConnect:
 
         assert str(excinfo.value) == "Could not connect to 1.1.1.1:445"
 
-    def test_handles_invalid_credentials_correctly(self, plugin, info):
-        keyring.set_password('kitovu-smb', 'invalid-user\nmyauthdomain\nexample.com', 'some_password')
+    @pytest.mark.parametrize('username', ['invalid-user', 'invalid-user-2'])
+    def test_handles_invalid_credentials_correctly(self, plugin, info, username):
+        keyring.set_password('kitovu-smb', f'{username}\nmyauthdomain\nexample.com', 'some_password')
 
-        info['username'] = 'invalid-user'
+        info['username'] = username
         plugin.configure(info)
 
-        with pytest.raises(utils.PluginOperationError) as excinfo:
+        with pytest.raises(utils.AuthenticationError) as excinfo:
             plugin.connect()
 
         assert str(excinfo.value) == "Authentication failed for 123.123.123.123:445"
@@ -198,6 +227,19 @@ class TestWithConnectedPlugin:
         assert plugin._connection.is_connected()
         plugin.disconnect()
         assert not plugin._connection.is_connected()
+
+    def test_create_local_digest(self, plugin, monkeypatch, temppath):
+        testfile = temppath / 'foo.txt'
+        text = 'hello kitovu'
+        testfile.write_text(text)
+
+        mtime = 13371337.4242
+        monkeypatch.setattr(pathlib.Path, 'lstat', lambda _self:
+                            FakeStatResult(st_size=len(text), st_mtime=mtime))
+
+        plugin.create_local_digest(testfile)
+
+        assert plugin.create_local_digest(testfile) == f'{len(text)}-13371337'
 
     def test_create_remote_digest(self, plugin):
         assert plugin.create_remote_digest(pathlib.PurePath('/test')) == '1024-988824605'
@@ -225,6 +267,19 @@ class TestWithConnectedPlugin:
             list(plugin.list_path(path))
 
         assert str(excinfo.value) == f'Folder "{path}" not found'
+
+    def test_retrieve_file(self, plugin):
+        fileobj = io.BytesIO()
+        path = pathlib.PurePath('foo.txt')
+        plugin.create_remote_digest(path)
+
+        mtime = 988824605.56
+        assert plugin.retrieve_file(path, fileobj) == mtime
+        assert fileobj.getvalue() == b"HELLO KITOVU"
+
+    def test_retrieve_file_error(self, plugin):
+        with pytest.raises(utils.PluginOperationError):
+            plugin.retrieve_file(pathlib.PurePath('foo.missing'), io.BytesIO())
 
 
 class TestValidations:

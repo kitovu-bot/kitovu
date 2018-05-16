@@ -25,7 +25,7 @@ class CentralWidget(QStackedWidget):
 
         self._conf_screen.close_requested.connect(
             lambda: self.setCurrentWidget(self._start_screen))
-        self._sync_screen.close_requested.connect(
+        self._sync_screen.close_requested.connect(  # pragma: no branch
             lambda: self.setCurrentWidget(self._start_screen))
 
         self._sync_screen.status_message.connect(self.status_message)
