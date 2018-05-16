@@ -77,6 +77,8 @@ class SMBConnectionMock:
         if str(path).endswith('example_dir') or str(path).endswith('sub'):
             return [self.SharedFileMock('sub_file', False)]
         return [
+            self.SharedFileMock('.', True),
+            self.SharedFileMock('..', True),
             self.SharedFileMock('example_dir', True),
             self.SharedFileMock('example.txt', False),
             self.SharedFileMock('other_example.txt', False),
