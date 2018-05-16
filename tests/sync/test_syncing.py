@@ -29,6 +29,14 @@ def dummy_plugin(temppath):
     })
 
 
+@pytest.fixture
+def patch_dummy_plugin(dummy_plugin, mocker):
+    manager = mocker.patch('stevedore.driver.DriverManager', autospec=True)
+    instance = manager(namespace='kitovu.sync.plugin', name='test',
+                       invoke_on_load=True)
+    instance.driver = dummy_plugin
+
+
 class TestFindPlugin:
 
     def test_load_plugin_builtin(self):
@@ -120,6 +128,46 @@ class TestSyncAll:
         ]
 
 
+class TestErrorHandling:
+
+    @pytest.fixture
+    def connection_settings(self, patch_dummy_plugin):
+        return ConnectionSettings(
+            plugin_name='dummy',
+            connection={'some-required-prop': 'foo'},
+            subjects=[{
+                'name': 'subject1',
+                'remote-dir': 'remote_dir/test',
+                'local-dir': 'local_dir/test',
+                'ignore': [],
+            }],
+        )
+
+    def test_connection_error(self, dummy_plugin, connection_settings, caplog):
+        dummy_plugin.error_connect = True
+        syncing._start('connection', connection_settings)
+
+        expected = 'Error from dummyplugin plugin: Could not connect, skipping this plugin'
+        record = caplog.records[-1]
+        assert record.message == expected
+
+    def test_list_path_error(self, dummy_plugin, connection_settings, caplog):
+        dummy_plugin.error_list_path = True
+        syncing._start('connection', connection_settings)
+
+        expected = 'Error from dummyplugin plugin: Could not list path, skipping this subject'
+        record = caplog.records[-1]
+        assert record.message == expected
+
+    def test_create_remote_digest_error(self, dummy_plugin, connection_settings, caplog):
+        dummy_plugin.error_create_remote_digest = True
+        syncing._start('connection', connection_settings)
+
+        expected = 'Error from dummyplugin plugin: Could not create remote digest, skipping this file'
+        record = caplog.records[-1]
+        assert record.message == expected
+
+
 class TestConfigError:
 
     def test_valid_configuration(self, temppath: pathlib.Path):
@@ -205,12 +253,7 @@ class TestConfigError:
             "Additional properties are not allowed ('unexpected_prop' was unexpected)",
         ]
 
-    def test_configuration_with_invalid_connections(self, mocker, temppath: pathlib.Path, dummy_plugin):
-        manager = mocker.patch('stevedore.driver.DriverManager', autospec=True)
-        instance = manager(namespace='kitovu.sync.plugin', name='test',
-                           invoke_on_load=True)
-        instance.driver = dummy_plugin
-
+    def test_configuration_with_invalid_connections(self, temppath: pathlib.Path, patch_dummy_plugin):
         config_yml = temppath / 'config.yml'
         config_yml.write_text("""
         root-dir: ./asdf

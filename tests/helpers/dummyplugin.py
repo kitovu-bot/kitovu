@@ -41,10 +41,17 @@ class DummyPlugin(syncplugin.AbstractSyncPlugin):
         self.is_connected: bool = False
         self._connection_schema = connection_schema if connection_schema else {}
 
+        self.error_connect = False
+        self.error_list_path = False
+        self.error_create_remote_digest = False
+
     def configure(self, info: typing.Dict[str, typing.Any]) -> None:
         pass
 
     def connect(self) -> None:
+        if self.error_connect:
+            raise utils.PluginOperationError("Could not connect")
+
         assert not self.is_connected
         self.is_connected = True
 
@@ -57,10 +64,16 @@ class DummyPlugin(syncplugin.AbstractSyncPlugin):
         return self.local_digests.get(path, '')
 
     def create_remote_digest(self, path: pathlib.PurePath) -> str:
+        if self.error_create_remote_digest:
+            raise utils.PluginOperationError("Could not create remote digest")
+
         assert self.is_connected
         return self.remote_digests[path]
 
     def list_path(self, path: pathlib.PurePath) -> typing.Iterable[pathlib.PurePath]:
+        if self.error_list_path:
+            raise utils.PluginOperationError("Could not list path")
+
         assert self.is_connected
         for filename in sorted(self.remote_digests):
             if str(filename).startswith(str(path)):
