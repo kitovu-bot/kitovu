@@ -129,3 +129,16 @@ class TestFileState:
         assert cache._data[local].cached_digest != "new-digest"
         assert cache.discover_changes(local, remote, plugin) == filecache.FileState.BOTH_CHANGED
         assert cache._data[local].cached_digest != "new-digest"
+
+    def test_outdated_cache_new_file(self, temppath, plugin, cache):
+        plugin.connect()
+        local = temppath / "local_dir/test/example4.txt"
+        local.parent.mkdir(parents=True)
+        local.touch()
+
+        remote = pathlib.PurePath("remote_dir/test/example4.txt")
+        plugin.remote_digests[remote] = "new-digest"
+
+        assert local not in cache._data
+        assert cache.discover_changes(local, remote, plugin) == filecache.FileState.BOTH_CHANGED
+        assert cache._data[local].cached_digest is None
