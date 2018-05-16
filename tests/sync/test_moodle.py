@@ -73,6 +73,13 @@ def patch_course_get_contents(responses, moodle_assets_dir):
 
 
 @pytest.fixture
+def patch_course_get_contents_no_html(responses, moodle_assets_dir):
+    body: str = (moodle_assets_dir / 'course_wi2.json').read_text(encoding='utf-8')
+    body = body.replace('index.html', 'index')
+    _patch_request(responses, 'core_course_get_contents', body=body, courseid=1172)
+
+
+@pytest.fixture
 def patch_get_site_info_wrong_token(responses):
     body: str = """
     {
@@ -252,8 +259,14 @@ class TestWithConnectedPlugin:
         assert courses == expected_courses
 
     @pytest.mark.parametrize('list_courses_first', [True, False])
-    def test_list_remote_dir_of_course_files(self, list_courses_first, plugin, connect_and_configure_plugin,
-                                             patch_get_users_courses, patch_course_get_contents):
+    @pytest.mark.parametrize('html_filename', [True, False])
+    def test_list_remote_dir_of_course_files(self, list_courses_first, html_filename,
+                                             plugin, connect_and_configure_plugin,
+                                             patch_get_users_courses, request):
+        patch = 'patch_course_get_contents'
+        if not html_filename:
+            patch += '_no_html'
+        request.getfixturevalue(patch)
 
         if list_courses_first:
             list(plugin.list_path(pathlib.PurePath("/")))
