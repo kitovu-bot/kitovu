@@ -13,6 +13,13 @@ from kitovu import utils
 from kitovu.sync.plugin import smb
 
 
+@attr.s
+class FakeStatResult:
+
+    st_size: int = attr.ib()
+    st_mtime: float = attr.ib()
+
+
 @pytest.fixture(autouse=True)
 def patch(monkeypatch):
     monkeypatch.setattr(smb, 'SMBConnection', SMBConnectionMock)
@@ -212,6 +219,19 @@ class TestWithConnectedPlugin:
         assert plugin._connection.is_connected()
         plugin.disconnect()
         assert not plugin._connection.is_connected()
+
+    def test_create_local_digest(self, plugin, monkeypatch, temppath):
+        testfile = temppath / 'foo.txt'
+        text = 'hello kitovu'
+        testfile.write_text(text)
+
+        mtime = 13371337.4242
+        monkeypatch.setattr(pathlib.Path, 'lstat', lambda _self:
+                            FakeStatResult(st_size=len(text), st_mtime=mtime))
+
+        plugin.create_local_digest(testfile)
+
+        assert plugin.create_local_digest(testfile) == f'{len(text)}-13371337'
 
     def test_create_remote_digest(self, plugin):
         assert plugin.create_remote_digest(pathlib.PurePath('/test')) == '1024-988824605'
