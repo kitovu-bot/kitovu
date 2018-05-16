@@ -27,7 +27,7 @@ def test_load_unreadable_file(temppath):
     settings.touch()
     settings.chmod(0)
     if os.access(settings, os.R_OK):
-        pytest.skip("Failed to make file unreadable")
+        pytest.skip("Failed to make file unreadable")  # pragma: no cover
 
     with pytest.raises(utils.UsageError):
         Settings.from_yaml_file(settings)
