@@ -1,3 +1,4 @@
+import os
 import pathlib
 
 import pytest
@@ -19,6 +20,17 @@ def test_creating_default_config(default_config, monkeypatch):
     spawner = settings.EditorSpawner()
     spawner.edit()
     assert default_config.exists()
+
+
+def test_load_unreadable_file(temppath):
+    settings = temppath / 'kitovu.yaml'
+    settings.touch()
+    settings.chmod(0)
+    if os.access(settings, os.R_OK):
+        pytest.skip("Failed to make file unreadable")
+
+    with pytest.raises(utils.UsageError):
+        Settings.from_yaml_file(settings)
 
 
 def test_load_a_sample_yaml_file(assets_dir):
