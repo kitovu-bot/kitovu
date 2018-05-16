@@ -6,7 +6,7 @@ import pytest
 import attr
 import keyring
 from smb.SMBConnection import SMBConnection
-from smb.smb_structs import OperationFailure
+from smb.smb_structs import OperationFailure, ProtocolError
 
 from kitovu.sync import syncing
 from kitovu import utils
@@ -40,8 +40,13 @@ class SMBConnectionMock:
         self.connected_port = None
 
     def connect(self, ip_address, port):
-        if self.init_args['username'] == 'invalid-user':
+        username: str = self.init_args['username']
+        if username == 'invalid-user':
             return False
+        elif username == 'invalid-user-2':
+            # FIXME Can be removed once https://github.com/miketeo/pysmb/issues/108 is fixed
+            raise ProtocolError("PySMB bug")
+
         if ip_address == "1.1.1.1":
             raise ConnectionRefusedError()
         self.connected_ip = ip_address
@@ -180,10 +185,11 @@ class TestConnect:
 
         assert str(excinfo.value) == "Could not connect to 1.1.1.1:445"
 
-    def test_handles_invalid_credentials_correctly(self, plugin, info):
-        keyring.set_password('kitovu-smb', 'invalid-user\nmyauthdomain\nexample.com', 'some_password')
+    @pytest.mark.parametrize('username', ['invalid-user', 'invalid-user-2'])
+    def test_handles_invalid_credentials_correctly(self, plugin, info, username):
+        keyring.set_password('kitovu-smb', f'{username}\nmyauthdomain\nexample.com', 'some_password')
 
-        info['username'] = 'invalid-user'
+        info['username'] = username
         plugin.configure(info)
 
         with pytest.raises(utils.PluginOperationError) as excinfo:
