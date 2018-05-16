@@ -106,12 +106,35 @@ def patch_generic_moodle_error(responses):
     }
     """
     _patch_request(responses, 'core_webservice_get_site_info', body=body, wstoken="some_token")
+
+
+RETRIEVE_FILE_URL = ("https://moodle.hsr.ch/webservice/pluginfile.php/75099/mod_resource/content/7/"
+                     "Gesch%C3%A4ftsprozessmanagement.pdf?forcedownload=1&token=some_token")
+
+
 @pytest.fixture
 def patch_retrieve_file(responses) -> None:
-    url = ("https://moodle.hsr.ch/webservice/pluginfile.php/75099/mod_resource/content/7/"
-           "Gesch%C3%A4ftsprozessmanagement.pdf?forcedownload=1&token=some_token")
-    responses.add(responses.GET, url, content_type="application/octet-stream",
+    responses.add(responses.GET, RETRIEVE_FILE_URL, content_type="application/octet-stream",
                   body="HELLO KITOVU", match_querystring=True)
+
+
+@pytest.fixture
+def patch_retrieve_file_server_error(responses) -> None:
+    responses.add(responses.GET, RETRIEVE_FILE_URL, content_type="application/octet-stream",
+                  body="HELLO KITOVU", match_querystring=True, status=500)
+
+
+@pytest.fixture
+def patch_retrieve_file_moodle_error(responses) -> None:
+    body: str = """
+    {
+        "errorcode": "alleskaputt",
+        "exception": "alles_kaputt_error",
+        "message": "Alles ist kaputt."
+    }
+    """
+    responses.add(responses.GET, RETRIEVE_FILE_URL, content_type="application/json",
+                  body=body, match_querystring=True)
 
 
 @pytest.fixture
@@ -309,3 +332,25 @@ class TestWithConnectedPlugin:
         fileobj = io.BytesIO()
         assert plugin.retrieve_file(remote_full_path, fileobj) == 1520803270
         assert fileobj.getvalue() == b"HELLO KITOVU"
+
+    def test_retrieve_file_server_error(self, plugin, connect_and_configure_plugin,
+                                        patch_get_users_courses, patch_course_get_contents,
+                                        patch_retrieve_file_server_error):
+        list(plugin.list_path(pathlib.PurePath("Wirtschaftsinformatik 2 FS2018")))
+        remote_full_path = pathlib.PurePath('Wirtschaftsinformatik 2 FS2018/02 - Geschäftsprozessmanagement/'
+                                            'Geschäftsprozessmanagement/Geschäftsprozessmanagement.pdf')
+        fileobj = io.BytesIO()
+
+        with pytest.raises(utils.PluginOperationError):
+            plugin.retrieve_file(remote_full_path, fileobj)
+
+    def test_retrieve_file_moodle_error(self, plugin, connect_and_configure_plugin,
+                                        patch_get_users_courses, patch_course_get_contents,
+                                        patch_retrieve_file_moodle_error):
+        list(plugin.list_path(pathlib.PurePath("Wirtschaftsinformatik 2 FS2018")))
+        remote_full_path = pathlib.PurePath('Wirtschaftsinformatik 2 FS2018/02 - Geschäftsprozessmanagement/'
+                                            'Geschäftsprozessmanagement/Geschäftsprozessmanagement.pdf')
+        fileobj = io.BytesIO()
+
+        with pytest.raises(utils.PluginOperationError):
+            plugin.retrieve_file(remote_full_path, fileobj)
