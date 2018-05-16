@@ -1,5 +1,6 @@
 import pathlib
 import socket
+import logging
 
 import pytest
 import attr
@@ -91,6 +92,13 @@ class TestConnect:
             'hostname': 'example.com',
             'share': 'myshare',
         }
+
+    @pytest.mark.parametrize('debug', [True, False])
+    def test_debug_logging(self, plugin, info, debug):
+        if debug:
+            info['debug'] = True
+        plugin.configure(info)
+        assert logging.getLogger('SMB.SMBConnection').propagate == debug
 
     def test_connect_with_default_options(self, plugin, info):
         plugin.configure(info)
