@@ -85,12 +85,20 @@ class TestSyncAll:
             pathlib.PurePath('Some/Test/Dir2/group3-file2.txt'): '32',
             pathlib.PurePath('Another/Test/Dir2/group4-file1.txt'): '41',
             pathlib.PurePath('Another/Test/Dir2/group4-file2.txt'): '42',
+        }, local_digests={
+            temppath / 'syncs/sync-1/group1-file1.txt': '11',
         })
         return instance.driver
 
     @pytest.mark.parametrize('mtime', [None, 13371337])
     def test_complex_sync_all(self, mtime, temppath: pathlib.Path, configured_dummy_plugin):
         configured_dummy_plugin.mtime = mtime
+
+        group1_file1 = temppath / 'syncs/sync-1/group1-file1.txt'
+        group1_file1.parent.mkdir(parents=True)
+        group1_file1.touch()
+
+        group1_file2 = temppath / 'syncs/sync-1/group1-file2.txt'
 
         config_yml = temppath / 'config.yml'
         config_yml.write_text(f"""
@@ -120,8 +128,8 @@ class TestSyncAll:
 
         assert sorted(pathlib.Path(temppath).glob("syncs/**/*")) == [
             pathlib.Path(f'{temppath}/syncs/sync-1'),
-            pathlib.Path(f'{temppath}/syncs/sync-1/group1-file1.txt'),
-            pathlib.Path(f'{temppath}/syncs/sync-1/group1-file2.txt'),
+            group1_file1,
+            group1_file2,
             pathlib.Path(f'{temppath}/syncs/sync-1/group1-file3.txt'),
             pathlib.Path(f'{temppath}/syncs/sync-1/group2-file1.txt'),
             pathlib.Path(f'{temppath}/syncs/sync-1/group2-file2.txt'),
@@ -132,8 +140,8 @@ class TestSyncAll:
         ]
 
         if mtime is not None:
-            mtime: float = (temppath / 'syncs' / 'sync-1' / 'group1-file1.txt').stat().st_mtime
-            assert int(mtime) == mtime
+            assert int(group1_file1.stat().st_mtime) != mtime  # no remote changes
+            assert int(group1_file2.stat().st_mtime) == mtime
 
 
 class TestErrorHandling:
