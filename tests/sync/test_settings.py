@@ -3,7 +3,22 @@ import pathlib
 import pytest
 
 from kitovu import utils
+from kitovu.sync import settings
 from kitovu.sync.settings import Settings, ConnectionSettings
+
+
+@pytest.fixture
+def default_config(monkeypatch, temppath):
+    monkeypatch.setattr(settings.appdirs, 'user_config_dir', lambda _name: str(temppath))
+    return temppath / 'kitovu.yaml'
+
+
+def test_creating_default_config(default_config, monkeypatch):
+    monkeypatch.setattr(settings.subprocess, 'call', lambda args: None)
+    assert not default_config.exists()
+    spawner = settings.EditorSpawner()
+    spawner.edit()
+    assert default_config.exists()
 
 
 def test_load_a_sample_yaml_file(assets_dir):
@@ -34,6 +49,11 @@ def test_load_a_sample_yaml_file(assets_dir):
         root_dir=expected_root_dir,
         connections=expected_connections,
     )
+
+
+def test_load_default_location(default_config):
+    with pytest.raises(utils.UsageError, match=f'Could not find the file {default_config}'):
+        Settings.from_yaml_file()
 
 
 def test_invalid_yaml_files(temppath: pathlib.Path):
