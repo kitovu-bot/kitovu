@@ -24,7 +24,7 @@ def read(*names, **kwargs):
 
 setup(
     name='kitovu',
-    version='0.0.0',
+    version='0.1.0',
     license='GPLv3',
     description='OpenHSR Connect 2',
     long_description='%s\n%s' % (
