@@ -118,32 +118,49 @@ def _sync_path(remote_full_path: pathlib.PurePath,
     filename: pathlib.PurePath = utils.sanitize_filename(remote_full_path.relative_to(remote_dir))
     local_full_path: pathlib.Path = local_dir / filename
 
-    # When both files changed, we currently override the local file, but this can and should
-    # later be handled as a user decision. https://jira.keltec.ch/jira/browse/EPJ-78
     state_of_file: filecache.FileState = cache.discover_changes(
         local_full_path=local_full_path, remote_full_path=remote_full_path, plugin=plugin)
     if state_of_file in [filecache.FileState.NO_CHANGES,
                          filecache.FileState.LOCAL_CHANGED]:
         logger.debug("No remote changes.")
     elif state_of_file in [filecache.FileState.REMOTE_CHANGED,
-                           filecache.FileState.NEW,
-                           filecache.FileState.BOTH_CHANGED]:
-        logger.info(f"Downloading {remote_full_path}")
-        local_full_path.parent.mkdir(parents=True, exist_ok=True)
-
-        with local_full_path.open('wb') as fileobj:
-            mtime: typing.Optional[int] = plugin.retrieve_file(remote_full_path, fileobj)
-
-        if mtime is not None:
-            os.utime(local_full_path, (local_full_path.stat().st_atime, mtime))
-
-        local_digest = plugin.create_local_digest(local_full_path)
-        logger.debug(f"Local digest: {local_digest}")
-
-        assert remote_digest == local_digest, local_full_path
-        cache.modify(local_full_path, plugin, local_digest)
+                           filecache.FileState.NEW]:
+        _download_file(local_full_path, remote_full_path, remote_digest, cache, plugin)
+    elif state_of_file == filecache.FileState.BOTH_CHANGED:
+        _rename_local_file(local_full_path)
+        _download_file(local_full_path, remote_full_path, remote_digest, cache, plugin)
     else:
         raise AssertionError(f"Unhandled state {state_of_file} for {local_full_path}")
+
+
+def _download_file(local_full_path: pathlib.Path, remote_full_path: pathlib.PurePath, remote_digest: str,
+                   cache: filecache.FileCache, plugin: AbstractSyncPlugin):
+    logger.info(f"Downloading {remote_full_path}")
+    local_full_path.parent.mkdir(parents=True, exist_ok=True)
+
+    with local_full_path.open('wb') as fileobj:
+        mtime: typing.Optional[int] = plugin.retrieve_file(remote_full_path, fileobj)
+
+    if mtime is not None:
+        os.utime(local_full_path, (local_full_path.stat().st_atime, mtime))
+
+    local_digest = plugin.create_local_digest(local_full_path)
+    logger.debug(f"Local digest: {local_digest}")
+
+    assert remote_digest == local_digest, local_full_path
+    cache.modify(local_full_path, plugin, local_digest)
+
+
+def _rename_local_file(path: pathlib.Path) -> None:
+    for n in range(1, 100):
+        # /home/leonie/EPJ/ospf.pdf => ospf_edited_01.pdf
+        new_filename = f"{path.stem}_edited_{n:02d}{path.suffix}"
+        new_path: pathlib.Path = path.parent / new_filename
+        if not new_path.exists():
+            path.rename(new_path)
+            return
+
+    raise AssertionError(f"Did not find suitable file name for {path}")
 
 
 def validate_config(config_file: typing.Optional[pathlib.Path]) -> None:
