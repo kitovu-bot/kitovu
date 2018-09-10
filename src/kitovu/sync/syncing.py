@@ -127,7 +127,8 @@ def _sync_path(remote_full_path: pathlib.PurePath,
                            filecache.FileState.NEW]:
         _download_file(local_full_path, remote_full_path, remote_digest, cache, plugin)
     elif state_of_file == filecache.FileState.BOTH_CHANGED:
-        _rename_local_file(local_full_path)
+        new_path: pathlib.Path = _rename_local_file(local_full_path)
+        logger.info(f"Both files changed, {local_full_path} renamed to {new_path.name}")
         _download_file(local_full_path, remote_full_path, remote_digest, cache, plugin)
     else:
         raise AssertionError(f"Unhandled state {state_of_file} for {local_full_path}")
@@ -151,14 +152,14 @@ def _download_file(local_full_path: pathlib.Path, remote_full_path: pathlib.Pure
     cache.modify(local_full_path, plugin, local_digest)
 
 
-def _rename_local_file(path: pathlib.Path) -> None:
+def _rename_local_file(path: pathlib.Path) -> pathlib.Path:
     for n in range(1, 100):
         # /home/leonie/EPJ/ospf.pdf => ospf_edited_01.pdf
         new_filename = f"{path.stem}_edited_{n:02d}{path.suffix}"
         new_path: pathlib.Path = path.parent / new_filename
         if not new_path.exists():
             path.rename(new_path)
-            return
+            return new_path
 
     raise AssertionError(f"Did not find suitable file name for {path}")
 
