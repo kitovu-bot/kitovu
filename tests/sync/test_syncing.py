@@ -144,6 +144,28 @@ class TestSyncAll:
             assert int(group1_file2.stat().st_mtime) == mtime
 
 
+class TestRenameLocalFile:
+
+    @pytest.fixture
+    def old_path(self, temppath: pathlib.Path) -> pathlib.Path:
+        old_path = pathlib.Path(temppath / 'file.pdf')
+        old_path.touch()
+        return old_path
+
+    def test_rename_local_file(self, temppath: pathlib.Path, old_path: pathlib.Path):
+        assert syncing._rename_local_file(old_path) == temppath / 'file_edited_01.pdf'
+
+    def test_next_file_renamed_correctly(self, temppath: pathlib.Path, old_path: pathlib.Path):
+        old_edited_path = pathlib.Path(temppath / 'file_edited_01.pdf')
+        old_edited_path.touch()
+        assert syncing._rename_local_file(old_path) == temppath / 'file_edited_02.pdf'
+
+    def test_filename_invalid(self, old_path: pathlib.Path, monkeypatch):
+        monkeypatch.setattr(pathlib.Path, 'exists', lambda _self: True)
+        with pytest.raises(AssertionError):
+            syncing._rename_local_file(old_path)
+
+
 class TestErrorHandling:
 
     @pytest.fixture
