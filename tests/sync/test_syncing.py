@@ -5,7 +5,7 @@ import stevedore
 import pytest
 
 from kitovu import utils
-from kitovu.sync import syncing
+from kitovu.sync import syncing, filecache
 from kitovu.sync.plugin import smb
 from kitovu.sync.settings import ConnectionSettings
 from helpers import dummyplugin
@@ -70,7 +70,7 @@ class TestFindPlugin:
 
 class TestSyncAll:
 
-    @pytest.fixture(autouse=True)
+    @pytest.fixture
     def configured_dummy_plugin(self, mocker, temppath):
         manager = mocker.patch('stevedore.driver.DriverManager', autospec=True)
         instance = manager(namespace='kitovu.sync.plugin', name='dummy',
@@ -142,6 +142,33 @@ class TestSyncAll:
         if mtime is not None:
             assert int(group1_file1.stat().st_mtime) != mtime  # no remote changes
             assert int(group1_file2.stat().st_mtime) == mtime
+
+
+class TestFileStates:
+
+    @pytest.fixture
+    def cache(self, temppath) -> filecache.FileCache:
+        return filecache.FileCache(temppath / 'filecache.json')
+
+    def test_no_changes(self, temppath, dummy_plugin, cache):
+        remote_full_path: pathlib.PurePath = 'group1-file1.txt'
+        local_dir: pathlib.Path = temppath / 'group1-file1.txt'
+        # do filestate of "no changes"
+        _sync_path(remote_full_path, local_dir, )
+        # assert old data still the same after sync_path
+
+    def test_local_changed(self, dummy_plugin):
+        pass
+
+    def test_remote_changed(self, dummy_plugin):
+        pass
+
+    def test_remote_new(self, dummy_plugin):
+        pass
+
+    def test_both_changed(self, dummy_plugin):
+        # has changed
+        pass
 
 
 class TestRenameLocalFile:
