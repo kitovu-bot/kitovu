@@ -4,9 +4,6 @@ WORKDIR /opt/project
 
 RUN apk --no-cache add alpine-sdk libffi-dev openssl-dev
 
-ENV PIPENV_VERSION 10.1.0
-RUN pip install pipenv==$PIPENV_VERSION
-
 RUN pip install tox
 
 ARG UID
@@ -20,10 +17,7 @@ RUN chmod +x /opt/bin/entrypoint.sh
 
 USER local-user
 
-COPY Pipfile /opt/project/
-COPY Pipfile.lock /opt/project/
-
-RUN pipenv sync --dev
+RUN pip install -r requirements.txt -r requirements-dev.txt
 
 ENTRYPOINT ["/opt/bin/entrypoint.sh"]
 
