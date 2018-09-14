@@ -11,7 +11,8 @@ disable=
     missing-docstring,
     locally-disabled,
     suppressed-message,
-    logging-fstring-interpolation
+    logging-fstring-interpolation,
+    no-else-return
 
 [reports]
 format=colorized
