@@ -44,8 +44,15 @@ def cli(loglevel: str) -> None:
 @cli.command()
 def gui() -> None:
     """Start the kitovu GUI."""
-    from kitovu.gui import app as guiapp
-    sys.exit(guiapp.run())
+    try:
+        from kitovu.gui import app as guiapp
+        sys.exit(guiapp.run())
+    except ModuleNotFoundError as e:
+        if e.name == 'PyQt5':
+            print('To run the GUI, you need to install the extra GUI dependencies')
+            print('Run "pip install kitovu[gui]"')
+        else:
+            raise
 
 
 @cli.command()
@@ -85,8 +92,8 @@ def docs() -> None:
 @cli.command()
 @click.option('--config', type=pathlib.Path, help="The configuration file to edit")
 @click.option('--editor', type=str, help="The command of the editor to use. "
-              f"Default: $EDITOR or the first existing out of "
-              f"{settings.EditorSpawner.DEFAULT_EDITORS_STR}")
+                                         f"Default: $EDITOR or the first existing out of "
+                                         f"{settings.EditorSpawner.DEFAULT_EDITORS_STR}")
 def edit(config: typing.Optional[pathlib.Path] = None, editor: typing.Optional[str] = None) -> None:
     """Edit the configuration file."""
     spawner = settings.EditorSpawner()
