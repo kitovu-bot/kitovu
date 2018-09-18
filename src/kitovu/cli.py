@@ -47,8 +47,8 @@ def gui() -> None:
     try:
         from kitovu.gui import app as guiapp
         sys.exit(guiapp.run())
-    except ModuleNotFoundError as e:
-        if e.name == 'PyQt5':
+    except ModuleNotFoundError as ex:
+        if ex.name == 'PyQt5':
             print('To run the GUI, you need to install the extra GUI dependencies', file=sys.stderr)
             print('To do so, run: pip install "kitovu[gui]"', file=sys.stderr)
             sys.exit(1)
