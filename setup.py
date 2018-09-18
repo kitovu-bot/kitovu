@@ -69,9 +69,6 @@ setup(
     ],
     extras_require={
         'gui': ['PyQt5']
-        # eg:
-        #   'rst': ['docutils>=0.11'],
-        #   ':python_version=="2.6"': ['argparse'],
     },
     entry_points={
         'console_scripts': [
