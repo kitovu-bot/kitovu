@@ -68,7 +68,7 @@ setup(
         'jsonschema',
     ],
     extras_require={
-        'gui': ['PyQt5']
+        'gui': ['PyQt5'],
     },
     entry_points={
         'console_scripts': [
