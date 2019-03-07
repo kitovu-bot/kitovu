@@ -130,7 +130,7 @@ class TestConnect:
             'domain': 'myauthdomain',
             'my_name': 'my-local-host',
             'remote_name': 'example.com',
-            'use_ntlm_v2': False,
+            'use_ntlm_v2': True,
             'sign_options': SMBConnection.SIGN_WHEN_REQUIRED,
             'is_direct_tcp': True,
         }
@@ -138,7 +138,7 @@ class TestConnect:
         assert plugin._connection.connected_port == 445
 
     def test_connect_with_custom_options(self, plugin, info):
-        info['use_ntlm_v2'] = True
+        info['use_ntlm_v2'] = False
         info['sign_options'] = 'when_supported'
         info['is_direct_tcp'] = False
 
@@ -151,7 +151,7 @@ class TestConnect:
             'domain': 'myauthdomain',
             'my_name': 'my-local-host',
             'remote_name': 'example.com',
-            'use_ntlm_v2': True,
+            'use_ntlm_v2': False,
             'sign_options': SMBConnection.SIGN_WHEN_SUPPORTED,
             'is_direct_tcp': False,
         }
@@ -170,7 +170,7 @@ class TestConnect:
             'domain': 'HSR',
             'my_name': 'my-local-host',
             'remote_name': 'svm-c213.hsr.ch',
-            'use_ntlm_v2': False,
+            'use_ntlm_v2': True,
             'sign_options': SMBConnection.SIGN_WHEN_REQUIRED,
             'is_direct_tcp': True,
         }
