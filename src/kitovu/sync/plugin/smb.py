@@ -73,7 +73,7 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
         return '\n'.join([self._info.username, domain, self._info.hostname])
 
     def configure(self, info: typing.Dict[str, typing.Any]) -> None:
-        self._info.use_ntlm_v2 = info.get('use_ntlm_v2', False)
+        self._info.use_ntlm_v2 = info.get('use_ntlm_v2', True)
         sign_options = info.get('sign_options', 'when_required')
         self._info.sign_options = _SignOptions[sign_options]
         self._info.is_direct_tcp = info.get('is_direct_tcp', True)
