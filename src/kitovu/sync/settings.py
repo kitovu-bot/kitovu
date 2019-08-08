@@ -128,7 +128,7 @@ class Settings:
         validator = utils.SchemaValidator()
 
         try:
-            data = yaml.load(stream)
+            data = yaml.full_load(stream)
         except (yaml.YAMLError, OSError, UnicodeDecodeError) as error:
             raise utils.UsageError(f"Failed to load configuration:\n{error}")
 
