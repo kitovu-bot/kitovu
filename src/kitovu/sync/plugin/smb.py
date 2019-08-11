@@ -126,7 +126,8 @@ class SmbPlugin(syncplugin.AbstractSyncPlugin):
         if not success:
             utils.delete_password('smb', self._password_identifier())
             raise utils.AuthenticationError(
-                f'Authentication failed for {server_ip}:{self._info.port} - try again to enter a new password')
+                f'Authentication failed for {server_ip}:{self._info.port}' +
+                ' - try again to enter a new password')
 
     def disconnect(self) -> None:
         self._connection.close()
