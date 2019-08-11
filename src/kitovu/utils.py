@@ -29,6 +29,19 @@ def get_password(plugin: str, identifier: str, prompt: str) -> str:
     return password
 
 
+def delete_password(plugin: str, identifier: str) -> None:
+    """Remove the password for the given URL from the keyring if it exists.
+
+    Args:
+       plugin: The name of the plugin requesting a password.
+       identifier: An unique identifier (such as an URL) for the connection.
+    """
+    service = f'kitovu-{plugin}'
+    if keyring.get_password(service, identifier) is not None:
+        logger.debug(f'Deleting password for {service}, identifier {identifier}')
+        keyring.delete_password(service, identifier)
+
+
 def sanitize_filename(name: pathlib.PurePath) -> pathlib.PurePath:
     r"""Replace invalid filename characters.
 
