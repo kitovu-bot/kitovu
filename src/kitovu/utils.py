@@ -30,7 +30,7 @@ def get_password(plugin: str, identifier: str, prompt: str) -> str:
 
 
 def delete_password(plugin: str, identifier: str) -> None:
-    """Get the password for the given URL via keyring.
+    """Remove the password for the given URL from the keyring if it exists.
 
     Args:
        plugin: The name of the plugin requesting a password.
