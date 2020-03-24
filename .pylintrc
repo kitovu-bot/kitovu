@@ -10,7 +10,9 @@ disable=
     no-self-use,
     missing-docstring,
     locally-disabled,
-    suppressed-message
+    suppressed-message,
+    logging-fstring-interpolation,
+    no-else-return
 
 [reports]
 format=colorized
